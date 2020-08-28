@@ -19,6 +19,7 @@ package containerregistryv1_test
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/IBM/go-sdk-core/v4/core"
 	. "github.com/onsi/ginkgo"
@@ -38,7 +39,6 @@ CONTAINER_REGISTRY_AUTH_URL=https://iam.test.cloud.ibm.com/identity/token
 CONTAINER_REGISTRY_APIKEY=[An IAM Apikey]
 CONTAINER_REGISTRY_ACCOUNT_ID=[Your test account ID]
 CONTAINER_REGISTRY_NAMESPACE=[Namespace name, to be created and deleted by the test, eg: ]jahsdk
-CONTAINER_REGISTRY_DNS_NAME=dev.icr.io
 CONTAINER_REGISTRY_SEED_IMAGE=[An existing namespace/repo:tag to copy in this test, eg: ]newjhart/busy:latest
 CONTAINER_REGISTRY_SEED_DIGEST=[The digest of the seed image, eg: ]sha256:2131f09e4044327fd101ca1fd4043e6f3ad921ae7ee901e9142e6e36b354a907
  *
@@ -95,10 +95,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			if accountID == "" {
 				Skip("Unable to load accountID configuration property, skipping tests")
 			}
-			registryDNSName = config["DNS_NAME"]
-			if registryDNSName == "" {
-				Skip("Unable to load registryDNSName configuration property, skipping tests")
-			}
+			registryDNSName = strings.TrimPrefix(serviceURL, "https://")
 			seedImage = config["SEED_IMAGE"]
 			if seedImage == "" {
 				Skip("Unable to load seedImage configuration property, skipping tests")
