@@ -19,19 +19,20 @@ package containerregistryv1_test
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+
 	"github.com/IBM/go-sdk-core/v4/core"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.ibm.com/ibmcloud/container-registry-go-sdk/containerregistryv1"
-	"os"
 )
 
 const externalConfigFile = "../container_registry_v1.env"
 
 var (
 	containerRegistryService *containerregistryv1.ContainerRegistryV1
-	config       map[string]string
-	configLoaded bool = false
+	config                   map[string]string
+	configLoaded             bool = false
 )
 
 // Globlal variables to hold link values
@@ -40,6 +41,7 @@ var (
 )
 
 func shouldSkipTest() {
+	Skip("Container Registry examples are not intended to be runnable tests")
 	if !configLoaded {
 		Skip("External configuration is not available, skipping tests...")
 	}
@@ -74,7 +76,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-common
 
 			containerRegistryServiceOptions := &containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr("testString"),
+				Account: core.StringPtr("accountID"),
 			}
 
 			containerRegistryService, err = containerregistryv1.NewContainerRegistryV1UsingExternalConfig(containerRegistryServiceOptions)
@@ -97,7 +99,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-create_namespace
 
 			createNamespaceOptions := containerRegistryService.NewCreateNamespaceOptions(
-				"testString",
+				"my_example_namespace",
 			)
 
 			namespace, response, err := containerRegistryService.CreateNamespace(createNamespaceOptions)
@@ -110,10 +112,10 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// end-create_namespace
 
 			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(200))
+			Expect(response.StatusCode).To(Or(Equal(201), Equal(200)))
 			Expect(namespace).ToNot(BeNil())
 
-			namespaceLink = *namespace.Namespace;
+			namespaceLink = *namespace.Namespace
 
 		})
 		It(`GetAuth request example`, func() {

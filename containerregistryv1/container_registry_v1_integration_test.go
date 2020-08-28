@@ -18,11 +18,12 @@ package containerregistryv1_test
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/IBM/go-sdk-core/v4/core"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.ibm.com/ibmcloud/container-registry-go-sdk/containerregistryv1"
-	"os"
 )
 
 /**
@@ -30,18 +31,35 @@ import (
  *
  * Notes:
  *
+ * Your configuration file should contain the following variables. The following example is for the dev registry, using staging IAM
+CONTAINER_REGISTRY_URL=https://dev.icr.io
+CONTAINER_REGISTRY_AUTH_TYPE=iam
+CONTAINER_REGISTRY_AUTH_URL=https://iam.test.cloud.ibm.com/identity/token
+CONTAINER_REGISTRY_APIKEY=[An IAM Apikey]
+CONTAINER_REGISTRY_ACCOUNT_ID=[Your test account ID]
+CONTAINER_REGISTRY_NAMESPACE=[Namespace name, to be created and deleted by the test, eg: ]jahsdk
+CONTAINER_REGISTRY_DNS_NAME=dev.icr.io
+CONTAINER_REGISTRY_SEED_IMAGE=[An existing namespace/repo:tag to copy in this test, eg: ]newjhart/busy:latest
+CONTAINER_REGISTRY_SEED_DIGEST=[The digest of the seed image, eg: ]sha256:2131f09e4044327fd101ca1fd4043e6f3ad921ae7ee901e9142e6e36b354a907
+ *
  * The integration test will automatically skip tests if the required config file is not available.
- */
+*/
 
 var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 	const externalConfigFile = "../container_registry_v1.env"
 
 	var (
-		err          error
-		containerRegistryService *containerregistryv1.ContainerRegistryV1
-		serviceURL   string
-		config       map[string]string
+		err               error
+		containerRegistry *containerregistryv1.ContainerRegistryV1
+		serviceURL        string
+		baseNamespace     string
+		accountID         string
+		registryDNSName   string
+		seedImage         string
+		seedDigest        string
+
+		config map[string]string
 	)
 
 	// Globlal variables to hold link values
@@ -69,6 +87,26 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			if serviceURL == "" {
 				Skip("Unable to load service URL configuration property, skipping tests")
 			}
+			baseNamespace = config["NAMESPACE"]
+			if baseNamespace == "" {
+				Skip("Unable to load baseNamespace configuration property, skipping tests")
+			}
+			accountID = config["ACCOUNT_ID"]
+			if accountID == "" {
+				Skip("Unable to load accountID configuration property, skipping tests")
+			}
+			registryDNSName = config["DNS_NAME"]
+			if registryDNSName == "" {
+				Skip("Unable to load registryDNSName configuration property, skipping tests")
+			}
+			seedImage = config["SEED_IMAGE"]
+			if seedImage == "" {
+				Skip("Unable to load seedImage configuration property, skipping tests")
+			}
+			seedDigest = config["SEED_DIGEST"]
+			if seedDigest == "" {
+				Skip("Unable to load seedDigest configuration property, skipping tests")
+			}
 
 			fmt.Printf("Service URL: %s\n", serviceURL)
 			shouldSkipTest = func() {}
@@ -81,15 +119,15 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 		It("Successfully construct the service client instance", func() {
 
-			containerRegistryServiceOptions := &containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr("testString"),
+			containerRegistryOptions := &containerregistryv1.ContainerRegistryV1Options{
+				Account: core.StringPtr(accountID),
 			}
 
-			containerRegistryService, err = containerregistryv1.NewContainerRegistryV1UsingExternalConfig(containerRegistryServiceOptions)
+			containerRegistry, err = containerregistryv1.NewContainerRegistryV1UsingExternalConfig(containerRegistryOptions)
 
 			Expect(err).To(BeNil())
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(containerRegistryService.Service.Options.URL).To(Equal(serviceURL))
+			Expect(containerRegistry).ToNot(BeNil())
+			Expect(containerRegistry.Service.Options.URL).To(Equal(serviceURL))
 		})
 	})
 
@@ -100,17 +138,16 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`CreateNamespace(createNamespaceOptions *CreateNamespaceOptions)`, func() {
 
 			createNamespaceOptions := &containerregistryv1.CreateNamespaceOptions{
-				Namespace: core.StringPtr("testString"),
-				XAuthResourceGroup: core.StringPtr("testString"),
+				Namespace: core.StringPtr(baseNamespace),
 			}
 
-			namespace, response, err := containerRegistryService.CreateNamespace(createNamespaceOptions)
+			namespace, response, err := containerRegistry.CreateNamespace(createNamespaceOptions)
 
 			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(200))
+			Expect(response.StatusCode).To(Or(Equal(201), Equal(200)))
 			Expect(namespace).ToNot(BeNil())
 
-			namespaceLink = *namespace.Namespace;
+			namespaceLink = *namespace.Namespace
 
 		})
 	})
@@ -121,10 +158,9 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 		It(`GetAuth(getAuthOptions *GetAuthOptions)`, func() {
 
-			getAuthOptions := &containerregistryv1.GetAuthOptions{
-			}
+			getAuthOptions := &containerregistryv1.GetAuthOptions{}
 
-			authOptions, response, err := containerRegistryService.GetAuth(getAuthOptions)
+			authOptions, response, err := containerRegistry.GetAuth(getAuthOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -141,10 +177,9 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			updateAuthOptions := &containerregistryv1.UpdateAuthOptions{
 				IamAuthz: core.BoolPtr(true),
-				PrivateOnly: core.BoolPtr(true),
 			}
 
-			response, err := containerRegistryService.UpdateAuth(updateAuthOptions)
+			response, err := containerRegistry.UpdateAuth(updateAuthOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))
@@ -159,15 +194,14 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`ListImages(listImagesOptions *ListImagesOptions)`, func() {
 
 			listImagesOptions := &containerregistryv1.ListImagesOptions{
-				Namespace: core.StringPtr("testString"),
-				IncludeIBM: core.BoolPtr(true),
-				IncludePrivate: core.BoolPtr(true),
+				Namespace:            core.StringPtr(namespaceLink),
+				IncludeIBM:           core.BoolPtr(true),
+				IncludePrivate:       core.BoolPtr(true),
 				IncludeManifestLists: core.BoolPtr(true),
-				Vulnerabilities: core.BoolPtr(true),
-				Repository: core.StringPtr("testString"),
+				Vulnerabilities:      core.BoolPtr(true),
 			}
 
-			remoteApiImage, response, err := containerRegistryService.ListImages(listImagesOptions)
+			remoteApiImage, response, err := containerRegistry.ListImages(listImagesOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -183,10 +217,10 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`BulkDeleteImages(bulkDeleteImagesOptions *BulkDeleteImagesOptions)`, func() {
 
 			bulkDeleteImagesOptions := &containerregistryv1.BulkDeleteImagesOptions{
-				BulkDelete: []string{"testString"},
+				BulkDelete: []string{fmt.Sprintf("%s/%s/notexist:1", registryDNSName, namespaceLink)},
 			}
 
-			imageBulkDeleteResult, response, err := containerRegistryService.BulkDeleteImages(bulkDeleteImagesOptions)
+			imageBulkDeleteResult, response, err := containerRegistry.BulkDeleteImages(bulkDeleteImagesOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -203,12 +237,11 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			listImageDigestsOptions := &containerregistryv1.ListImageDigestsOptions{
 				ExcludeTagged: core.BoolPtr(false),
-				ExcludeVa: core.BoolPtr(false),
-				IncludeIbm: core.BoolPtr(false),
-				Repositories: []string{"testString"},
+				ExcludeVa:     core.BoolPtr(false),
+				IncludeIbm:    core.BoolPtr(false),
 			}
 
-			digestListImage, response, err := containerRegistryService.ListImageDigests(listImageDigestsOptions)
+			digestListImage, response, err := containerRegistry.ListImageDigests(listImageDigestsOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -224,11 +257,11 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`TagImage(tagImageOptions *TagImageOptions)`, func() {
 
 			tagImageOptions := &containerregistryv1.TagImageOptions{
-				Fromimage: core.StringPtr("testString"),
-				Toimage: core.StringPtr("testString"),
+				Fromimage: core.StringPtr(fmt.Sprintf("%s/%s", registryDNSName, seedImage)),
+				Toimage:   core.StringPtr(fmt.Sprintf("%s/%s/sdktest:1", registryDNSName, namespaceLink)),
 			}
 
-			response, err := containerRegistryService.TagImage(tagImageOptions)
+			response, err := containerRegistry.TagImage(tagImageOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(201))
@@ -243,10 +276,10 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`InspectImage(inspectImageOptions *InspectImageOptions)`, func() {
 
 			inspectImageOptions := &containerregistryv1.InspectImageOptions{
-				Image: core.StringPtr("testString"),
+				Image: core.StringPtr(fmt.Sprintf("%s/%s/sdktest:1", registryDNSName, namespaceLink)),
 			}
 
-			imageInspection, response, err := containerRegistryService.InspectImage(inspectImageOptions)
+			imageInspection, response, err := containerRegistry.InspectImage(inspectImageOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -262,10 +295,10 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`GetImageManifest(getImageManifestOptions *GetImageManifestOptions)`, func() {
 
 			getImageManifestOptions := &containerregistryv1.GetImageManifestOptions{
-				Image: core.StringPtr("testString"),
+				Image: core.StringPtr(fmt.Sprintf("%s/%s/sdktest:1", registryDNSName, namespaceLink)),
 			}
 
-			response, err := containerRegistryService.GetImageManifest(getImageManifestOptions)
+			response, err := containerRegistry.GetImageManifest(getImageManifestOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -279,10 +312,9 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 		It(`GetMessages(getMessagesOptions *GetMessagesOptions)`, func() {
 
-			getMessagesOptions := &containerregistryv1.GetMessagesOptions{
-			}
+			getMessagesOptions := &containerregistryv1.GetMessagesOptions{}
 
-			result, response, err := containerRegistryService.GetMessages(getMessagesOptions)
+			result, response, err := containerRegistry.GetMessages(getMessagesOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -297,10 +329,9 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 		It(`ListNamespaces(listNamespacesOptions *ListNamespacesOptions)`, func() {
 
-			listNamespacesOptions := &containerregistryv1.ListNamespacesOptions{
-			}
+			listNamespacesOptions := &containerregistryv1.ListNamespacesOptions{}
 
-			result, response, err := containerRegistryService.ListNamespaces(listNamespacesOptions)
+			result, response, err := containerRegistry.ListNamespaces(listNamespacesOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -315,10 +346,9 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 		It(`ListNamespaceDetails(listNamespaceDetailsOptions *ListNamespaceDetailsOptions)`, func() {
 
-			listNamespaceDetailsOptions := &containerregistryv1.ListNamespaceDetailsOptions{
-			}
+			listNamespaceDetailsOptions := &containerregistryv1.ListNamespaceDetailsOptions{}
 
-			namespaceDetail, response, err := containerRegistryService.ListNamespaceDetails(listNamespaceDetailsOptions)
+			namespaceDetail, response, err := containerRegistry.ListNamespaceDetails(listNamespaceDetailsOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -334,11 +364,11 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`AssignNamespace(assignNamespaceOptions *AssignNamespaceOptions)`, func() {
 
 			assignNamespaceOptions := &containerregistryv1.AssignNamespaceOptions{
-				XAuthResourceGroup: core.StringPtr("testString"),
-				Namespace: core.StringPtr("testString"),
+				Namespace:          core.StringPtr(namespaceLink),
+				XAuthResourceGroup: core.StringPtr("aea257aa3c636f5e88267c4fd70f2c1f"),
 			}
 
-			namespace, response, err := containerRegistryService.AssignNamespace(assignNamespaceOptions)
+			namespace, response, err := containerRegistry.AssignNamespace(assignNamespaceOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -353,10 +383,9 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 		It(`GetPlans(getPlansOptions *GetPlansOptions)`, func() {
 
-			getPlansOptions := &containerregistryv1.GetPlansOptions{
-			}
+			getPlansOptions := &containerregistryv1.GetPlansOptions{}
 
-			plan, response, err := containerRegistryService.GetPlans(getPlansOptions)
+			plan, response, err := containerRegistry.GetPlans(getPlansOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -375,10 +404,10 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 				Plan: core.StringPtr("Standard"),
 			}
 
-			response, err := containerRegistryService.UpdatePlans(updatePlansOptions)
+			response, err := containerRegistry.UpdatePlans(updatePlansOptions)
 
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(200))
+			Expect(err).NotTo(BeNil())
+			Expect(response.StatusCode).To(Equal(403))
 
 		})
 	})
@@ -389,10 +418,9 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 		It(`GetQuota(getQuotaOptions *GetQuotaOptions)`, func() {
 
-			getQuotaOptions := &containerregistryv1.GetQuotaOptions{
-			}
+			getQuotaOptions := &containerregistryv1.GetQuotaOptions{}
 
-			quota, response, err := containerRegistryService.GetQuota(getQuotaOptions)
+			quota, response, err := containerRegistry.GetQuota(getQuotaOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -412,7 +440,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 				TrafficMegabytes: core.Int64Ptr(int64(480)),
 			}
 
-			response, err := containerRegistryService.UpdateQuota(updateQuotaOptions)
+			response, err := containerRegistry.UpdateQuota(updateQuotaOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -426,10 +454,9 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 		It(`ListRetentionPolicies(listRetentionPoliciesOptions *ListRetentionPoliciesOptions)`, func() {
 
-			listRetentionPoliciesOptions := &containerregistryv1.ListRetentionPoliciesOptions{
-			}
+			listRetentionPoliciesOptions := &containerregistryv1.ListRetentionPoliciesOptions{}
 
-			mapStringRetentionPolicy, response, err := containerRegistryService.ListRetentionPolicies(listRetentionPoliciesOptions)
+			mapStringRetentionPolicy, response, err := containerRegistry.ListRetentionPolicies(listRetentionPoliciesOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -445,15 +472,15 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`SetRetentionPolicy(setRetentionPolicyOptions *SetRetentionPolicyOptions)`, func() {
 
 			setRetentionPolicyOptions := &containerregistryv1.SetRetentionPolicyOptions{
-				ImagesPerRepo: core.Int64Ptr(int64(10)),
-				Namespace: core.StringPtr("birds"),
+				ImagesPerRepo:  core.Int64Ptr(int64(10)),
+				Namespace:      core.StringPtr(namespaceLink),
 				RetainUntagged: core.BoolPtr(false),
 			}
 
-			response, err := containerRegistryService.SetRetentionPolicy(setRetentionPolicyOptions)
+			response, err := containerRegistry.SetRetentionPolicy(setRetentionPolicyOptions)
 
 			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(200))
+			Expect(response.StatusCode).To(Equal(201))
 
 		})
 	})
@@ -465,12 +492,12 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions *AnalyzeRetentionPolicyOptions)`, func() {
 
 			analyzeRetentionPolicyOptions := &containerregistryv1.AnalyzeRetentionPolicyOptions{
-				ImagesPerRepo: core.Int64Ptr(int64(10)),
-				Namespace: core.StringPtr("birds"),
+				ImagesPerRepo:  core.Int64Ptr(int64(10)),
+				Namespace:      core.StringPtr(namespaceLink),
 				RetainUntagged: core.BoolPtr(false),
 			}
 
-			mapStringstring, response, err := containerRegistryService.AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions)
+			mapStringstring, response, err := containerRegistry.AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -486,88 +513,14 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`GetRetentionPolicy(getRetentionPolicyOptions *GetRetentionPolicyOptions)`, func() {
 
 			getRetentionPolicyOptions := &containerregistryv1.GetRetentionPolicyOptions{
-				Namespace: core.StringPtr("testString"),
+				Namespace: core.StringPtr(namespaceLink),
 			}
 
-			retentionPolicy, response, err := containerRegistryService.GetRetentionPolicy(getRetentionPolicyOptions)
+			retentionPolicy, response, err := containerRegistry.GetRetentionPolicy(getRetentionPolicyOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(retentionPolicy).ToNot(BeNil())
-
-		})
-	})
-
-	Describe(`ListDeletedImages - List deleted images`, func() {
-		BeforeEach(func() {
-			shouldSkipTest()
-		})
-		It(`ListDeletedImages(listDeletedImagesOptions *ListDeletedImagesOptions)`, func() {
-
-			listDeletedImagesOptions := &containerregistryv1.ListDeletedImagesOptions{
-				Namespace: core.StringPtr("testString"),
-			}
-
-			mapStringTrash, response, err := containerRegistryService.ListDeletedImages(listDeletedImagesOptions)
-
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(200))
-			Expect(mapStringTrash).ToNot(BeNil())
-
-		})
-	})
-
-	Describe(`RestoreTags - Restore a digest and all associated tags`, func() {
-		BeforeEach(func() {
-			shouldSkipTest()
-		})
-		It(`RestoreTags(restoreTagsOptions *RestoreTagsOptions)`, func() {
-
-			restoreTagsOptions := &containerregistryv1.RestoreTagsOptions{
-				Digest: core.StringPtr("testString"),
-			}
-
-			restoreResult, response, err := containerRegistryService.RestoreTags(restoreTagsOptions)
-
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(200))
-			Expect(restoreResult).ToNot(BeNil())
-
-		})
-	})
-
-	Describe(`RestoreImage - Restore deleted image`, func() {
-		BeforeEach(func() {
-			shouldSkipTest()
-		})
-		It(`RestoreImage(restoreImageOptions *RestoreImageOptions)`, func() {
-
-			restoreImageOptions := &containerregistryv1.RestoreImageOptions{
-				Image: core.StringPtr("testString"),
-			}
-
-			response, err := containerRegistryService.RestoreImage(restoreImageOptions)
-
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(200))
-
-		})
-	})
-
-	Describe(`DeleteNamespace - Delete namespace`, func() {
-		BeforeEach(func() {
-			shouldSkipTest()
-		})
-		It(`DeleteNamespace(deleteNamespaceOptions *DeleteNamespaceOptions)`, func() {
-
-			deleteNamespaceOptions := &containerregistryv1.DeleteNamespaceOptions{
-				Namespace: core.StringPtr(namespaceLink),
-			}
-
-			response, err := containerRegistryService.DeleteNamespace(deleteNamespaceOptions)
-
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(204))
 
 		})
 	})
@@ -579,10 +532,10 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`DeleteImageTag(deleteImageTagOptions *DeleteImageTagOptions)`, func() {
 
 			deleteImageTagOptions := &containerregistryv1.DeleteImageTagOptions{
-				Image: core.StringPtr("testString"),
+				Image: core.StringPtr(fmt.Sprintf("%s/%s/sdktest:1", registryDNSName, namespaceLink)),
 			}
 
-			imageDeleteResult, response, err := containerRegistryService.DeleteImageTag(deleteImageTagOptions)
+			imageDeleteResult, response, err := containerRegistry.DeleteImageTag(deleteImageTagOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -598,14 +551,87 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`DeleteImage(deleteImageOptions *DeleteImageOptions)`, func() {
 
 			deleteImageOptions := &containerregistryv1.DeleteImageOptions{
-				Image: core.StringPtr("testString"),
+				Image: core.StringPtr(fmt.Sprintf("%s/%s/sdktest@%s", registryDNSName, namespaceLink, seedDigest)),
 			}
-
-			imageDeleteResult, response, err := containerRegistryService.DeleteImage(deleteImageOptions)
+			imageDeleteResult, response, err := containerRegistry.DeleteImage(deleteImageOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(imageDeleteResult).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`ListDeletedImages - List deleted images`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`ListDeletedImages(listDeletedImagesOptions *ListDeletedImagesOptions)`, func() {
+
+			listDeletedImagesOptions := &containerregistryv1.ListDeletedImagesOptions{
+				Namespace: core.StringPtr(namespaceLink),
+			}
+
+			mapStringTrash, response, err := containerRegistry.ListDeletedImages(listDeletedImagesOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(mapStringTrash).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`RestoreTags - Restore a digest and all associated tags`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`RestoreTags(restoreTagsOptions *RestoreTagsOptions)`, func() {
+
+			restoreTagsOptions := &containerregistryv1.RestoreTagsOptions{
+				Digest: core.StringPtr(fmt.Sprintf("%s/%s/sdktest@%s", registryDNSName, namespaceLink, seedDigest)),
+			}
+
+			restoreResult, response, err := containerRegistry.RestoreTags(restoreTagsOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(restoreResult).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`RestoreImage - Restore deleted image`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`RestoreImage(restoreImageOptions *RestoreImageOptions)`, func() {
+
+			restoreImageOptions := &containerregistryv1.RestoreImageOptions{
+				Image: core.StringPtr(fmt.Sprintf("%s/%s/sdktest:nope", registryDNSName, namespaceLink)),
+			}
+
+			response, err := containerRegistry.RestoreImage(restoreImageOptions)
+
+			Expect(err).NotTo(BeNil())
+			Expect(response.StatusCode).To(Equal(404))
+
+		})
+	})
+
+	Describe(`DeleteNamespace - Delete namespace`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`DeleteNamespace(deleteNamespaceOptions *DeleteNamespaceOptions)`, func() {
+
+			deleteNamespaceOptions := &containerregistryv1.DeleteNamespaceOptions{
+				Namespace: core.StringPtr(namespaceLink),
+			}
+
+			response, err := containerRegistry.DeleteNamespace(deleteNamespaceOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
 
 		})
 	})
