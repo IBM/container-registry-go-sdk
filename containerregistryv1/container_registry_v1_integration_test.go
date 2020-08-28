@@ -1,0 +1,616 @@
+/**
+ * (C) Copyright IBM Corp. 2020.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package containerregistryv1_test
+
+import (
+	"fmt"
+	"github.com/IBM/go-sdk-core/v4/core"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"github.ibm.com/ibmcloud/container-registry-go-sdk/containerregistryv1"
+	"os"
+)
+
+/**
+ * This file contains an integration test for the containerregistryv1 package.
+ *
+ * Notes:
+ *
+ * The integration test will automatically skip tests if the required config file is not available.
+ */
+
+var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
+
+	const externalConfigFile = "../container_registry_v1.env"
+
+	var (
+		err          error
+		containerRegistryService *containerregistryv1.ContainerRegistryV1
+		serviceURL   string
+		config       map[string]string
+	)
+
+	// Globlal variables to hold link values
+	var (
+		namespaceLink string
+	)
+
+	var shouldSkipTest = func() {
+		Skip("External configuration is not available, skipping tests...")
+	}
+
+	Describe(`External configuration`, func() {
+		It("Successfully load the configuration", func() {
+			_, err = os.Stat(externalConfigFile)
+			if err != nil {
+				Skip("External configuration file not found, skipping tests: " + err.Error())
+			}
+
+			os.Setenv("IBM_CREDENTIALS_FILE", externalConfigFile)
+			config, err = core.GetServiceProperties(containerregistryv1.DefaultServiceName)
+			if err != nil {
+				Skip("Error loading service properties, skipping tests: " + err.Error())
+			}
+			serviceURL = config["URL"]
+			if serviceURL == "" {
+				Skip("Unable to load service URL configuration property, skipping tests")
+			}
+
+			fmt.Printf("Service URL: %s\n", serviceURL)
+			shouldSkipTest = func() {}
+		})
+	})
+
+	Describe(`Client initialization`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It("Successfully construct the service client instance", func() {
+
+			containerRegistryServiceOptions := &containerregistryv1.ContainerRegistryV1Options{
+				Account: core.StringPtr("testString"),
+			}
+
+			containerRegistryService, err = containerregistryv1.NewContainerRegistryV1UsingExternalConfig(containerRegistryServiceOptions)
+
+			Expect(err).To(BeNil())
+			Expect(containerRegistryService).ToNot(BeNil())
+			Expect(containerRegistryService.Service.Options.URL).To(Equal(serviceURL))
+		})
+	})
+
+	Describe(`CreateNamespace - Create namespace`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`CreateNamespace(createNamespaceOptions *CreateNamespaceOptions)`, func() {
+
+			createNamespaceOptions := &containerregistryv1.CreateNamespaceOptions{
+				Namespace: core.StringPtr("testString"),
+				XAuthResourceGroup: core.StringPtr("testString"),
+			}
+
+			namespace, response, err := containerRegistryService.CreateNamespace(createNamespaceOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(namespace).ToNot(BeNil())
+
+			namespaceLink = *namespace.Namespace;
+
+		})
+	})
+
+	Describe(`GetAuth - Get authorization options`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`GetAuth(getAuthOptions *GetAuthOptions)`, func() {
+
+			getAuthOptions := &containerregistryv1.GetAuthOptions{
+			}
+
+			authOptions, response, err := containerRegistryService.GetAuth(getAuthOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(authOptions).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`UpdateAuth - Update authorization options`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`UpdateAuth(updateAuthOptions *UpdateAuthOptions)`, func() {
+
+			updateAuthOptions := &containerregistryv1.UpdateAuthOptions{
+				IamAuthz: core.BoolPtr(true),
+				PrivateOnly: core.BoolPtr(true),
+			}
+
+			response, err := containerRegistryService.UpdateAuth(updateAuthOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
+
+		})
+	})
+
+	Describe(`ListImages - List images`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`ListImages(listImagesOptions *ListImagesOptions)`, func() {
+
+			listImagesOptions := &containerregistryv1.ListImagesOptions{
+				Namespace: core.StringPtr("testString"),
+				IncludeIBM: core.BoolPtr(true),
+				IncludePrivate: core.BoolPtr(true),
+				IncludeManifestLists: core.BoolPtr(true),
+				Vulnerabilities: core.BoolPtr(true),
+				Repository: core.StringPtr("testString"),
+			}
+
+			remoteApiImage, response, err := containerRegistryService.ListImages(listImagesOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(remoteApiImage).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`BulkDeleteImages - Bulk delete images`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`BulkDeleteImages(bulkDeleteImagesOptions *BulkDeleteImagesOptions)`, func() {
+
+			bulkDeleteImagesOptions := &containerregistryv1.BulkDeleteImagesOptions{
+				BulkDelete: []string{"testString"},
+			}
+
+			imageBulkDeleteResult, response, err := containerRegistryService.BulkDeleteImages(bulkDeleteImagesOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(imageBulkDeleteResult).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`ListImageDigests - List images by digest`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`ListImageDigests(listImageDigestsOptions *ListImageDigestsOptions)`, func() {
+
+			listImageDigestsOptions := &containerregistryv1.ListImageDigestsOptions{
+				ExcludeTagged: core.BoolPtr(false),
+				ExcludeVa: core.BoolPtr(false),
+				IncludeIbm: core.BoolPtr(false),
+				Repositories: []string{"testString"},
+			}
+
+			digestListImage, response, err := containerRegistryService.ListImageDigests(listImageDigestsOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(digestListImage).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`TagImage - Create tag`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`TagImage(tagImageOptions *TagImageOptions)`, func() {
+
+			tagImageOptions := &containerregistryv1.TagImageOptions{
+				Fromimage: core.StringPtr("testString"),
+				Toimage: core.StringPtr("testString"),
+			}
+
+			response, err := containerRegistryService.TagImage(tagImageOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(201))
+
+		})
+	})
+
+	Describe(`InspectImage - Inspect an image`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`InspectImage(inspectImageOptions *InspectImageOptions)`, func() {
+
+			inspectImageOptions := &containerregistryv1.InspectImageOptions{
+				Image: core.StringPtr("testString"),
+			}
+
+			imageInspection, response, err := containerRegistryService.InspectImage(inspectImageOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(imageInspection).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`GetImageManifest - Get image manifest`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`GetImageManifest(getImageManifestOptions *GetImageManifestOptions)`, func() {
+
+			getImageManifestOptions := &containerregistryv1.GetImageManifestOptions{
+				Image: core.StringPtr("testString"),
+			}
+
+			response, err := containerRegistryService.GetImageManifest(getImageManifestOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+
+		})
+	})
+
+	Describe(`GetMessages - Get messages`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`GetMessages(getMessagesOptions *GetMessagesOptions)`, func() {
+
+			getMessagesOptions := &containerregistryv1.GetMessagesOptions{
+			}
+
+			result, response, err := containerRegistryService.GetMessages(getMessagesOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(result).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`ListNamespaces - List namespaces`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`ListNamespaces(listNamespacesOptions *ListNamespacesOptions)`, func() {
+
+			listNamespacesOptions := &containerregistryv1.ListNamespacesOptions{
+			}
+
+			result, response, err := containerRegistryService.ListNamespaces(listNamespacesOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(result).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`ListNamespaceDetails - Detailed namespace list`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`ListNamespaceDetails(listNamespaceDetailsOptions *ListNamespaceDetailsOptions)`, func() {
+
+			listNamespaceDetailsOptions := &containerregistryv1.ListNamespaceDetailsOptions{
+			}
+
+			namespaceDetail, response, err := containerRegistryService.ListNamespaceDetails(listNamespaceDetailsOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(namespaceDetail).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`AssignNamespace - Assign namespace`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`AssignNamespace(assignNamespaceOptions *AssignNamespaceOptions)`, func() {
+
+			assignNamespaceOptions := &containerregistryv1.AssignNamespaceOptions{
+				XAuthResourceGroup: core.StringPtr("testString"),
+				Namespace: core.StringPtr("testString"),
+			}
+
+			namespace, response, err := containerRegistryService.AssignNamespace(assignNamespaceOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(namespace).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`GetPlans - Get plans`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`GetPlans(getPlansOptions *GetPlansOptions)`, func() {
+
+			getPlansOptions := &containerregistryv1.GetPlansOptions{
+			}
+
+			plan, response, err := containerRegistryService.GetPlans(getPlansOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(plan).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`UpdatePlans - Update plans`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`UpdatePlans(updatePlansOptions *UpdatePlansOptions)`, func() {
+
+			updatePlansOptions := &containerregistryv1.UpdatePlansOptions{
+				Plan: core.StringPtr("Standard"),
+			}
+
+			response, err := containerRegistryService.UpdatePlans(updatePlansOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+
+		})
+	})
+
+	Describe(`GetQuota - Get quotas`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`GetQuota(getQuotaOptions *GetQuotaOptions)`, func() {
+
+			getQuotaOptions := &containerregistryv1.GetQuotaOptions{
+			}
+
+			quota, response, err := containerRegistryService.GetQuota(getQuotaOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(quota).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`UpdateQuota - Update quotas`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`UpdateQuota(updateQuotaOptions *UpdateQuotaOptions)`, func() {
+
+			updateQuotaOptions := &containerregistryv1.UpdateQuotaOptions{
+				StorageMegabytes: core.Int64Ptr(int64(26)),
+				TrafficMegabytes: core.Int64Ptr(int64(480)),
+			}
+
+			response, err := containerRegistryService.UpdateQuota(updateQuotaOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+
+		})
+	})
+
+	Describe(`ListRetentionPolicies - List retention policies`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`ListRetentionPolicies(listRetentionPoliciesOptions *ListRetentionPoliciesOptions)`, func() {
+
+			listRetentionPoliciesOptions := &containerregistryv1.ListRetentionPoliciesOptions{
+			}
+
+			mapStringRetentionPolicy, response, err := containerRegistryService.ListRetentionPolicies(listRetentionPoliciesOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(mapStringRetentionPolicy).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`SetRetentionPolicy - Set retention policy`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`SetRetentionPolicy(setRetentionPolicyOptions *SetRetentionPolicyOptions)`, func() {
+
+			setRetentionPolicyOptions := &containerregistryv1.SetRetentionPolicyOptions{
+				ImagesPerRepo: core.Int64Ptr(int64(10)),
+				Namespace: core.StringPtr("birds"),
+				RetainUntagged: core.BoolPtr(false),
+			}
+
+			response, err := containerRegistryService.SetRetentionPolicy(setRetentionPolicyOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+
+		})
+	})
+
+	Describe(`AnalyzeRetentionPolicy - Analyze retention policy`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions *AnalyzeRetentionPolicyOptions)`, func() {
+
+			analyzeRetentionPolicyOptions := &containerregistryv1.AnalyzeRetentionPolicyOptions{
+				ImagesPerRepo: core.Int64Ptr(int64(10)),
+				Namespace: core.StringPtr("birds"),
+				RetainUntagged: core.BoolPtr(false),
+			}
+
+			mapStringstring, response, err := containerRegistryService.AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(mapStringstring).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`GetRetentionPolicy - Get retention policy`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`GetRetentionPolicy(getRetentionPolicyOptions *GetRetentionPolicyOptions)`, func() {
+
+			getRetentionPolicyOptions := &containerregistryv1.GetRetentionPolicyOptions{
+				Namespace: core.StringPtr("testString"),
+			}
+
+			retentionPolicy, response, err := containerRegistryService.GetRetentionPolicy(getRetentionPolicyOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(retentionPolicy).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`ListDeletedImages - List deleted images`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`ListDeletedImages(listDeletedImagesOptions *ListDeletedImagesOptions)`, func() {
+
+			listDeletedImagesOptions := &containerregistryv1.ListDeletedImagesOptions{
+				Namespace: core.StringPtr("testString"),
+			}
+
+			mapStringTrash, response, err := containerRegistryService.ListDeletedImages(listDeletedImagesOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(mapStringTrash).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`RestoreTags - Restore a digest and all associated tags`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`RestoreTags(restoreTagsOptions *RestoreTagsOptions)`, func() {
+
+			restoreTagsOptions := &containerregistryv1.RestoreTagsOptions{
+				Digest: core.StringPtr("testString"),
+			}
+
+			restoreResult, response, err := containerRegistryService.RestoreTags(restoreTagsOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(restoreResult).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`RestoreImage - Restore deleted image`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`RestoreImage(restoreImageOptions *RestoreImageOptions)`, func() {
+
+			restoreImageOptions := &containerregistryv1.RestoreImageOptions{
+				Image: core.StringPtr("testString"),
+			}
+
+			response, err := containerRegistryService.RestoreImage(restoreImageOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+
+		})
+	})
+
+	Describe(`DeleteNamespace - Delete namespace`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`DeleteNamespace(deleteNamespaceOptions *DeleteNamespaceOptions)`, func() {
+
+			deleteNamespaceOptions := &containerregistryv1.DeleteNamespaceOptions{
+				Namespace: core.StringPtr(namespaceLink),
+			}
+
+			response, err := containerRegistryService.DeleteNamespace(deleteNamespaceOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
+
+		})
+	})
+
+	Describe(`DeleteImageTag - Delete tag`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`DeleteImageTag(deleteImageTagOptions *DeleteImageTagOptions)`, func() {
+
+			deleteImageTagOptions := &containerregistryv1.DeleteImageTagOptions{
+				Image: core.StringPtr("testString"),
+			}
+
+			imageDeleteResult, response, err := containerRegistryService.DeleteImageTag(deleteImageTagOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(imageDeleteResult).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`DeleteImage - Delete image`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`DeleteImage(deleteImageOptions *DeleteImageOptions)`, func() {
+
+			deleteImageOptions := &containerregistryv1.DeleteImageOptions{
+				Image: core.StringPtr("testString"),
+			}
+
+			imageDeleteResult, response, err := containerRegistryService.DeleteImage(deleteImageOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(imageDeleteResult).ToNot(BeNil())
+
+		})
+	})
+})
+
+//
+// Utility functions are declared in the unit test file
+//
