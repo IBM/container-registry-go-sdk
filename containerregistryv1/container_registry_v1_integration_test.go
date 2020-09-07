@@ -38,6 +38,7 @@ CONTAINER_REGISTRY_AUTH_TYPE=iam
 CONTAINER_REGISTRY_AUTH_URL=https://iam.test.cloud.ibm.com/identity/token
 CONTAINER_REGISTRY_APIKEY=[An IAM Apikey]
 CONTAINER_REGISTRY_ACCOUNT_ID=[Your test account ID]
+CONTAINER_REGISTRY_RESOURCE_GROUP_ID=[Your resource group ID]
 CONTAINER_REGISTRY_NAMESPACE=[Namespace name, to be created and deleted by the test, eg: ]jahsdk
 CONTAINER_REGISTRY_SEED_IMAGE=[An existing namespace/repo:tag to copy in this test, eg: ]newjhart/busy:latest
 CONTAINER_REGISTRY_SEED_DIGEST=[The digest of the seed image, eg: ]sha256:2131f09e4044327fd101ca1fd4043e6f3ad921ae7ee901e9142e6e36b354a907
@@ -55,6 +56,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		serviceURL        string
 		baseNamespace     string
 		accountID         string
+		resouceGroupID    string
 		registryDNSName   string
 		seedImage         string
 		seedDigest        string
@@ -94,6 +96,10 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			accountID = config["ACCOUNT_ID"]
 			if accountID == "" {
 				Skip("Unable to load accountID configuration property, skipping tests")
+			}
+			resouceGroupID = config["RESOURCE_GROUP_ID"]
+			if resouceGroupID == "" {
+				Skip("Unable to load resouceGroupID configuration property, skipping tests")
 			}
 			registryDNSName = strings.TrimPrefix(serviceURL, "https://")
 			seedImage = config["SEED_IMAGE"]
@@ -314,7 +320,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			result, response, err := containerRegistry.GetMessages(getMessagesOptions)
 
 			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(200))
+			Expect(response.StatusCode).To(Or(Equal(200), Equal(204)))
 			Expect(result).ToNot(BeNil())
 
 		})
@@ -362,7 +368,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			assignNamespaceOptions := &containerregistryv1.AssignNamespaceOptions{
 				Namespace:          core.StringPtr(namespaceLink),
-				XAuthResourceGroup: core.StringPtr("aea257aa3c636f5e88267c4fd70f2c1f"),
+				XAuthResourceGroup: core.StringPtr(resouceGroupID),
 			}
 
 			namespace, response, err := containerRegistry.AssignNamespace(assignNamespaceOptions)
@@ -435,8 +441,8 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`UpdateQuota(updateQuotaOptions *UpdateQuotaOptions)`, func() {
 
 			updateQuotaOptions := &containerregistryv1.UpdateQuotaOptions{
-				StorageMegabytes: core.Int64Ptr(int64(26)),
-				TrafficMegabytes: core.Int64Ptr(int64(480)),
+				StorageMegabytes: core.Int64Ptr(int64(500)),
+				TrafficMegabytes: core.Int64Ptr(int64(4900)),
 			}
 
 			response, err := containerRegistry.UpdateQuota(updateQuotaOptions)
