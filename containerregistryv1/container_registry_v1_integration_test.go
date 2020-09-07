@@ -397,6 +397,8 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 		It(`UpdatePlans(updatePlansOptions *UpdatePlansOptions)`, func() {
 
+			Skip("Upgrading plan affects the whole account. Not safe to attempt in this context, skipping tests...")
+
 			updatePlansOptions := &containerregistryv1.UpdatePlansOptions{
 				Plan: core.StringPtr("Standard"),
 			}
