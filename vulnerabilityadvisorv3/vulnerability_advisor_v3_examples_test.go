@@ -1,3 +1,5 @@
+// +build examples
+
 /**
  * (C) Copyright IBM Corp. 2020.
  *

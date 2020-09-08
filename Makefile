@@ -13,6 +13,12 @@ unittest:
 alltest:
 	go test `go list ./... | grep -v samples` -v -tags=integration
 
+registryintegration:
+	go test ./containerregistryv1 -v -tags=integration
+
+vaintegration:
+	go test ./vulnerabilityadvisorv3 -v -tags=integration
+
 lint:
 	golangci-lint run
 
