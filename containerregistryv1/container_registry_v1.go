@@ -17,7 +17,6 @@
 /*
  * IBM OpenAPI SDK Code Generator Version: 3.12.0-64fe8d3f-20200820-144050
  */
- 
 
 // Package containerregistryv1 : Operations and models for the ContainerRegistryV1 service
 package containerregistryv1
@@ -25,9 +24,10 @@ package containerregistryv1
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
+
 	"github.com/IBM/go-sdk-core/v4/core"
 	common "github.ibm.com/ibmcloud/container-registry-go-sdk/common"
-	"reflect"
 )
 
 // ContainerRegistryV1 : Management interface for IBM Cloud Container Registry
@@ -616,8 +616,9 @@ func (containerRegistry *ContainerRegistryV1) GetImageManifest(getImageManifestO
 	if err != nil {
 		return
 	}
-
-	response, err = containerRegistry.Service.Request(request, nil)
+	// MANUALLY MODIFIED GENERATED CODE. To pass in a result object
+	var result []byte
+	response, err = containerRegistry.Service.Request(request, &result)
 
 	return
 }
@@ -1595,7 +1596,7 @@ type AssignNamespaceOptions struct {
 func (*ContainerRegistryV1) NewAssignNamespaceOptions(xAuthResourceGroup string, namespace string) *AssignNamespaceOptions {
 	return &AssignNamespaceOptions{
 		XAuthResourceGroup: core.StringPtr(xAuthResourceGroup),
-		Namespace: core.StringPtr(namespace),
+		Namespace:          core.StringPtr(namespace),
 	}
 }
 
@@ -1625,7 +1626,6 @@ type AuthOptions struct {
 	// Restrict account to only be able to push and pull images over private connections.
 	PrivateOnly *bool `json:"private_only,omitempty"`
 }
-
 
 // UnmarshalAuthOptions unmarshals an instance of AuthOptions from the specified map of raw messages.
 func UnmarshalAuthOptions(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -1748,7 +1748,6 @@ type Config struct {
 	// Current working directory (PWD) in the command will be launched.
 	WorkingDir *string `json:"WorkingDir,omitempty"`
 }
-
 
 // UnmarshalConfig unmarshals an instance of Config from the specified map of raw messages.
 func UnmarshalConfig(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -1997,7 +1996,6 @@ type DigestListImage struct {
 	Size *int64 `json:"size,omitempty"`
 }
 
-
 // UnmarshalDigestListImage unmarshals an instance of DigestListImage from the specified map of raw messages.
 func UnmarshalDigestListImage(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(DigestListImage)
@@ -2174,7 +2172,6 @@ type HealthConfig struct {
 	Timeout *int64 `json:"Timeout,omitempty"`
 }
 
-
 // UnmarshalHealthConfig unmarshals an instance of HealthConfig from the specified map of raw messages.
 func UnmarshalHealthConfig(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(HealthConfig)
@@ -2207,7 +2204,6 @@ type ImageBulkDeleteError struct {
 	Message *string `json:"message,omitempty"`
 }
 
-
 // UnmarshalImageBulkDeleteError unmarshals an instance of ImageBulkDeleteError from the specified map of raw messages.
 func UnmarshalImageBulkDeleteError(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImageBulkDeleteError)
@@ -2232,7 +2228,6 @@ type ImageBulkDeleteResult struct {
 	Success []string `json:"success,omitempty"`
 }
 
-
 // UnmarshalImageBulkDeleteResult unmarshals an instance of ImageBulkDeleteResult from the specified map of raw messages.
 func UnmarshalImageBulkDeleteResult(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImageBulkDeleteResult)
@@ -2252,7 +2247,6 @@ func UnmarshalImageBulkDeleteResult(m map[string]json.RawMessage, result interfa
 type ImageDeleteResult struct {
 	Untagged *string `json:"Untagged,omitempty"`
 }
-
 
 // UnmarshalImageDeleteResult unmarshals an instance of ImageDeleteResult from the specified map of raw messages.
 func UnmarshalImageDeleteResult(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2315,7 +2309,6 @@ type ImageInspection struct {
 	// The sum of the size of each layer in the image in bytes.
 	VirtualSize *int64 `json:"VirtualSize,omitempty"`
 }
-
 
 // UnmarshalImageInspection unmarshals an instance of ImageInspection from the specified map of raw messages.
 func UnmarshalImageInspection(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2634,7 +2627,6 @@ type Namespace struct {
 	Namespace *string `json:"namespace,omitempty"`
 }
 
-
 // UnmarshalNamespace unmarshals an instance of Namespace from the specified map of raw messages.
 func UnmarshalNamespace(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Namespace)
@@ -2668,7 +2660,6 @@ type NamespaceDetail struct {
 	// When the namespace was last updated.
 	UpdatedDate *string `json:"updated_date,omitempty"`
 }
-
 
 // UnmarshalNamespaceDetail unmarshals an instance of NamespaceDetail from the specified map of raw messages.
 func UnmarshalNamespaceDetail(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2710,7 +2701,6 @@ type Plan struct {
 	Plan *string `json:"plan,omitempty"`
 }
 
-
 // UnmarshalPlan unmarshals an instance of Plan from the specified map of raw messages.
 func UnmarshalPlan(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Plan)
@@ -2728,7 +2718,6 @@ type Quota struct {
 
 	Usage *QuotaDetails `json:"usage,omitempty"`
 }
-
 
 // UnmarshalQuota unmarshals an instance of Quota from the specified map of raw messages.
 func UnmarshalQuota(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2753,7 +2742,6 @@ type QuotaDetails struct {
 	// Traffic quota or usage in bytes. The value -1 denotes "Unlimited".
 	TrafficBytes *int64 `json:"traffic_bytes,omitempty"`
 }
-
 
 // UnmarshalQuotaDetails unmarshals an instance of QuotaDetails from the specified map of raw messages.
 func UnmarshalQuotaDetails(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2802,7 +2790,6 @@ type RemoteAPIImage struct {
 
 	Vulnerable *string `json:"Vulnerable,omitempty"`
 }
-
 
 // UnmarshalRemoteAPIImage unmarshals an instance of RemoteAPIImage from the specified map of raw messages.
 func UnmarshalRemoteAPIImage(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2910,7 +2897,6 @@ type RestoreResult struct {
 	Unsuccessful []string `json:"unsuccessful,omitempty"`
 }
 
-
 // UnmarshalRestoreResult unmarshals an instance of RestoreResult from the specified map of raw messages.
 func UnmarshalRestoreResult(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(RestoreResult)
@@ -2969,7 +2955,6 @@ type RetentionPolicy struct {
 	RetainUntagged *bool `json:"retain_untagged,omitempty"`
 }
 
-
 // UnmarshalRetentionPolicy unmarshals an instance of RetentionPolicy from the specified map of raw messages.
 func UnmarshalRetentionPolicy(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(RetentionPolicy)
@@ -3000,7 +2985,6 @@ type RootFS struct {
 	// The type of filesystem.
 	Type *string `json:"Type,omitempty"`
 }
-
 
 // UnmarshalRootFS unmarshals an instance of RootFS from the specified map of raw messages.
 func UnmarshalRootFS(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -3083,7 +3067,7 @@ type TagImageOptions struct {
 func (*ContainerRegistryV1) NewTagImageOptions(fromimage string, toimage string) *TagImageOptions {
 	return &TagImageOptions{
 		Fromimage: core.StringPtr(fromimage),
-		Toimage: core.StringPtr(toimage),
+		Toimage:   core.StringPtr(toimage),
 	}
 }
 
@@ -3111,7 +3095,6 @@ type Trash struct {
 
 	Tags []string `json:"tags,omitempty"`
 }
-
 
 // UnmarshalTrash unmarshals an instance of Trash from the specified map of raw messages.
 func UnmarshalTrash(m map[string]json.RawMessage, result interface{}) (err error) {
