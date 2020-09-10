@@ -19,6 +19,7 @@
 package containerregistryv1_test
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -150,7 +151,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Or(Equal(201), Equal(200)))
-			Expect(namespace).ToNot(BeNil())
+			Expect(*namespace.Namespace).To(Equal(baseNamespace))
 
 			namespaceLink = *namespace.Namespace
 
@@ -169,7 +170,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(authOptions).ToNot(BeNil())
+			Expect(*authOptions.IamAuthz).To(BeTrue())
 
 		})
 	})
@@ -188,6 +189,25 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))
+
+		})
+	})
+
+	Describe(`TagImage - Create tag`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`TagImage(tagImageOptions *TagImageOptions)`, func() {
+
+			tagImageOptions := &containerregistryv1.TagImageOptions{
+				Fromimage: core.StringPtr(fmt.Sprintf("%s/%s", registryDNSName, seedImage)),
+				Toimage:   core.StringPtr(fmt.Sprintf("%s/%s/sdktest:1", registryDNSName, namespaceLink)),
+			}
+
+			response, err := containerRegistry.TagImage(tagImageOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(201))
 
 		})
 	})
@@ -211,6 +231,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(remoteApiImage).ToNot(BeNil())
+			Expect(remoteApiImage[0].RepoTags[0]).To(Equal(fmt.Sprintf("%s/%s/sdktest:1", registryDNSName, namespaceLink)))
 
 		})
 	})
@@ -251,26 +272,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(digestListImage).ToNot(BeNil())
-
-		})
-	})
-
-	Describe(`TagImage - Create tag`, func() {
-		BeforeEach(func() {
-			shouldSkipTest()
-		})
-		It(`TagImage(tagImageOptions *TagImageOptions)`, func() {
-
-			tagImageOptions := &containerregistryv1.TagImageOptions{
-				Fromimage: core.StringPtr(fmt.Sprintf("%s/%s", registryDNSName, seedImage)),
-				Toimage:   core.StringPtr(fmt.Sprintf("%s/%s/sdktest:1", registryDNSName, namespaceLink)),
-			}
-
-			response, err := containerRegistry.TagImage(tagImageOptions)
-
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(201))
-
+			Expect(digestListImage[0].RepoTags[fmt.Sprintf("%s/%s/sdktest", registryDNSName, namespaceLink)]).ToNot(BeNil())
 		})
 	})
 
@@ -308,6 +310,14 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 
+			contentType := response.Headers.Get("Content-Type")
+			Expect(contentType).To(Equal("application/vnd.docker.distribution.manifest.v2+json"))
+			// Alternatively import the relevant schema definition (based on schema type) and unmarshal directly into that
+			var outputMap map[string]interface{}
+			jsErr := json.Unmarshal(response.GetResult().([]byte), &outputMap)
+			Expect(jsErr).To(BeNil())
+			Expect(outputMap["schemaVersion"]).To(Equal(float64(2)))
+
 		})
 	})
 
@@ -340,7 +350,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(result).ToNot(BeNil())
+			Expect(result).To(ContainElement(baseNamespace))
 
 		})
 	})
@@ -357,7 +367,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(namespaceDetail).ToNot(BeNil())
+			Expect(namespaceDetail).ToNot(BeEmpty())
 
 		})
 	})
@@ -419,23 +429,6 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		})
 	})
 
-	Describe(`GetQuota - Get quotas`, func() {
-		BeforeEach(func() {
-			shouldSkipTest()
-		})
-		It(`GetQuota(getQuotaOptions *GetQuotaOptions)`, func() {
-
-			getQuotaOptions := &containerregistryv1.GetQuotaOptions{}
-
-			quota, response, err := containerRegistry.GetQuota(getQuotaOptions)
-
-			Expect(err).To(BeNil())
-			Expect(response.StatusCode).To(Equal(200))
-			Expect(quota).ToNot(BeNil())
-
-		})
-	})
-
 	Describe(`UpdateQuota - Update quotas`, func() {
 		BeforeEach(func() {
 			shouldSkipTest()
@@ -451,6 +444,23 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
+
+		})
+	})
+
+	Describe(`GetQuota - Get quotas`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`GetQuota(getQuotaOptions *GetQuotaOptions)`, func() {
+
+			getQuotaOptions := &containerregistryv1.GetQuotaOptions{}
+
+			quota, response, err := containerRegistry.GetQuota(getQuotaOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(*quota.Limit.StorageBytes).To(Equal(int64(524288000)))
 
 		})
 	})
@@ -527,7 +537,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(retentionPolicy).ToNot(BeNil())
+			Expect(*retentionPolicy.ImagesPerRepo).To(Equal(int64(10)))
 
 		})
 	})
@@ -583,7 +593,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(mapStringTrash).ToNot(BeNil())
+			Expect(mapStringTrash[fmt.Sprintf("%s/%s/sdktest@%s", registryDNSName, namespaceLink, seedDigest)]).ToNot(BeNil())
 
 		})
 	})
