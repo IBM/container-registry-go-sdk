@@ -1,3 +1,10 @@
+## [0.0.3]([secure]/ibmcloud/container-registry-go-sdk/compare/v0.0.2...v0.0.3) (2020-10-05)
+
+
+### Bug Fixes
+
+* **project:** Update to reflect VA API doc improvements ([b5a7b2e]([secure]/ibmcloud/container-registry-go-sdk/commit/b5a7b2e22001c48f6729cfefd16111545e49dbda))
+
 ## [0.0.2]([secure]/ibmcloud/container-registry-go-sdk/compare/v0.0.1...v0.0.2) (2020-09-10)
 
 
