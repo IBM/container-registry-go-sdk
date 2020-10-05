@@ -1,3 +1,10 @@
+## [0.0.4]([secure]/ibmcloud/container-registry-go-sdk/compare/v0.0.3...v0.0.4) (2020-10-05)
+
+
+### Bug Fixes
+
+* **Registry:** Ensure Registry SDK is on same version as VA ([68df916]([secure]/ibmcloud/container-registry-go-sdk/commit/68df916b6c7eeef1a06d29225e00857ca7fcd9ab))
+
 ## [0.0.3]([secure]/ibmcloud/container-registry-go-sdk/compare/v0.0.2...v0.0.3) (2020-10-05)
 
 
