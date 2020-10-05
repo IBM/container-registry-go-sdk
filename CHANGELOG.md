@@ -1,3 +1,10 @@
+## [0.0.5]([secure]/ibmcloud/container-registry-go-sdk/compare/v0.0.4...v0.0.5) (2020-10-05)
+
+
+### Bug Fixes
+
+* **Registry:** Reinstate manual fix to Manifest Get ([22a3473]([secure]/ibmcloud/container-registry-go-sdk/commit/22a3473205f594b72b9a28ef999863c18d38efb2))
+
 ## [0.0.4]([secure]/ibmcloud/container-registry-go-sdk/compare/v0.0.3...v0.0.4) (2020-10-05)
 
 
