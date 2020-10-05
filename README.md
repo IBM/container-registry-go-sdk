@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.com/ibmcloud/container-registry-go-sdk.svg?token=eW5FVD71iyte6tTby8gr&branch=master)](https://travis.ibm.com/ibmcloud/container-registry-go-sdk.svg?token=eW5FVD71iyte6tTby8gr&branch=master)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-# IBM Cloud Container Registry Go SDK 0.0.3
+# IBM Cloud Container Registry Go SDK 0.0.4
 Go client library to interact with the [IBM Cloud Container Registry API](https://cloud.ibm.com/apidocs/container-registry), and [IBM Cloud Container Registry Vulnerability Advisor API](https://cloud.ibm.com/apidocs/container-registry/va)
 
 Disclaimer: this SDK is being released initially as a **pre-release** version.
@@ -53,7 +53,7 @@ Service Name | Package name
 * Go version 1.12 or above.
 
 ## Installation
-The current version of this SDK: 0.0.3
+The current version of this SDK: 0.0.4
 
 There are a few different ways to download and install the Container Registry Go SDK project for use by your
 Go application:
@@ -86,7 +86,7 @@ to your `Gopkg.toml` file.  Here is an example:
 ```
 [[constraint]]
   name = "github.ibm.com/ibmcloud/container-registry-go-sdk"
-  version = "0.0.3"
+  version = "0.0.4"
 
 ```
 
