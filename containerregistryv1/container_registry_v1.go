@@ -15,8 +15,9 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.12.0-64fe8d3f-20200820-144050
+ * IBM OpenAPI SDK Code Generator Version: 3.12.3-81ed37e0-20200929-215851
  */
+ 
 
 // Package containerregistryv1 : Operations and models for the ContainerRegistryV1 service
 package containerregistryv1
@@ -24,10 +25,9 @@ package containerregistryv1
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
-
 	"github.com/IBM/go-sdk-core/v4/core"
 	common "github.ibm.com/ibmcloud/container-registry-go-sdk/common"
+	"reflect"
 )
 
 // ContainerRegistryV1 : Management interface for IBM Cloud Container Registry
@@ -130,11 +130,8 @@ func (containerRegistry *ContainerRegistryV1) GetAuth(getAuthOptions *GetAuthOpt
 		return
 	}
 
-	pathSegments := []string{"api/v1/auth"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/auth`, nil)
 	if err != nil {
 		return
 	}
@@ -183,11 +180,8 @@ func (containerRegistry *ContainerRegistryV1) UpdateAuth(updateAuthOptions *Upda
 		return
 	}
 
-	pathSegments := []string{"api/v1/auth"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.PATCH)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/auth`, nil)
 	if err != nil {
 		return
 	}
@@ -235,11 +229,8 @@ func (containerRegistry *ContainerRegistryV1) ListImages(listImagesOptions *List
 		return
 	}
 
-	pathSegments := []string{"api/v1/images"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images`, nil)
 	if err != nil {
 		return
 	}
@@ -307,11 +298,8 @@ func (containerRegistry *ContainerRegistryV1) BulkDeleteImages(bulkDeleteImagesO
 		return
 	}
 
-	pathSegments := []string{"api/v1/images/bulkdelete"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.POST)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/bulkdelete`, nil)
 	if err != nil {
 		return
 	}
@@ -366,11 +354,8 @@ func (containerRegistry *ContainerRegistryV1) ListImageDigests(listImageDigestsO
 		return
 	}
 
-	pathSegments := []string{"api/v1/images/digests"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.POST)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/digests`, nil)
 	if err != nil {
 		return
 	}
@@ -438,11 +423,8 @@ func (containerRegistry *ContainerRegistryV1) TagImage(tagImageOptions *TagImage
 		return
 	}
 
-	pathSegments := []string{"api/v1/images/tags"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.POST)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/tags`, nil)
 	if err != nil {
 		return
 	}
@@ -484,11 +466,12 @@ func (containerRegistry *ContainerRegistryV1) DeleteImage(deleteImageOptions *De
 		return
 	}
 
-	pathSegments := []string{"api/v1/images"}
-	pathParameters := []string{*deleteImageOptions.Image}
+	pathParamsMap := map[string]string{
+		"image": *deleteImageOptions.Image,
+	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/{image}`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -537,11 +520,12 @@ func (containerRegistry *ContainerRegistryV1) InspectImage(inspectImageOptions *
 		return
 	}
 
-	pathSegments := []string{"api/v1/images", "json"}
-	pathParameters := []string{*inspectImageOptions.Image}
+	pathParamsMap := map[string]string{
+		"image": *inspectImageOptions.Image,
+	}
 
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/{image}/json`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -590,11 +574,12 @@ func (containerRegistry *ContainerRegistryV1) GetImageManifest(getImageManifestO
 		return
 	}
 
-	pathSegments := []string{"api/v1/images", "manifest"}
-	pathParameters := []string{*getImageManifestOptions.Image}
+	pathParamsMap := map[string]string{
+		"image": *getImageManifestOptions.Image,
+	}
 
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/{image}/manifest`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -616,9 +601,8 @@ func (containerRegistry *ContainerRegistryV1) GetImageManifest(getImageManifestO
 	if err != nil {
 		return
 	}
-	// MANUALLY MODIFIED GENERATED CODE. To pass in a result object
-	var result []byte
-	response, err = containerRegistry.Service.Request(request, &result)
+
+	response, err = containerRegistry.Service.Request(request, nil)
 
 	return
 }
@@ -631,11 +615,8 @@ func (containerRegistry *ContainerRegistryV1) GetMessages(getMessagesOptions *Ge
 		return
 	}
 
-	pathSegments := []string{"api/v1/messages"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/messages`, nil)
 	if err != nil {
 		return
 	}
@@ -668,11 +649,8 @@ func (containerRegistry *ContainerRegistryV1) ListNamespaces(listNamespacesOptio
 		return
 	}
 
-	pathSegments := []string{"api/v1/namespaces"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces`, nil)
 	if err != nil {
 		return
 	}
@@ -708,11 +686,8 @@ func (containerRegistry *ContainerRegistryV1) ListNamespaceDetails(listNamespace
 		return
 	}
 
-	pathSegments := []string{"api/v1/namespaces/details"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/details`, nil)
 	if err != nil {
 		return
 	}
@@ -761,11 +736,12 @@ func (containerRegistry *ContainerRegistryV1) CreateNamespace(createNamespaceOpt
 		return
 	}
 
-	pathSegments := []string{"api/v1/namespaces"}
-	pathParameters := []string{*createNamespaceOptions.Namespace}
+	pathParamsMap := map[string]string{
+		"namespace": *createNamespaceOptions.Namespace,
+	}
 
 	builder := core.NewRequestBuilder(core.PUT)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{namespace}`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -817,11 +793,12 @@ func (containerRegistry *ContainerRegistryV1) AssignNamespace(assignNamespaceOpt
 		return
 	}
 
-	pathSegments := []string{"api/v1/namespaces"}
-	pathParameters := []string{*assignNamespaceOptions.Namespace}
+	pathParamsMap := map[string]string{
+		"namespace": *assignNamespaceOptions.Namespace,
+	}
 
 	builder := core.NewRequestBuilder(core.PATCH)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{namespace}`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -874,11 +851,12 @@ func (containerRegistry *ContainerRegistryV1) DeleteNamespace(deleteNamespaceOpt
 		return
 	}
 
-	pathSegments := []string{"api/v1/namespaces"}
-	pathParameters := []string{*deleteNamespaceOptions.Namespace}
+	pathParamsMap := map[string]string{
+		"namespace": *deleteNamespaceOptions.Namespace,
+	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{namespace}`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -913,11 +891,8 @@ func (containerRegistry *ContainerRegistryV1) GetPlans(getPlansOptions *GetPlans
 		return
 	}
 
-	pathSegments := []string{"api/v1/plans"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/plans`, nil)
 	if err != nil {
 		return
 	}
@@ -966,11 +941,8 @@ func (containerRegistry *ContainerRegistryV1) UpdatePlans(updatePlansOptions *Up
 		return
 	}
 
-	pathSegments := []string{"api/v1/plans"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.PATCH)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/plans`, nil)
 	if err != nil {
 		return
 	}
@@ -1015,11 +987,8 @@ func (containerRegistry *ContainerRegistryV1) GetQuota(getQuotaOptions *GetQuota
 		return
 	}
 
-	pathSegments := []string{"api/v1/quotas"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/quotas`, nil)
 	if err != nil {
 		return
 	}
@@ -1068,11 +1037,8 @@ func (containerRegistry *ContainerRegistryV1) UpdateQuota(updateQuotaOptions *Up
 		return
 	}
 
-	pathSegments := []string{"api/v1/quotas"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.PATCH)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/quotas`, nil)
 	if err != nil {
 		return
 	}
@@ -1120,11 +1086,8 @@ func (containerRegistry *ContainerRegistryV1) ListRetentionPolicies(listRetentio
 		return
 	}
 
-	pathSegments := []string{"api/v1/retentions"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/retentions`, nil)
 	if err != nil {
 		return
 	}
@@ -1173,11 +1136,8 @@ func (containerRegistry *ContainerRegistryV1) SetRetentionPolicy(setRetentionPol
 		return
 	}
 
-	pathSegments := []string{"api/v1/retentions"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.POST)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/retentions`, nil)
 	if err != nil {
 		return
 	}
@@ -1232,11 +1192,8 @@ func (containerRegistry *ContainerRegistryV1) AnalyzeRetentionPolicy(analyzeRete
 		return
 	}
 
-	pathSegments := []string{"api/v1/retentions/analyze"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.POST)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/retentions/analyze`, nil)
 	if err != nil {
 		return
 	}
@@ -1292,11 +1249,12 @@ func (containerRegistry *ContainerRegistryV1) GetRetentionPolicy(getRetentionPol
 		return
 	}
 
-	pathSegments := []string{"api/v1/retentions"}
-	pathParameters := []string{*getRetentionPolicyOptions.Namespace}
+	pathParamsMap := map[string]string{
+		"namespace": *getRetentionPolicyOptions.Namespace,
+	}
 
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/retentions/{namespace}`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -1345,11 +1303,12 @@ func (containerRegistry *ContainerRegistryV1) DeleteImageTag(deleteImageTagOptio
 		return
 	}
 
-	pathSegments := []string{"api/v1/tags"}
-	pathParameters := []string{*deleteImageTagOptions.Image}
+	pathParamsMap := map[string]string{
+		"image": *deleteImageTagOptions.Image,
+	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/tags/{image}`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -1394,11 +1353,8 @@ func (containerRegistry *ContainerRegistryV1) ListDeletedImages(listDeletedImage
 		return
 	}
 
-	pathSegments := []string{"api/v1/trash"}
-	pathParameters := []string{}
-
 	builder := core.NewRequestBuilder(core.GET)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/trash`, nil)
 	if err != nil {
 		return
 	}
@@ -1451,11 +1407,12 @@ func (containerRegistry *ContainerRegistryV1) RestoreTags(restoreTagsOptions *Re
 		return
 	}
 
-	pathSegments := []string{"api/v1/trash", "restoretags"}
-	pathParameters := []string{*restoreTagsOptions.Digest}
+	pathParamsMap := map[string]string{
+		"digest": *restoreTagsOptions.Digest,
+	}
 
 	builder := core.NewRequestBuilder(core.POST)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/trash/{digest}/restoretags`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -1504,11 +1461,12 @@ func (containerRegistry *ContainerRegistryV1) RestoreImage(restoreImageOptions *
 		return
 	}
 
-	pathSegments := []string{"api/v1/trash", "restore"}
-	pathParameters := []string{*restoreImageOptions.Image}
+	pathParamsMap := map[string]string{
+		"image": *restoreImageOptions.Image,
+	}
 
 	builder := core.NewRequestBuilder(core.POST)
-	_, err = builder.ConstructHTTPURL(containerRegistry.Service.Options.URL, pathSegments, pathParameters)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/trash/{image}/restore`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -1586,7 +1544,7 @@ type AssignNamespaceOptions struct {
 	XAuthResourceGroup *string `json:"X-Auth-Resource-Group" validate:"required"`
 
 	// Adds the specified namespace to your IBM Cloud account.
-	Namespace *string `json:"namespace" validate:"required"`
+	Namespace *string `json:"namespace" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1596,7 +1554,7 @@ type AssignNamespaceOptions struct {
 func (*ContainerRegistryV1) NewAssignNamespaceOptions(xAuthResourceGroup string, namespace string) *AssignNamespaceOptions {
 	return &AssignNamespaceOptions{
 		XAuthResourceGroup: core.StringPtr(xAuthResourceGroup),
-		Namespace:          core.StringPtr(namespace),
+		Namespace: core.StringPtr(namespace),
 	}
 }
 
@@ -1626,6 +1584,7 @@ type AuthOptions struct {
 	// Restrict account to only be able to push and pull images over private connections.
 	PrivateOnly *bool `json:"private_only,omitempty"`
 }
+
 
 // UnmarshalAuthOptions unmarshals an instance of AuthOptions from the specified map of raw messages.
 func UnmarshalAuthOptions(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -1749,6 +1708,7 @@ type Config struct {
 	WorkingDir *string `json:"WorkingDir,omitempty"`
 }
 
+
 // UnmarshalConfig unmarshals an instance of Config from the specified map of raw messages.
 func UnmarshalConfig(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Config)
@@ -1859,7 +1819,7 @@ func UnmarshalConfig(m map[string]json.RawMessage, result interface{}) (err erro
 // CreateNamespaceOptions : The CreateNamespace options.
 type CreateNamespaceOptions struct {
 	// Adds the specified namespace to your IBM Cloud account.
-	Namespace *string `json:"namespace" validate:"required"`
+	Namespace *string `json:"namespace" validate:"required,ne="`
 
 	// The ID of the resource group that the namespace will be created within.
 	XAuthResourceGroup *string `json:"X-Auth-Resource-Group,omitempty"`
@@ -1897,7 +1857,7 @@ func (options *CreateNamespaceOptions) SetHeaders(param map[string]string) *Crea
 type DeleteImageOptions struct {
 	// The full IBM Cloud registry path to the image that you want to delete, including its tag. If you do not provide a
 	// specific tag, the version with the `latest` tag is removed.
-	Image *string `json:"image" validate:"required"`
+	Image *string `json:"image" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1925,7 +1885,7 @@ func (options *DeleteImageOptions) SetHeaders(param map[string]string) *DeleteIm
 // DeleteImageTagOptions : The DeleteImageTag options.
 type DeleteImageTagOptions struct {
 	// The name of the image that you want to delete, in the format &lt;REPOSITORY&gt;:&lt;TAG&gt;.
-	Image *string `json:"image" validate:"required"`
+	Image *string `json:"image" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1953,7 +1913,7 @@ func (options *DeleteImageTagOptions) SetHeaders(param map[string]string) *Delet
 // DeleteNamespaceOptions : The DeleteNamespace options.
 type DeleteNamespaceOptions struct {
 	// The namespace that you want to delete.
-	Namespace *string `json:"namespace" validate:"required"`
+	Namespace *string `json:"namespace" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1995,6 +1955,7 @@ type DigestListImage struct {
 	// The size of the image in bytes.
 	Size *int64 `json:"size,omitempty"`
 }
+
 
 // UnmarshalDigestListImage unmarshals an instance of DigestListImage from the specified map of raw messages.
 func UnmarshalDigestListImage(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2045,7 +2006,7 @@ func (options *GetAuthOptions) SetHeaders(param map[string]string) *GetAuthOptio
 type GetImageManifestOptions struct {
 	// The full IBM Cloud registry path to the image that you want to inspect. Run `ibmcloud cr images` or call the `GET
 	// /images/json` endpoint to review images that are in the registry.
-	Image *string `json:"image" validate:"required"`
+	Image *string `json:"image" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2127,7 +2088,7 @@ func (options *GetQuotaOptions) SetHeaders(param map[string]string) *GetQuotaOpt
 // GetRetentionPolicyOptions : The GetRetentionPolicy options.
 type GetRetentionPolicyOptions struct {
 	// Gets the retention policy for the specified namespace.
-	Namespace *string `json:"namespace" validate:"required"`
+	Namespace *string `json:"namespace" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2172,6 +2133,7 @@ type HealthConfig struct {
 	Timeout *int64 `json:"Timeout,omitempty"`
 }
 
+
 // UnmarshalHealthConfig unmarshals an instance of HealthConfig from the specified map of raw messages.
 func UnmarshalHealthConfig(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(HealthConfig)
@@ -2204,6 +2166,7 @@ type ImageBulkDeleteError struct {
 	Message *string `json:"message,omitempty"`
 }
 
+
 // UnmarshalImageBulkDeleteError unmarshals an instance of ImageBulkDeleteError from the specified map of raw messages.
 func UnmarshalImageBulkDeleteError(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImageBulkDeleteError)
@@ -2228,6 +2191,7 @@ type ImageBulkDeleteResult struct {
 	Success []string `json:"success,omitempty"`
 }
 
+
 // UnmarshalImageBulkDeleteResult unmarshals an instance of ImageBulkDeleteResult from the specified map of raw messages.
 func UnmarshalImageBulkDeleteResult(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImageBulkDeleteResult)
@@ -2247,6 +2211,7 @@ func UnmarshalImageBulkDeleteResult(m map[string]json.RawMessage, result interfa
 type ImageDeleteResult struct {
 	Untagged *string `json:"Untagged,omitempty"`
 }
+
 
 // UnmarshalImageDeleteResult unmarshals an instance of ImageDeleteResult from the specified map of raw messages.
 func UnmarshalImageDeleteResult(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2309,6 +2274,7 @@ type ImageInspection struct {
 	// The sum of the size of each layer in the image in bytes.
 	VirtualSize *int64 `json:"VirtualSize,omitempty"`
 }
+
 
 // UnmarshalImageInspection unmarshals an instance of ImageInspection from the specified map of raw messages.
 func UnmarshalImageInspection(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2385,7 +2351,7 @@ func UnmarshalImageInspection(m map[string]json.RawMessage, result interface{}) 
 type InspectImageOptions struct {
 	// The full IBM Cloud registry path to the image that you want to inspect. Run `ibmcloud cr images` or call the `GET
 	// /images/json` endpoint to review images that are in the registry.
-	Image *string `json:"image" validate:"required"`
+	Image *string `json:"image" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2627,6 +2593,7 @@ type Namespace struct {
 	Namespace *string `json:"namespace,omitempty"`
 }
 
+
 // UnmarshalNamespace unmarshals an instance of Namespace from the specified map of raw messages.
 func UnmarshalNamespace(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Namespace)
@@ -2660,6 +2627,7 @@ type NamespaceDetail struct {
 	// When the namespace was last updated.
 	UpdatedDate *string `json:"updated_date,omitempty"`
 }
+
 
 // UnmarshalNamespaceDetail unmarshals an instance of NamespaceDetail from the specified map of raw messages.
 func UnmarshalNamespaceDetail(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2701,6 +2669,7 @@ type Plan struct {
 	Plan *string `json:"plan,omitempty"`
 }
 
+
 // UnmarshalPlan unmarshals an instance of Plan from the specified map of raw messages.
 func UnmarshalPlan(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(Plan)
@@ -2718,6 +2687,7 @@ type Quota struct {
 
 	Usage *QuotaDetails `json:"usage,omitempty"`
 }
+
 
 // UnmarshalQuota unmarshals an instance of Quota from the specified map of raw messages.
 func UnmarshalQuota(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2742,6 +2712,7 @@ type QuotaDetails struct {
 	// Traffic quota or usage in bytes. The value -1 denotes "Unlimited".
 	TrafficBytes *int64 `json:"traffic_bytes,omitempty"`
 }
+
 
 // UnmarshalQuotaDetails unmarshals an instance of QuotaDetails from the specified map of raw messages.
 func UnmarshalQuotaDetails(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2790,6 +2761,7 @@ type RemoteAPIImage struct {
 
 	Vulnerable *string `json:"Vulnerable,omitempty"`
 }
+
 
 // UnmarshalRemoteAPIImage unmarshals an instance of RemoteAPIImage from the specified map of raw messages.
 func UnmarshalRemoteAPIImage(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -2862,7 +2834,7 @@ func UnmarshalRemoteAPIImage(m map[string]json.RawMessage, result interface{}) (
 type RestoreImageOptions struct {
 	// The name of the image that you want to restore, in the format &lt;REPOSITORY&gt;:&lt;TAG&gt;. Run `ibmcloud cr
 	// trash-list` or call the `GET /trash/json` endpoint to review images that are in the trash.
-	Image *string `json:"image" validate:"required"`
+	Image *string `json:"image" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2897,6 +2869,7 @@ type RestoreResult struct {
 	Unsuccessful []string `json:"unsuccessful,omitempty"`
 }
 
+
 // UnmarshalRestoreResult unmarshals an instance of RestoreResult from the specified map of raw messages.
 func UnmarshalRestoreResult(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(RestoreResult)
@@ -2917,7 +2890,7 @@ type RestoreTagsOptions struct {
 	// The full IBM Cloud registry digest reference for the digest that you want to restore such as
 	// `icr.io/namespace/repo@sha256:a9be...`. Call the `GET /trash/json` endpoint to review digests that are in the trash
 	// and their tags in the same repository.
-	Digest *string `json:"digest" validate:"required"`
+	Digest *string `json:"digest" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2955,6 +2928,7 @@ type RetentionPolicy struct {
 	RetainUntagged *bool `json:"retain_untagged,omitempty"`
 }
 
+
 // UnmarshalRetentionPolicy unmarshals an instance of RetentionPolicy from the specified map of raw messages.
 func UnmarshalRetentionPolicy(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(RetentionPolicy)
@@ -2985,6 +2959,7 @@ type RootFS struct {
 	// The type of filesystem.
 	Type *string `json:"Type,omitempty"`
 }
+
 
 // UnmarshalRootFS unmarshals an instance of RootFS from the specified map of raw messages.
 func UnmarshalRootFS(m map[string]json.RawMessage, result interface{}) (err error) {
@@ -3067,7 +3042,7 @@ type TagImageOptions struct {
 func (*ContainerRegistryV1) NewTagImageOptions(fromimage string, toimage string) *TagImageOptions {
 	return &TagImageOptions{
 		Fromimage: core.StringPtr(fromimage),
-		Toimage:   core.StringPtr(toimage),
+		Toimage: core.StringPtr(toimage),
 	}
 }
 
@@ -3095,6 +3070,7 @@ type Trash struct {
 
 	Tags []string `json:"tags,omitempty"`
 }
+
 
 // UnmarshalTrash unmarshals an instance of Trash from the specified map of raw messages.
 func UnmarshalTrash(m map[string]json.RawMessage, result interface{}) (err error) {

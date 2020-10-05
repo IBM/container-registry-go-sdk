@@ -158,7 +158,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getAuthPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getAuthPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -200,7 +200,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getAuthPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getAuthPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -270,7 +270,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(updateAuthPath))
+					Expect(req.URL.EscapedPath()).To(Equal(updateAuthPath))
 					Expect(req.Method).To(Equal("PATCH"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -453,7 +453,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listImagesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listImagesPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -517,7 +517,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listImagesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listImagesPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -614,7 +614,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(bulkDeleteImagesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(bulkDeleteImagesPath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -657,7 +657,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(bulkDeleteImagesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(bulkDeleteImagesPath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -735,7 +735,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listImageDigestsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listImageDigestsPath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -781,7 +781,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listImageDigestsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listImageDigestsPath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -859,7 +859,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(tagImagePath))
+					Expect(req.URL.EscapedPath()).To(Equal(tagImagePath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -937,7 +937,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(deleteImagePath))
+					Expect(req.URL.EscapedPath()).To(Equal(deleteImagePath))
 					Expect(req.Method).To(Equal("DELETE"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -980,7 +980,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(deleteImagePath))
+					Expect(req.URL.EscapedPath()).To(Equal(deleteImagePath))
 					Expect(req.Method).To(Equal("DELETE"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1058,7 +1058,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(inspectImagePath))
+					Expect(req.URL.EscapedPath()).To(Equal(inspectImagePath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1101,7 +1101,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(inspectImagePath))
+					Expect(req.URL.EscapedPath()).To(Equal(inspectImagePath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1180,7 +1180,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getImageManifestPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getImageManifestPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1368,7 +1368,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getMessagesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getMessagesPath))
 					Expect(req.Method).To(Equal("GET"))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
@@ -1551,7 +1551,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listNamespacesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listNamespacesPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1620,7 +1620,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listNamespaceDetailsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listNamespaceDetailsPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1662,7 +1662,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listNamespaceDetailsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listNamespaceDetailsPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1731,7 +1731,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(createNamespacePath))
+					Expect(req.URL.EscapedPath()).To(Equal(createNamespacePath))
 					Expect(req.Method).To(Equal("PUT"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1777,7 +1777,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(createNamespacePath))
+					Expect(req.URL.EscapedPath()).To(Equal(createNamespacePath))
 					Expect(req.Method).To(Equal("PUT"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1859,7 +1859,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(assignNamespacePath))
+					Expect(req.URL.EscapedPath()).To(Equal(assignNamespacePath))
 					Expect(req.Method).To(Equal("PATCH"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1905,7 +1905,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(assignNamespacePath))
+					Expect(req.URL.EscapedPath()).To(Equal(assignNamespacePath))
 					Expect(req.Method).To(Equal("PATCH"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1988,7 +1988,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(deleteNamespacePath))
+					Expect(req.URL.EscapedPath()).To(Equal(deleteNamespacePath))
 					Expect(req.Method).To(Equal("DELETE"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2175,7 +2175,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getPlansPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getPlansPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2217,7 +2217,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getPlansPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getPlansPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2287,7 +2287,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(updatePlansPath))
+					Expect(req.URL.EscapedPath()).To(Equal(updatePlansPath))
 					Expect(req.Method).To(Equal("PATCH"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2468,7 +2468,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getQuotaPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getQuotaPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2510,7 +2510,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getQuotaPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getQuotaPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2580,7 +2580,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(updateQuotaPath))
+					Expect(req.URL.EscapedPath()).To(Equal(updateQuotaPath))
 					Expect(req.Method).To(Equal("PATCH"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2763,7 +2763,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listRetentionPoliciesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listRetentionPoliciesPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2805,7 +2805,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listRetentionPoliciesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listRetentionPoliciesPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2875,7 +2875,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(setRetentionPolicyPath))
+					Expect(req.URL.EscapedPath()).To(Equal(setRetentionPolicyPath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2945,7 +2945,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(analyzeRetentionPolicyPath))
+					Expect(req.URL.EscapedPath()).To(Equal(analyzeRetentionPolicyPath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -2990,7 +2990,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(analyzeRetentionPolicyPath))
+					Expect(req.URL.EscapedPath()).To(Equal(analyzeRetentionPolicyPath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3065,7 +3065,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getRetentionPolicyPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getRetentionPolicyPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3108,7 +3108,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(getRetentionPolicyPath))
+					Expect(req.URL.EscapedPath()).To(Equal(getRetentionPolicyPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3301,7 +3301,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(deleteImageTagPath))
+					Expect(req.URL.EscapedPath()).To(Equal(deleteImageTagPath))
 					Expect(req.Method).To(Equal("DELETE"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3344,7 +3344,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(deleteImageTagPath))
+					Expect(req.URL.EscapedPath()).To(Equal(deleteImageTagPath))
 					Expect(req.Method).To(Equal("DELETE"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3537,7 +3537,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listDeletedImagesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listDeletedImagesPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3582,7 +3582,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(listDeletedImagesPath))
+					Expect(req.URL.EscapedPath()).To(Equal(listDeletedImagesPath))
 					Expect(req.Method).To(Equal("GET"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3655,7 +3655,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(restoreTagsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(restoreTagsPath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3698,7 +3698,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(restoreTagsPath))
+					Expect(req.URL.EscapedPath()).To(Equal(restoreTagsPath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3777,7 +3777,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
-					Expect(req.URL.Path).To(Equal(restoreImagePath))
+					Expect(req.URL.EscapedPath()).To(Equal(restoreImagePath))
 					Expect(req.Method).To(Equal("POST"))
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
