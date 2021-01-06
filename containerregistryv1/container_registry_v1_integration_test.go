@@ -1,7 +1,7 @@
 // +build integration
 
 /**
- * (C) Copyright IBM Corp. 2020.
+ * (C) Copyright IBM Corp. 2020, 2021.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import (
 	"os"
 	"strings"
 
+	"github.com/IBM/container-registry-go-sdk/containerregistryv1"
 	"github.com/IBM/go-sdk-core/v4/core"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.ibm.com/ibmcloud/container-registry-go-sdk/containerregistryv1"
 )
 
 /**
@@ -35,16 +35,16 @@ import (
  *
  * Notes:
  *
- * Your configuration file should contain the following variables. The following example is for the dev registry, using staging IAM
-CONTAINER_REGISTRY_URL=https://dev.icr.io
+ * Your configuration file (container_registry_v1.env) should contain the following variables.
+CONTAINER_REGISTRY_URL=[Registry URL, eg https://uk.icr.io]
 CONTAINER_REGISTRY_AUTH_TYPE=iam
-CONTAINER_REGISTRY_AUTH_URL=https://iam.test.cloud.ibm.com/identity/token
+CONTAINER_REGISTRY_AUTH_URL=https://iam.cloud.ibm.com/identity/token
 CONTAINER_REGISTRY_APIKEY=[An IAM Apikey]
 CONTAINER_REGISTRY_ACCOUNT_ID=[Your test account ID]
 CONTAINER_REGISTRY_RESOURCE_GROUP_ID=[Your resource group ID]
-CONTAINER_REGISTRY_NAMESPACE=[Namespace name, to be created and deleted by the test, eg: jahsdk]
-CONTAINER_REGISTRY_SEED_IMAGE=[An existing namespace/repo:tag to copy in this test, eg: newjhart/busy:latest]
-CONTAINER_REGISTRY_SEED_DIGEST=[The digest of the seed image, eg: sha256:2131f09e4044327fd101ca1fd4043e6f3ad921ae7ee901e9142e6e36b354a907]
+CONTAINER_REGISTRY_NAMESPACE=[Namespace name, to be created and deleted by the test]
+CONTAINER_REGISTRY_SEED_IMAGE=[An existing namespace/repo:tag to copy in this test, eg: my_existing_namespace/seedimage:1234]
+CONTAINER_REGISTRY_SEED_DIGEST=[The digest of the seed image, eg: sha256:aaaaaa9e4044327fd101ca1fd4043e6f3ad921ae7ee901e9142e6e36deadbeef]
  *
  * The integration test will automatically skip tests if the required config file is not available.
 */
@@ -186,6 +186,41 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			}
 
 			response, err := containerRegistry.UpdateAuth(updateAuthOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
+
+		})
+	})
+
+	Describe(`GetSettings - Get account settings`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`GetSettings(getSettingsOptions *GetSettingsOptions)`, func() {
+
+			getSettingsOptions := &containerregistryv1.GetSettingsOptions{}
+
+			accountSettings, response, err := containerRegistry.GetSettings(getSettingsOptions)
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(accountSettings).ToNot(BeNil())
+
+		})
+	})
+
+	Describe(`UpdateSettings - Update account settings`, func() {
+		BeforeEach(func() {
+			shouldSkipTest()
+		})
+		It(`UpdateSettings(updateSettingsOptions *UpdateSettingsOptions)`, func() {
+
+			updateSettingsOptions := &containerregistryv1.UpdateSettingsOptions{
+				PlatformMetrics: core.BoolPtr(false),
+			}
+
+			response, err := containerRegistry.UpdateSettings(updateSettingsOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))

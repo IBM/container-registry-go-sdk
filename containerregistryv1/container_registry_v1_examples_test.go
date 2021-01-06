@@ -1,7 +1,7 @@
 // +build examples
 
 /**
- * (C) Copyright IBM Corp. 2020.
+ * (C) Copyright IBM Corp. 2020, 2021.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,10 +23,10 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/IBM/container-registry-go-sdk/containerregistryv1"
 	"github.com/IBM/go-sdk-core/v4/core"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.ibm.com/ibmcloud/container-registry-go-sdk/containerregistryv1"
 )
 
 const externalConfigFile = "../container_registry_v1.env"
@@ -151,6 +151,42 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			}
 
 			// end-update_auth
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(204))
+
+		})
+		It(`GetSettings request example`, func() {
+			// begin-get_settings
+
+			getSettingsOptions := containerRegistryService.NewGetSettingsOptions()
+
+			accountSettings, response, err := containerRegistryService.GetSettings(getSettingsOptions)
+			if err != nil {
+				panic(err)
+			}
+			b, _ := json.MarshalIndent(accountSettings, "", "  ")
+			fmt.Println(string(b))
+
+			// end-get_settings
+
+			Expect(err).To(BeNil())
+			Expect(response.StatusCode).To(Equal(200))
+			Expect(accountSettings).ToNot(BeNil())
+
+		})
+		It(`UpdateSettings request example`, func() {
+			// begin-update_settings
+
+			updateSettingsOptions := containerRegistryService.NewUpdateSettingsOptions()
+			updateSettingsOptions.SetPlatformMetrics(true)
+
+			response, err := containerRegistryService.UpdateSettings(updateSettingsOptions)
+			if err != nil {
+				panic(err)
+			}
+
+			// end-update_settings
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))

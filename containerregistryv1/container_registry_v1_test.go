@@ -1,5 +1,5 @@
 /**
- * (C) Copyright IBM Corp. 2020.
+ * (C) Copyright IBM Corp. 2020, 2021.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,20 @@ package containerregistryv1_test
 
 import (
 	"bytes"
+	"context"
 	"fmt"
-	"github.com/IBM/go-sdk-core/v4/core"
-	"github.com/go-openapi/strfmt"
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-	"github.ibm.com/ibmcloud/container-registry-go-sdk/containerregistryv1"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"time"
+
+	"github.com/IBM/container-registry-go-sdk/containerregistryv1"
+	"github.com/IBM/go-sdk-core/v4/core"
+	"github.com/go-openapi/strfmt"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
 )
 
 var _ = Describe(`ContainerRegistryV1`, func() {
@@ -39,14 +41,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -54,7 +56,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -75,7 +77,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -87,17 +89,29 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url programatically successfully`, func() {
 				SetTestEnvironment(testEnvironment)
@@ -110,12 +124,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 		})
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -133,12 +153,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -147,6 +167,16 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).ToNot(BeNil())
 				ClearTestEnvironment(testEnvironment)
 			})
+		})
+	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`GetAuth(getAuthOptions *GetAuthOptions) - Operation response error`, func() {
@@ -171,7 +201,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -181,6 +211,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				getAuthOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
 				result, response, operationErr := containerRegistryService.GetAuth(getAuthOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.GetAuth(getAuthOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
@@ -194,16 +231,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`GetAuth(getAuthOptions *GetAuthOptions)`, func() {
 		account := "testString"
 		getAuthPath := "/api/v1/auth"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(getAuthPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"iam_authz": true, "private_only": false}`)
@@ -213,10 +257,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.GetAuth(nil)
@@ -233,12 +278,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetAuthWithContext(ctx, getAuthOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.GetAuth(getAuthOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetAuthWithContext(ctx, getAuthOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke GetAuth with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -272,6 +342,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(updateAuthPath))
 					Expect(req.Method).To(Equal("PATCH"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.WriteHeader(204)
@@ -281,10 +368,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				response, operationErr := containerRegistryService.UpdateAuth(nil)
@@ -301,12 +389,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				response, operationErr = containerRegistryService.UpdateAuth(updateAuthOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				response, operationErr = containerRegistryService.UpdateAuth(updateAuthOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
 			})
 			It(`Invoke UpdateAuth with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -334,14 +428,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -349,7 +443,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -370,7 +464,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -382,17 +476,29 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url programatically successfully`, func() {
 				SetTestEnvironment(testEnvironment)
@@ -405,12 +511,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 		})
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -428,12 +540,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -442,6 +554,16 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).ToNot(BeNil())
 				ClearTestEnvironment(testEnvironment)
 			})
+		})
+	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`ListImages(listImagesOptions *ListImagesOptions) - Operation response error`, func() {
@@ -459,15 +581,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					Expect(req.URL.Query()["namespace"]).To(Equal([]string{"testString"}))
 
-
 					// TODO: Add check for includeIBM query parameter
-
 
 					// TODO: Add check for includePrivate query parameter
 
-
 					// TODO: Add check for includeManifestLists query parameter
-
 
 					// TODO: Add check for vulnerabilities query parameter
 
@@ -482,7 +600,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -501,6 +619,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.ListImages(listImagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -511,32 +636,35 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`ListImages(listImagesOptions *ListImagesOptions)`, func() {
 		account := "testString"
 		listImagesPath := "/api/v1/images"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(listImagesPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					Expect(req.URL.Query()["namespace"]).To(Equal([]string{"testString"}))
 
-
 					// TODO: Add check for includeIBM query parameter
-
 
 					// TODO: Add check for includePrivate query parameter
 
-
 					// TODO: Add check for includeManifestLists query parameter
-
 
 					// TODO: Add check for vulnerabilities query parameter
 
 					Expect(req.URL.Query()["repository"]).To(Equal([]string{"testString"}))
 
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `[{"ConfigurationIssueCount": 23, "Created": 7, "DigestTags": {"mapKey": ["Inner"]}, "ExemptIssueCount": 16, "Id": "ID", "IssueCount": 10, "Labels": {"mapKey": "Inner"}, "ManifestType": "ManifestType", "ParentId": "ParentID", "RepoDigests": ["RepoDigests"], "RepoTags": ["RepoTags"], "Size": 4, "VirtualSize": 11, "VulnerabilityCount": 18, "Vulnerable": "Vulnerable"}]`)
@@ -546,10 +674,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.ListImages(nil)
@@ -572,12 +701,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListImagesWithContext(ctx, listImagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.ListImages(listImagesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListImagesWithContext(ctx, listImagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke ListImages with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -627,7 +781,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -641,6 +795,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.BulkDeleteImages(bulkDeleteImagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -651,16 +812,39 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`BulkDeleteImages(bulkDeleteImagesOptions *BulkDeleteImagesOptions)`, func() {
 		account := "testString"
 		bulkDeleteImagesPath := "/api/v1/images/bulkdelete"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(bulkDeleteImagesPath))
 					Expect(req.Method).To(Equal("POST"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"error": {"mapKey": {"code": "Code", "message": "Message"}}, "success": ["Success"]}`)
@@ -670,10 +854,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.BulkDeleteImages(nil)
@@ -691,12 +876,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.BulkDeleteImagesWithContext(ctx, bulkDeleteImagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.BulkDeleteImages(bulkDeleteImagesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.BulkDeleteImagesWithContext(ctx, bulkDeleteImagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke BulkDeleteImages with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -748,7 +958,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -765,6 +975,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.ListImageDigests(listImageDigestsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -775,16 +992,39 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`ListImageDigests(listImageDigestsOptions *ListImageDigestsOptions)`, func() {
 		account := "testString"
 		listImageDigestsPath := "/api/v1/images/digests"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(listImageDigestsPath))
 					Expect(req.Method).To(Equal("POST"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `[{"created": 7, "id": "ID", "manifestType": "ManifestType", "repoTags": {"mapKey": "anyValue"}, "size": 4}]`)
@@ -794,10 +1034,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.ListImageDigests(nil)
@@ -818,12 +1059,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListImageDigestsWithContext(ctx, listImageDigestsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.ListImageDigests(listImageDigestsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListImageDigestsWithContext(ctx, listImageDigestsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke ListImageDigests with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -861,6 +1127,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(tagImagePath))
 					Expect(req.Method).To(Equal("POST"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					Expect(req.URL.Query()["fromimage"]).To(Equal([]string{"testString"}))
@@ -874,10 +1141,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				response, operationErr := containerRegistryService.TagImage(nil)
@@ -894,12 +1162,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				response, operationErr = containerRegistryService.TagImage(tagImageOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				response, operationErr = containerRegistryService.TagImage(tagImageOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
 			})
 			It(`Invoke TagImage with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -950,7 +1224,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -964,6 +1238,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.DeleteImage(deleteImageOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -974,16 +1255,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`DeleteImage(deleteImageOptions *DeleteImageOptions)`, func() {
 		account := "testString"
 		deleteImagePath := "/api/v1/images/testString"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(deleteImagePath))
 					Expect(req.Method).To(Equal("DELETE"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
@@ -993,10 +1281,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.DeleteImage(nil)
@@ -1014,12 +1303,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.DeleteImageWithContext(ctx, deleteImageOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.DeleteImage(deleteImageOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.DeleteImageWithContext(ctx, deleteImageOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke DeleteImage with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1071,7 +1385,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1085,6 +1399,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.InspectImage(inspectImageOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -1095,16 +1416,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`InspectImage(inspectImageOptions *InspectImageOptions)`, func() {
 		account := "testString"
 		inspectImagePath := "/api/v1/images/testString/json"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(inspectImagePath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"Architecture": "Architecture", "Author": "Author", "Comment": "Comment", "Config": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"mapKey": {"anyKey": "anyValue"}}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"mapKey": {"anyKey": "anyValue"}}, "WorkingDir": "WorkingDir"}, "Container": "Container", "ContainerConfig": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"mapKey": {"anyKey": "anyValue"}}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"mapKey": {"anyKey": "anyValue"}}, "WorkingDir": "WorkingDir"}, "Created": "Created", "DockerVersion": "DockerVersion", "Id": "ID", "ManifestType": "ManifestType", "Os": "Os", "OsVersion": "OsVersion", "Parent": "Parent", "RootFS": {"BaseLayer": "BaseLayer", "Layers": ["Layers"], "Type": "Type"}, "Size": 4, "VirtualSize": 11}`)
@@ -1114,10 +1442,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.InspectImage(nil)
@@ -1135,12 +1464,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.InspectImageWithContext(ctx, inspectImageOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.InspectImage(inspectImageOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.InspectImageWithContext(ctx, inspectImageOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke InspectImage with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1182,6 +1536,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(getImageManifestPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.WriteHeader(200)
@@ -1191,10 +1546,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				response, operationErr := containerRegistryService.GetImageManifest(nil)
@@ -1210,12 +1566,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				response, operationErr = containerRegistryService.GetImageManifest(getImageManifestOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				response, operationErr = containerRegistryService.GetImageManifest(getImageManifestOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
 			})
 			It(`Invoke GetImageManifest with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1248,14 +1610,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -1263,7 +1625,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -1284,7 +1646,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -1296,17 +1658,29 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url programatically successfully`, func() {
 				SetTestEnvironment(testEnvironment)
@@ -1319,12 +1693,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 		})
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -1342,12 +1722,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -1358,18 +1738,35 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
+		})
+	})
 
 	Describe(`GetMessages(getMessagesOptions *GetMessagesOptions)`, func() {
 		account := "testString"
 		getMessagesPath := "/api/v1/messages"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(getMessagesPath))
 					Expect(req.Method).To(Equal("GET"))
+
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `"OperationResponse"`)
@@ -1379,10 +1776,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.GetMessages(nil)
@@ -1399,12 +1797,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetMessagesWithContext(ctx, getMessagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.GetMessages(getMessagesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetMessagesWithContext(ctx, getMessagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke GetMessages with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1431,14 +1854,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -1446,7 +1869,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -1467,7 +1890,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -1479,17 +1902,29 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url programatically successfully`, func() {
 				SetTestEnvironment(testEnvironment)
@@ -1502,12 +1937,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 		})
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -1525,12 +1966,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -1541,20 +1982,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
+		})
+	})
 
 	Describe(`ListNamespaces(listNamespacesOptions *ListNamespacesOptions)`, func() {
 		account := "testString"
 		listNamespacesPath := "/api/v1/namespaces"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(listNamespacesPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `["OperationResponse"]`)
@@ -1564,10 +2022,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.ListNamespaces(nil)
@@ -1584,12 +2043,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListNamespacesWithContext(ctx, listNamespacesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.ListNamespaces(listNamespacesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListNamespacesWithContext(ctx, listNamespacesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke ListNamespaces with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1633,7 +2117,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1643,6 +2127,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				listNamespaceDetailsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
 				result, response, operationErr := containerRegistryService.ListNamespaceDetails(listNamespaceDetailsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.ListNamespaceDetails(listNamespaceDetailsOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
@@ -1656,16 +2147,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`ListNamespaceDetails(listNamespaceDetailsOptions *ListNamespaceDetailsOptions)`, func() {
 		account := "testString"
 		listNamespaceDetailsPath := "/api/v1/namespaces/details"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(listNamespaceDetailsPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `[{"account": "Account", "created_date": "CreatedDate", "crn": "Crn", "name": "Name", "resource_created_date": "ResourceCreatedDate", "resource_group": "ResourceGroup", "updated_date": "UpdatedDate"}]`)
@@ -1675,10 +2173,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.ListNamespaceDetails(nil)
@@ -1695,12 +2194,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListNamespaceDetailsWithContext(ctx, listNamespaceDetailsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.ListNamespaceDetails(listNamespaceDetailsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListNamespaceDetailsWithContext(ctx, listNamespaceDetailsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke ListNamespaceDetails with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1746,7 +2270,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1761,6 +2285,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.CreateNamespace(createNamespaceOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -1771,18 +2302,25 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`CreateNamespace(createNamespaceOptions *CreateNamespaceOptions)`, func() {
 		account := "testString"
 		createNamespacePath := "/api/v1/namespaces/testString"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(createNamespacePath))
 					Expect(req.Method).To(Equal("PUT"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					Expect(req.Header["X-Auth-Resource-Group"]).ToNot(BeNil())
 					Expect(req.Header["X-Auth-Resource-Group"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
@@ -1792,10 +2330,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.CreateNamespace(nil)
@@ -1814,12 +2353,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.CreateNamespaceWithContext(ctx, createNamespaceOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.CreateNamespace(createNamespaceOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.CreateNamespaceWithContext(ctx, createNamespaceOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke CreateNamespace with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1874,7 +2438,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1889,6 +2453,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.AssignNamespace(assignNamespaceOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -1899,18 +2470,25 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`AssignNamespace(assignNamespaceOptions *AssignNamespaceOptions)`, func() {
 		account := "testString"
 		assignNamespacePath := "/api/v1/namespaces/testString"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(assignNamespacePath))
 					Expect(req.Method).To(Equal("PATCH"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					Expect(req.Header["X-Auth-Resource-Group"]).ToNot(BeNil())
 					Expect(req.Header["X-Auth-Resource-Group"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
@@ -1920,10 +2498,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.AssignNamespace(nil)
@@ -1942,12 +2521,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.AssignNamespaceWithContext(ctx, assignNamespaceOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.AssignNamespace(assignNamespaceOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.AssignNamespaceWithContext(ctx, assignNamespaceOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke AssignNamespace with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1990,6 +2594,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(deleteNamespacePath))
 					Expect(req.Method).To(Equal("DELETE"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.WriteHeader(204)
@@ -1999,10 +2604,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				response, operationErr := containerRegistryService.DeleteNamespace(nil)
@@ -2018,12 +2624,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				response, operationErr = containerRegistryService.DeleteNamespace(deleteNamespaceOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				response, operationErr = containerRegistryService.DeleteNamespace(deleteNamespaceOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
 			})
 			It(`Invoke DeleteNamespace with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2056,14 +2668,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -2071,7 +2683,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -2092,7 +2704,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -2104,17 +2716,29 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url programatically successfully`, func() {
 				SetTestEnvironment(testEnvironment)
@@ -2127,12 +2751,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 		})
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -2150,12 +2780,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -2164,6 +2794,16 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).ToNot(BeNil())
 				ClearTestEnvironment(testEnvironment)
 			})
+		})
+	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`GetPlans(getPlansOptions *GetPlansOptions) - Operation response error`, func() {
@@ -2188,7 +2828,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2198,6 +2838,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				getPlansOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
 				result, response, operationErr := containerRegistryService.GetPlans(getPlansOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.GetPlans(getPlansOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
@@ -2211,16 +2858,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`GetPlans(getPlansOptions *GetPlansOptions)`, func() {
 		account := "testString"
 		getPlansPath := "/api/v1/plans"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(getPlansPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"plan": "Plan"}`)
@@ -2230,10 +2884,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.GetPlans(nil)
@@ -2250,12 +2905,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetPlansWithContext(ctx, getPlansOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.GetPlans(getPlansOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetPlansWithContext(ctx, getPlansOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke GetPlans with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2289,6 +2969,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(updatePlansPath))
 					Expect(req.Method).To(Equal("PATCH"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.WriteHeader(200)
@@ -2298,10 +2995,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				response, operationErr := containerRegistryService.UpdatePlans(nil)
@@ -2317,12 +3015,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				response, operationErr = containerRegistryService.UpdatePlans(updatePlansOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				response, operationErr = containerRegistryService.UpdatePlans(updatePlansOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
 			})
 			It(`Invoke UpdatePlans with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2349,14 +3053,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -2364,7 +3068,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -2385,7 +3089,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -2397,17 +3101,29 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url programatically successfully`, func() {
 				SetTestEnvironment(testEnvironment)
@@ -2420,12 +3136,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 		})
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -2443,12 +3165,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -2457,6 +3179,16 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).ToNot(BeNil())
 				ClearTestEnvironment(testEnvironment)
 			})
+		})
+	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`GetQuota(getQuotaOptions *GetQuotaOptions) - Operation response error`, func() {
@@ -2481,7 +3213,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2491,6 +3223,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				getQuotaOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
 				result, response, operationErr := containerRegistryService.GetQuota(getQuotaOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.GetQuota(getQuotaOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
@@ -2504,16 +3243,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`GetQuota(getQuotaOptions *GetQuotaOptions)`, func() {
 		account := "testString"
 		getQuotaPath := "/api/v1/quotas"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(getQuotaPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"limit": {"storage_bytes": 12, "traffic_bytes": 12}, "usage": {"storage_bytes": 12, "traffic_bytes": 12}}`)
@@ -2523,10 +3269,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.GetQuota(nil)
@@ -2543,12 +3290,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetQuotaWithContext(ctx, getQuotaOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.GetQuota(getQuotaOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetQuotaWithContext(ctx, getQuotaOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke GetQuota with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2582,6 +3354,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(updateQuotaPath))
 					Expect(req.Method).To(Equal("PATCH"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.WriteHeader(200)
@@ -2591,10 +3380,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				response, operationErr := containerRegistryService.UpdateQuota(nil)
@@ -2611,12 +3401,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				response, operationErr = containerRegistryService.UpdateQuota(updateQuotaOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				response, operationErr = containerRegistryService.UpdateQuota(updateQuotaOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
 			})
 			It(`Invoke UpdateQuota with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2644,14 +3440,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -2659,7 +3455,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -2680,7 +3476,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -2692,17 +3488,29 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url programatically successfully`, func() {
 				SetTestEnvironment(testEnvironment)
@@ -2715,12 +3523,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 		})
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -2738,12 +3552,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -2752,6 +3566,16 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).ToNot(BeNil())
 				ClearTestEnvironment(testEnvironment)
 			})
+		})
+	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`ListRetentionPolicies(listRetentionPoliciesOptions *ListRetentionPoliciesOptions) - Operation response error`, func() {
@@ -2776,7 +3600,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2786,6 +3610,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				listRetentionPoliciesOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 				// Expect response parsing to fail since we are receiving a text/plain response
 				result, response, operationErr := containerRegistryService.ListRetentionPolicies(listRetentionPoliciesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.ListRetentionPolicies(listRetentionPoliciesOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
@@ -2799,16 +3630,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`ListRetentionPolicies(listRetentionPoliciesOptions *ListRetentionPoliciesOptions)`, func() {
 		account := "testString"
 		listRetentionPoliciesPath := "/api/v1/retentions"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(listRetentionPoliciesPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"mapKey": {"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}}`)
@@ -2818,10 +3656,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.ListRetentionPolicies(nil)
@@ -2838,12 +3677,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListRetentionPoliciesWithContext(ctx, listRetentionPoliciesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.ListRetentionPolicies(listRetentionPoliciesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListRetentionPoliciesWithContext(ctx, listRetentionPoliciesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke ListRetentionPolicies with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2877,6 +3741,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(setRetentionPolicyPath))
 					Expect(req.Method).To(Equal("POST"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.WriteHeader(200)
@@ -2886,10 +3767,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				response, operationErr := containerRegistryService.SetRetentionPolicy(nil)
@@ -2907,12 +3789,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				response, operationErr = containerRegistryService.SetRetentionPolicy(setRetentionPolicyOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				response, operationErr = containerRegistryService.SetRetentionPolicy(setRetentionPolicyOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
 			})
 			It(`Invoke SetRetentionPolicy with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2958,7 +3846,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2974,6 +3862,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.AnalyzeRetentionPolicy(analyzeRetentionPolicyOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -2984,16 +3879,39 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions *AnalyzeRetentionPolicyOptions)`, func() {
 		account := "testString"
 		analyzeRetentionPolicyPath := "/api/v1/retentions/analyze"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(analyzeRetentionPolicyPath))
 					Expect(req.Method).To(Equal("POST"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"mapKey": ["Inner"]}`)
@@ -3003,10 +3921,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.AnalyzeRetentionPolicy(nil)
@@ -3026,12 +3945,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.AnalyzeRetentionPolicyWithContext(ctx, analyzeRetentionPolicyOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.AnalyzeRetentionPolicy(analyzeRetentionPolicyOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.AnalyzeRetentionPolicyWithContext(ctx, analyzeRetentionPolicyOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke AnalyzeRetentionPolicy with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3078,7 +4022,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3092,6 +4036,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.GetRetentionPolicy(getRetentionPolicyOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -3102,16 +4053,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`GetRetentionPolicy(getRetentionPolicyOptions *GetRetentionPolicyOptions)`, func() {
 		account := "testString"
 		getRetentionPolicyPath := "/api/v1/retentions/testString"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(getRetentionPolicyPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}`)
@@ -3121,10 +4079,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.GetRetentionPolicy(nil)
@@ -3142,12 +4101,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetRetentionPolicyWithContext(ctx, getRetentionPolicyOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.GetRetentionPolicy(getRetentionPolicyOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetRetentionPolicyWithContext(ctx, getRetentionPolicyOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke GetRetentionPolicy with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3182,14 +4166,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -3197,7 +4181,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -3218,7 +4202,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -3230,17 +4214,29 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url programatically successfully`, func() {
 				SetTestEnvironment(testEnvironment)
@@ -3253,12 +4249,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 		})
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -3276,12 +4278,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -3290,6 +4292,401 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).ToNot(BeNil())
 				ClearTestEnvironment(testEnvironment)
 			})
+		})
+	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
+		})
+	})
+	Describe(`GetSettings(getSettingsOptions *GetSettingsOptions) - Operation response error`, func() {
+		account := "testString"
+		getSettingsPath := "/api/v1/settings"
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(getSettingsPath))
+					Expect(req.Method).To(Equal("GET"))
+					Expect(req.Header["Account"]).ToNot(BeNil())
+					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, `} this is not valid json {`)
+				}))
+			})
+			It(`Invoke GetSettings with error: Operation response processing error`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the GetSettingsOptions model
+				getSettingsOptionsModel := new(containerregistryv1.GetSettingsOptions)
+				getSettingsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Expect response parsing to fail since we are receiving a text/plain response
+				result, response, operationErr := containerRegistryService.GetSettings(getSettingsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.GetSettings(getSettingsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+
+	Describe(`GetSettings(getSettingsOptions *GetSettingsOptions)`, func() {
+		account := "testString"
+		getSettingsPath := "/api/v1/settings"
+		var serverSleepTime time.Duration
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				serverSleepTime = 0
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(getSettingsPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					Expect(req.Header["Account"]).ToNot(BeNil())
+					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"platform_metrics": false}`)
+				}))
+			})
+			It(`Invoke GetSettings successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
+
+				// Invoke operation with nil options model (negative test)
+				result, response, operationErr := containerRegistryService.GetSettings(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+
+				// Construct an instance of the GetSettingsOptions model
+				getSettingsOptionsModel := new(containerregistryv1.GetSettingsOptions)
+				getSettingsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				result, response, operationErr = containerRegistryService.GetSettings(getSettingsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetSettingsWithContext(ctx, getSettingsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.GetSettings(getSettingsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.GetSettingsWithContext(ctx, getSettingsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+			})
+			It(`Invoke GetSettings with error: Operation request error`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the GetSettingsOptions model
+				getSettingsOptionsModel := new(containerregistryv1.GetSettingsOptions)
+				getSettingsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := containerRegistryService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				result, response, operationErr := containerRegistryService.GetSettings(getSettingsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+
+	Describe(`UpdateSettings(updateSettingsOptions *UpdateSettingsOptions)`, func() {
+		account := "testString"
+		updateSettingsPath := "/api/v1/settings"
+		Context(`Using mock server endpoint`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(updateSettingsPath))
+					Expect(req.Method).To(Equal("PATCH"))
+
+					// For gzip-disabled operation, verify Content-Encoding is not set.
+					Expect(req.Header.Get("Content-Encoding")).To(BeEmpty())
+
+					// If there is a body, then make sure we can read it
+					bodyBuf := new(bytes.Buffer)
+					if req.Header.Get("Content-Encoding") == "gzip" {
+						body, err := core.NewGzipDecompressionReader(req.Body)
+						Expect(err).To(BeNil())
+						_, err = bodyBuf.ReadFrom(body)
+						Expect(err).To(BeNil())
+					} else {
+						_, err := bodyBuf.ReadFrom(req.Body)
+						Expect(err).To(BeNil())
+					}
+					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+
+					Expect(req.Header["Account"]).ToNot(BeNil())
+					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					res.WriteHeader(204)
+				}))
+			})
+			It(`Invoke UpdateSettings successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
+
+				// Invoke operation with nil options model (negative test)
+				response, operationErr := containerRegistryService.UpdateSettings(nil)
+				Expect(operationErr).NotTo(BeNil())
+				Expect(response).To(BeNil())
+
+				// Construct an instance of the UpdateSettingsOptions model
+				updateSettingsOptionsModel := new(containerregistryv1.UpdateSettingsOptions)
+				updateSettingsOptionsModel.PlatformMetrics = core.BoolPtr(true)
+				updateSettingsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with valid options model (positive test)
+				response, operationErr = containerRegistryService.UpdateSettings(updateSettingsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				response, operationErr = containerRegistryService.UpdateSettings(updateSettingsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+			})
+			It(`Invoke UpdateSettings with error: Operation request error`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the UpdateSettingsOptions model
+				updateSettingsOptionsModel := new(containerregistryv1.UpdateSettingsOptions)
+				updateSettingsOptionsModel.PlatformMetrics = core.BoolPtr(true)
+				updateSettingsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+				// Invoke operation with empty URL (negative test)
+				err := containerRegistryService.SetServiceURL("")
+				Expect(err).To(BeNil())
+				response, operationErr := containerRegistryService.UpdateSettings(updateSettingsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
+				Expect(response).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
+	Describe(`Service constructor tests`, func() {
+		account := "testString"
+		It(`Instantiate service client`, func() {
+			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+				Authenticator: &core.NoAuthAuthenticator{},
+				Account:       core.StringPtr(account),
+			})
+			Expect(containerRegistryService).ToNot(BeNil())
+			Expect(serviceErr).To(BeNil())
+		})
+		It(`Instantiate service client with error: Invalid URL`, func() {
+			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+				URL:     "{BAD_URL_STRING",
+				Account: core.StringPtr(account),
+			})
+			Expect(containerRegistryService).To(BeNil())
+			Expect(serviceErr).ToNot(BeNil())
+		})
+		It(`Instantiate service client with error: Invalid Auth`, func() {
+			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+				URL:     "https://containerregistryv1/api",
+				Account: core.StringPtr(account),
+				Authenticator: &core.BasicAuthenticator{
+					Username: "",
+					Password: "",
+				},
+			})
+			Expect(containerRegistryService).To(BeNil())
+			Expect(serviceErr).ToNot(BeNil())
+		})
+		It(`Instantiate service client with error: Validation Error`, func() {
+			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
+			Expect(containerRegistryService).To(BeNil())
+			Expect(serviceErr).ToNot(BeNil())
+		})
+	})
+	Describe(`Service constructor tests using external config`, func() {
+		account := "testString"
+		Context(`Using external config, construct service client instances`, func() {
+			// Map containing environment variables used in testing.
+			var testEnvironment = map[string]string{
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
+			}
+
+			It(`Create service client using external config successfully`, func() {
+				SetTestEnvironment(testEnvironment)
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
+					Account: core.StringPtr(account),
+				})
+				Expect(containerRegistryService).ToNot(BeNil())
+				Expect(serviceErr).To(BeNil())
+				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
+			})
+			It(`Create service client using external config and set url from constructor successfully`, func() {
+				SetTestEnvironment(testEnvironment)
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
+					URL:     "https://testService/api",
+					Account: core.StringPtr(account),
+				})
+				Expect(containerRegistryService).ToNot(BeNil())
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
+				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
+			})
+			It(`Create service client using external config and set url programatically successfully`, func() {
+				SetTestEnvironment(testEnvironment)
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
+					Account: core.StringPtr(account),
+				})
+				err := containerRegistryService.SetServiceURL("https://testService/api")
+				Expect(err).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
+				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
+			})
+		})
+		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
+			// Map containing environment variables used in testing.
+			var testEnvironment = map[string]string{
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
+			}
+
+			SetTestEnvironment(testEnvironment)
+			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
+				Account: core.StringPtr(account),
+			})
+
+			It(`Instantiate service client with error`, func() {
+				Expect(containerRegistryService).To(BeNil())
+				Expect(serviceErr).ToNot(BeNil())
+				ClearTestEnvironment(testEnvironment)
+			})
+		})
+		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
+			// Map containing environment variables used in testing.
+			var testEnvironment = map[string]string{
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
+			}
+
+			SetTestEnvironment(testEnvironment)
+			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
+				URL:     "{BAD_URL_STRING",
+				Account: core.StringPtr(account),
+			})
+
+			It(`Instantiate service client with error`, func() {
+				Expect(containerRegistryService).To(BeNil())
+				Expect(serviceErr).ToNot(BeNil())
+				ClearTestEnvironment(testEnvironment)
+			})
+		})
+	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`DeleteImageTag(deleteImageTagOptions *DeleteImageTagOptions) - Operation response error`, func() {
@@ -3314,7 +4711,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3328,6 +4725,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.DeleteImageTag(deleteImageTagOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -3338,16 +4742,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`DeleteImageTag(deleteImageTagOptions *DeleteImageTagOptions)`, func() {
 		account := "testString"
 		deleteImageTagPath := "/api/v1/tags/testString"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(deleteImageTagPath))
 					Expect(req.Method).To(Equal("DELETE"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
@@ -3357,10 +4768,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.DeleteImageTag(nil)
@@ -3378,12 +4790,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.DeleteImageTagWithContext(ctx, deleteImageTagOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.DeleteImageTag(deleteImageTagOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.DeleteImageTagWithContext(ctx, deleteImageTagOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke DeleteImageTag with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3418,14 +4855,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -3433,7 +4870,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -3454,7 +4891,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -3466,17 +4903,29 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 			It(`Create service client using external config and set url programatically successfully`, func() {
 				SetTestEnvironment(testEnvironment)
@@ -3489,12 +4938,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
 				ClearTestEnvironment(testEnvironment)
+
+				clone := containerRegistryService.Clone()
+				Expect(clone).ToNot(BeNil())
+				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
+				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
+				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
 			})
 		})
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -3512,12 +4967,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -3526,6 +4981,16 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(serviceErr).ToNot(BeNil())
 				ClearTestEnvironment(testEnvironment)
 			})
+		})
+	})
+	Describe(`Regional endpoint tests`, func() {
+		It(`GetServiceURLForRegion(region string)`, func() {
+			var url string
+			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
+			Expect(url).To(BeEmpty())
+			Expect(err).ToNot(BeNil())
+			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`ListDeletedImages(listDeletedImagesOptions *ListDeletedImagesOptions) - Operation response error`, func() {
@@ -3552,7 +5017,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3566,6 +5031,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.ListDeletedImages(listDeletedImagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -3576,18 +5048,25 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`ListDeletedImages(listDeletedImagesOptions *ListDeletedImagesOptions)`, func() {
 		account := "testString"
 		listDeletedImagesPath := "/api/v1/trash"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(listDeletedImagesPath))
 					Expect(req.Method).To(Equal("GET"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					Expect(req.URL.Query()["namespace"]).To(Equal([]string{"testString"}))
 
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"mapKey": {"daysUntilExpiry": 15, "tags": ["Tags"]}}`)
@@ -3597,10 +5076,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.ListDeletedImages(nil)
@@ -3618,12 +5098,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListDeletedImagesWithContext(ctx, listDeletedImagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.ListDeletedImages(listDeletedImagesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.ListDeletedImagesWithContext(ctx, listDeletedImagesOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke ListDeletedImages with error: Operation request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3668,7 +5173,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3682,6 +5187,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).To(BeNil())
+
+				// Enable retries and test again
+				containerRegistryService.EnableRetries(0, 0)
+				result, response, operationErr = containerRegistryService.RestoreTags(restoreTagsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
@@ -3692,16 +5204,23 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`RestoreTags(restoreTagsOptions *RestoreTagsOptions)`, func() {
 		account := "testString"
 		restoreTagsPath := "/api/v1/trash/testString/restoretags"
+		var serverSleepTime time.Duration
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
+				serverSleepTime = 0
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
 
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(restoreTagsPath))
 					Expect(req.Method).To(Equal("POST"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(serverSleepTime)
+
+					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
 					fmt.Fprintf(res, "%s", `{"successful": ["Successful"], "unsuccessful": ["Unsuccessful"]}`)
@@ -3711,10 +5230,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				result, response, operationErr := containerRegistryService.RestoreTags(nil)
@@ -3732,12 +5252,37 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
 				Expect(result).ToNot(BeNil())
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.RestoreTagsWithContext(ctx, restoreTagsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr = containerRegistryService.RestoreTags(restoreTagsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				serverSleepTime = 100 * time.Millisecond
+				_, _, operationErr = containerRegistryService.RestoreTagsWithContext(ctx, restoreTagsOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+				serverSleepTime = time.Duration(0)
 			})
 			It(`Invoke RestoreTags with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3779,6 +5324,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Verify the contents of the request
 					Expect(req.URL.EscapedPath()).To(Equal(restoreImagePath))
 					Expect(req.Method).To(Equal("POST"))
+
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.WriteHeader(200)
@@ -3788,10 +5334,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
 
 				// Invoke operation with nil options model (negative test)
 				response, operationErr := containerRegistryService.RestoreImage(nil)
@@ -3807,12 +5354,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				response, operationErr = containerRegistryService.RestoreImage(restoreImageOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				response, operationErr = containerRegistryService.RestoreImage(restoreImageOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
 			})
 			It(`Invoke RestoreImage with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3846,7 +5399,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			containerRegistryService, _ := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				URL:           "http://containerregistryv1modelgenerator.com",
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			It(`Invoke NewAnalyzeRetentionPolicyOptions successfully`, func() {
 				// Construct an instance of the AnalyzeRetentionPolicyOptions model
@@ -3973,6 +5526,13 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(getRetentionPolicyOptionsModel).ToNot(BeNil())
 				Expect(getRetentionPolicyOptionsModel.Namespace).To(Equal(core.StringPtr("testString")))
 				Expect(getRetentionPolicyOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewGetSettingsOptions successfully`, func() {
+				// Construct an instance of the GetSettingsOptions model
+				getSettingsOptionsModel := containerRegistryService.NewGetSettingsOptions()
+				getSettingsOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(getSettingsOptionsModel).ToNot(BeNil())
+				Expect(getSettingsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 			It(`Invoke NewInspectImageOptions successfully`, func() {
 				// Construct an instance of the InspectImageOptions model
@@ -4124,6 +5684,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(updateQuotaOptionsModel.StorageMegabytes).To(Equal(core.Int64Ptr(int64(26))))
 				Expect(updateQuotaOptionsModel.TrafficMegabytes).To(Equal(core.Int64Ptr(int64(480))))
 				Expect(updateQuotaOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
+			})
+			It(`Invoke NewUpdateSettingsOptions successfully`, func() {
+				// Construct an instance of the UpdateSettingsOptions model
+				updateSettingsOptionsModel := containerRegistryService.NewUpdateSettingsOptions()
+				updateSettingsOptionsModel.SetPlatformMetrics(true)
+				updateSettingsOptionsModel.SetHeaders(map[string]string{"foo": "bar"})
+				Expect(updateSettingsOptionsModel).ToNot(BeNil())
+				Expect(updateSettingsOptionsModel.PlatformMetrics).To(Equal(core.BoolPtr(true)))
+				Expect(updateSettingsOptionsModel.Headers).To(Equal(map[string]string{"foo": "bar"}))
 			})
 		})
 	})

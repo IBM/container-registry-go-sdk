@@ -1,5 +1,5 @@
 /**
- * (C) Copyright IBM Corp. 2020.
+ * (C) Copyright IBM Corp. 2020, 2021.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,22 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.12.3-81ed37e0-20200929-215851
+ * IBM OpenAPI SDK Code Generator Version: 3.23.0-cea909d1-20201230-184314
  */
 
 // Package containerregistryv1 : Operations and models for the ContainerRegistryV1 service
 package containerregistryv1
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"reflect"
+	"time"
 
+	common "github.com/IBM/container-registry-go-sdk/common"
 	"github.com/IBM/go-sdk-core/v4/core"
-	common "github.ibm.com/ibmcloud/container-registry-go-sdk/common"
 )
 
 // ContainerRegistryV1 : Management interface for IBM Cloud Container Registry
@@ -117,20 +120,73 @@ func NewContainerRegistryV1(options *ContainerRegistryV1Options) (service *Conta
 	return
 }
 
+// GetServiceURLForRegion returns the service URL to be used for the specified region
+func GetServiceURLForRegion(region string) (string, error) {
+	return "", fmt.Errorf("service does not support regional URLs")
+}
+
+// Clone makes a copy of "containerRegistry" suitable for processing requests.
+func (containerRegistry *ContainerRegistryV1) Clone() *ContainerRegistryV1 {
+	if core.IsNil(containerRegistry) {
+		return nil
+	}
+	clone := *containerRegistry
+	clone.Service = containerRegistry.Service.Clone()
+	return &clone
+}
+
 // SetServiceURL sets the service URL
 func (containerRegistry *ContainerRegistryV1) SetServiceURL(url string) error {
 	return containerRegistry.Service.SetServiceURL(url)
 }
 
+// GetServiceURL returns the service URL
+func (containerRegistry *ContainerRegistryV1) GetServiceURL() string {
+	return containerRegistry.Service.GetServiceURL()
+}
+
+// SetDefaultHeaders sets HTTP headers to be sent in every request
+func (containerRegistry *ContainerRegistryV1) SetDefaultHeaders(headers http.Header) {
+	containerRegistry.Service.SetDefaultHeaders(headers)
+}
+
+// SetEnableGzipCompression sets the service's EnableGzipCompression field
+func (containerRegistry *ContainerRegistryV1) SetEnableGzipCompression(enableGzip bool) {
+	containerRegistry.Service.SetEnableGzipCompression(enableGzip)
+}
+
+// GetEnableGzipCompression returns the service's EnableGzipCompression field
+func (containerRegistry *ContainerRegistryV1) GetEnableGzipCompression() bool {
+	return containerRegistry.Service.GetEnableGzipCompression()
+}
+
+// EnableRetries enables automatic retries for requests invoked for this service instance.
+// If either parameter is specified as 0, then a default value is used instead.
+func (containerRegistry *ContainerRegistryV1) EnableRetries(maxRetries int, maxRetryInterval time.Duration) {
+	containerRegistry.Service.EnableRetries(maxRetries, maxRetryInterval)
+}
+
+// DisableRetries disables automatic retries for requests invoked for this service instance.
+func (containerRegistry *ContainerRegistryV1) DisableRetries() {
+	containerRegistry.Service.DisableRetries()
+}
+
 // GetAuth : Get authorization options
 // Get authorization options for the targeted account.
 func (containerRegistry *ContainerRegistryV1) GetAuth(getAuthOptions *GetAuthOptions) (result *AuthOptions, response *core.DetailedResponse, err error) {
+	return containerRegistry.GetAuthWithContext(context.Background(), getAuthOptions)
+}
+
+// GetAuthWithContext is an alternate form of the GetAuth method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) GetAuthWithContext(ctx context.Context, getAuthOptions *GetAuthOptions) (result *AuthOptions, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(getAuthOptions, "getAuthOptions")
 	if err != nil {
 		return
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/auth`, nil)
 	if err != nil {
 		return
@@ -171,6 +227,11 @@ func (containerRegistry *ContainerRegistryV1) GetAuth(getAuthOptions *GetAuthOpt
 // UpdateAuth : Update authorization options
 // Update authorization options for the targeted account.
 func (containerRegistry *ContainerRegistryV1) UpdateAuth(updateAuthOptions *UpdateAuthOptions) (response *core.DetailedResponse, err error) {
+	return containerRegistry.UpdateAuthWithContext(context.Background(), updateAuthOptions)
+}
+
+// UpdateAuthWithContext is an alternate form of the UpdateAuth method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) UpdateAuthWithContext(ctx context.Context, updateAuthOptions *UpdateAuthOptions) (response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(updateAuthOptions, "updateAuthOptions cannot be nil")
 	if err != nil {
 		return
@@ -181,6 +242,8 @@ func (containerRegistry *ContainerRegistryV1) UpdateAuth(updateAuthOptions *Upda
 	}
 
 	builder := core.NewRequestBuilder(core.PATCH)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/auth`, nil)
 	if err != nil {
 		return
@@ -224,12 +287,19 @@ func (containerRegistry *ContainerRegistryV1) UpdateAuth(updateAuthOptions *Upda
 // ListImages : List images
 // List all images in namespaces in a targeted IBM Cloud account.
 func (containerRegistry *ContainerRegistryV1) ListImages(listImagesOptions *ListImagesOptions) (result []RemoteAPIImage, response *core.DetailedResponse, err error) {
+	return containerRegistry.ListImagesWithContext(context.Background(), listImagesOptions)
+}
+
+// ListImagesWithContext is an alternate form of the ListImages method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) ListImagesWithContext(ctx context.Context, listImagesOptions *ListImagesOptions) (result []RemoteAPIImage, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(listImagesOptions, "listImagesOptions")
 	if err != nil {
 		return
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images`, nil)
 	if err != nil {
 		return
@@ -289,6 +359,11 @@ func (containerRegistry *ContainerRegistryV1) ListImages(listImagesOptions *List
 // BulkDeleteImages : Bulk delete images
 // Remove multiple container images from the registry.
 func (containerRegistry *ContainerRegistryV1) BulkDeleteImages(bulkDeleteImagesOptions *BulkDeleteImagesOptions) (result *ImageBulkDeleteResult, response *core.DetailedResponse, err error) {
+	return containerRegistry.BulkDeleteImagesWithContext(context.Background(), bulkDeleteImagesOptions)
+}
+
+// BulkDeleteImagesWithContext is an alternate form of the BulkDeleteImages method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) BulkDeleteImagesWithContext(ctx context.Context, bulkDeleteImagesOptions *BulkDeleteImagesOptions) (result *ImageBulkDeleteResult, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(bulkDeleteImagesOptions, "bulkDeleteImagesOptions cannot be nil")
 	if err != nil {
 		return
@@ -299,6 +374,8 @@ func (containerRegistry *ContainerRegistryV1) BulkDeleteImages(bulkDeleteImagesO
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/bulkdelete`, nil)
 	if err != nil {
 		return
@@ -345,6 +422,11 @@ func (containerRegistry *ContainerRegistryV1) BulkDeleteImages(bulkDeleteImagesO
 // ListImageDigests : List images by digest
 // List all images by digest in namespaces in a targeted IBM Cloud account.
 func (containerRegistry *ContainerRegistryV1) ListImageDigests(listImageDigestsOptions *ListImageDigestsOptions) (result []DigestListImage, response *core.DetailedResponse, err error) {
+	return containerRegistry.ListImageDigestsWithContext(context.Background(), listImageDigestsOptions)
+}
+
+// ListImageDigestsWithContext is an alternate form of the ListImageDigests method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) ListImageDigestsWithContext(ctx context.Context, listImageDigestsOptions *ListImageDigestsOptions) (result []DigestListImage, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(listImageDigestsOptions, "listImageDigestsOptions cannot be nil")
 	if err != nil {
 		return
@@ -355,6 +437,8 @@ func (containerRegistry *ContainerRegistryV1) ListImageDigests(listImageDigestsO
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/digests`, nil)
 	if err != nil {
 		return
@@ -414,6 +498,11 @@ func (containerRegistry *ContainerRegistryV1) ListImageDigests(listImageDigestsO
 // TagImage : Create tag
 // Create a new tag in a private registry that refers to an existing image in the same region.
 func (containerRegistry *ContainerRegistryV1) TagImage(tagImageOptions *TagImageOptions) (response *core.DetailedResponse, err error) {
+	return containerRegistry.TagImageWithContext(context.Background(), tagImageOptions)
+}
+
+// TagImageWithContext is an alternate form of the TagImage method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) TagImageWithContext(ctx context.Context, tagImageOptions *TagImageOptions) (response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(tagImageOptions, "tagImageOptions cannot be nil")
 	if err != nil {
 		return
@@ -424,6 +513,8 @@ func (containerRegistry *ContainerRegistryV1) TagImage(tagImageOptions *TagImage
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/tags`, nil)
 	if err != nil {
 		return
@@ -457,6 +548,11 @@ func (containerRegistry *ContainerRegistryV1) TagImage(tagImageOptions *TagImage
 // DeleteImage : Delete image
 // Delete a container image from the registry.
 func (containerRegistry *ContainerRegistryV1) DeleteImage(deleteImageOptions *DeleteImageOptions) (result *ImageDeleteResult, response *core.DetailedResponse, err error) {
+	return containerRegistry.DeleteImageWithContext(context.Background(), deleteImageOptions)
+}
+
+// DeleteImageWithContext is an alternate form of the DeleteImage method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) DeleteImageWithContext(ctx context.Context, deleteImageOptions *DeleteImageOptions) (result *ImageDeleteResult, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(deleteImageOptions, "deleteImageOptions cannot be nil")
 	if err != nil {
 		return
@@ -471,6 +567,8 @@ func (containerRegistry *ContainerRegistryV1) DeleteImage(deleteImageOptions *De
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/{image}`, pathParamsMap)
 	if err != nil {
 		return
@@ -511,6 +609,11 @@ func (containerRegistry *ContainerRegistryV1) DeleteImage(deleteImageOptions *De
 // InspectImage : Inspect an image
 // Inspect a container image in the private registry.
 func (containerRegistry *ContainerRegistryV1) InspectImage(inspectImageOptions *InspectImageOptions) (result *ImageInspection, response *core.DetailedResponse, err error) {
+	return containerRegistry.InspectImageWithContext(context.Background(), inspectImageOptions)
+}
+
+// InspectImageWithContext is an alternate form of the InspectImage method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) InspectImageWithContext(ctx context.Context, inspectImageOptions *InspectImageOptions) (result *ImageInspection, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(inspectImageOptions, "inspectImageOptions cannot be nil")
 	if err != nil {
 		return
@@ -525,6 +628,8 @@ func (containerRegistry *ContainerRegistryV1) InspectImage(inspectImageOptions *
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/{image}/json`, pathParamsMap)
 	if err != nil {
 		return
@@ -565,6 +670,11 @@ func (containerRegistry *ContainerRegistryV1) InspectImage(inspectImageOptions *
 // GetImageManifest : Get image manifest
 // Get the manifest for a container image in the private registry.
 func (containerRegistry *ContainerRegistryV1) GetImageManifest(getImageManifestOptions *GetImageManifestOptions) (response *core.DetailedResponse, err error) {
+	return containerRegistry.GetImageManifestWithContext(context.Background(), getImageManifestOptions)
+}
+
+// GetImageManifestWithContext is an alternate form of the GetImageManifest method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) GetImageManifestWithContext(ctx context.Context, getImageManifestOptions *GetImageManifestOptions) (response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(getImageManifestOptions, "getImageManifestOptions cannot be nil")
 	if err != nil {
 		return
@@ -579,6 +689,8 @@ func (containerRegistry *ContainerRegistryV1) GetImageManifest(getImageManifestO
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/images/{image}/manifest`, pathParamsMap)
 	if err != nil {
 		return
@@ -612,12 +724,19 @@ func (containerRegistry *ContainerRegistryV1) GetImageManifest(getImageManifestO
 // GetMessages : Get messages
 // Return any published system messages.
 func (containerRegistry *ContainerRegistryV1) GetMessages(getMessagesOptions *GetMessagesOptions) (result *string, response *core.DetailedResponse, err error) {
+	return containerRegistry.GetMessagesWithContext(context.Background(), getMessagesOptions)
+}
+
+// GetMessagesWithContext is an alternate form of the GetMessages method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) GetMessagesWithContext(ctx context.Context, getMessagesOptions *GetMessagesOptions) (result *string, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(getMessagesOptions, "getMessagesOptions")
 	if err != nil {
 		return
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/messages`, nil)
 	if err != nil {
 		return
@@ -646,12 +765,19 @@ func (containerRegistry *ContainerRegistryV1) GetMessages(getMessagesOptions *Ge
 // ListNamespaces : List namespaces
 // List authorized namespaces in the targeted IBM Cloud account.
 func (containerRegistry *ContainerRegistryV1) ListNamespaces(listNamespacesOptions *ListNamespacesOptions) (result []string, response *core.DetailedResponse, err error) {
+	return containerRegistry.ListNamespacesWithContext(context.Background(), listNamespacesOptions)
+}
+
+// ListNamespacesWithContext is an alternate form of the ListNamespaces method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) ListNamespacesWithContext(ctx context.Context, listNamespacesOptions *ListNamespacesOptions) (result []string, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(listNamespacesOptions, "listNamespacesOptions")
 	if err != nil {
 		return
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces`, nil)
 	if err != nil {
 		return
@@ -683,12 +809,19 @@ func (containerRegistry *ContainerRegistryV1) ListNamespaces(listNamespacesOptio
 // ListNamespaceDetails : Detailed namespace list
 // Retrieves details, such as resource group, for all your namespaces in the targeted registry.
 func (containerRegistry *ContainerRegistryV1) ListNamespaceDetails(listNamespaceDetailsOptions *ListNamespaceDetailsOptions) (result []NamespaceDetail, response *core.DetailedResponse, err error) {
+	return containerRegistry.ListNamespaceDetailsWithContext(context.Background(), listNamespaceDetailsOptions)
+}
+
+// ListNamespaceDetailsWithContext is an alternate form of the ListNamespaceDetails method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) ListNamespaceDetailsWithContext(ctx context.Context, listNamespaceDetailsOptions *ListNamespaceDetailsOptions) (result []NamespaceDetail, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(listNamespaceDetailsOptions, "listNamespaceDetailsOptions")
 	if err != nil {
 		return
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/details`, nil)
 	if err != nil {
 		return
@@ -729,6 +862,11 @@ func (containerRegistry *ContainerRegistryV1) ListNamespaceDetails(listNamespace
 // CreateNamespace : Create namespace
 // Add a namespace to the targeted IBM Cloud account.
 func (containerRegistry *ContainerRegistryV1) CreateNamespace(createNamespaceOptions *CreateNamespaceOptions) (result *Namespace, response *core.DetailedResponse, err error) {
+	return containerRegistry.CreateNamespaceWithContext(context.Background(), createNamespaceOptions)
+}
+
+// CreateNamespaceWithContext is an alternate form of the CreateNamespace method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) CreateNamespaceWithContext(ctx context.Context, createNamespaceOptions *CreateNamespaceOptions) (result *Namespace, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(createNamespaceOptions, "createNamespaceOptions cannot be nil")
 	if err != nil {
 		return
@@ -743,6 +881,8 @@ func (containerRegistry *ContainerRegistryV1) CreateNamespace(createNamespaceOpt
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{namespace}`, pathParamsMap)
 	if err != nil {
 		return
@@ -786,6 +926,11 @@ func (containerRegistry *ContainerRegistryV1) CreateNamespace(createNamespaceOpt
 // AssignNamespace : Assign namespace
 // Assign a namespace to the specified resource group in the targeted IBM Cloud account.
 func (containerRegistry *ContainerRegistryV1) AssignNamespace(assignNamespaceOptions *AssignNamespaceOptions) (result *Namespace, response *core.DetailedResponse, err error) {
+	return containerRegistry.AssignNamespaceWithContext(context.Background(), assignNamespaceOptions)
+}
+
+// AssignNamespaceWithContext is an alternate form of the AssignNamespace method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) AssignNamespaceWithContext(ctx context.Context, assignNamespaceOptions *AssignNamespaceOptions) (result *Namespace, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(assignNamespaceOptions, "assignNamespaceOptions cannot be nil")
 	if err != nil {
 		return
@@ -800,6 +945,8 @@ func (containerRegistry *ContainerRegistryV1) AssignNamespace(assignNamespaceOpt
 	}
 
 	builder := core.NewRequestBuilder(core.PATCH)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{namespace}`, pathParamsMap)
 	if err != nil {
 		return
@@ -844,6 +991,11 @@ func (containerRegistry *ContainerRegistryV1) AssignNamespace(assignNamespaceOpt
 // Delete the IBM Cloud Container Registry namespace from the targeted IBM Cloud account, and removes all images that
 // were in that namespace.
 func (containerRegistry *ContainerRegistryV1) DeleteNamespace(deleteNamespaceOptions *DeleteNamespaceOptions) (response *core.DetailedResponse, err error) {
+	return containerRegistry.DeleteNamespaceWithContext(context.Background(), deleteNamespaceOptions)
+}
+
+// DeleteNamespaceWithContext is an alternate form of the DeleteNamespace method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) DeleteNamespaceWithContext(ctx context.Context, deleteNamespaceOptions *DeleteNamespaceOptions) (response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(deleteNamespaceOptions, "deleteNamespaceOptions cannot be nil")
 	if err != nil {
 		return
@@ -858,6 +1010,8 @@ func (containerRegistry *ContainerRegistryV1) DeleteNamespace(deleteNamespaceOpt
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{namespace}`, pathParamsMap)
 	if err != nil {
 		return
@@ -888,12 +1042,19 @@ func (containerRegistry *ContainerRegistryV1) DeleteNamespace(deleteNamespaceOpt
 // GetPlans : Get plans
 // Get plans for the targeted account.
 func (containerRegistry *ContainerRegistryV1) GetPlans(getPlansOptions *GetPlansOptions) (result *Plan, response *core.DetailedResponse, err error) {
+	return containerRegistry.GetPlansWithContext(context.Background(), getPlansOptions)
+}
+
+// GetPlansWithContext is an alternate form of the GetPlans method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) GetPlansWithContext(ctx context.Context, getPlansOptions *GetPlansOptions) (result *Plan, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(getPlansOptions, "getPlansOptions")
 	if err != nil {
 		return
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/plans`, nil)
 	if err != nil {
 		return
@@ -934,6 +1095,11 @@ func (containerRegistry *ContainerRegistryV1) GetPlans(getPlansOptions *GetPlans
 // UpdatePlans : Update plans
 // Update plans for the targeted account.
 func (containerRegistry *ContainerRegistryV1) UpdatePlans(updatePlansOptions *UpdatePlansOptions) (response *core.DetailedResponse, err error) {
+	return containerRegistry.UpdatePlansWithContext(context.Background(), updatePlansOptions)
+}
+
+// UpdatePlansWithContext is an alternate form of the UpdatePlans method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) UpdatePlansWithContext(ctx context.Context, updatePlansOptions *UpdatePlansOptions) (response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(updatePlansOptions, "updatePlansOptions cannot be nil")
 	if err != nil {
 		return
@@ -944,6 +1110,8 @@ func (containerRegistry *ContainerRegistryV1) UpdatePlans(updatePlansOptions *Up
 	}
 
 	builder := core.NewRequestBuilder(core.PATCH)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/plans`, nil)
 	if err != nil {
 		return
@@ -984,12 +1152,19 @@ func (containerRegistry *ContainerRegistryV1) UpdatePlans(updatePlansOptions *Up
 // GetQuota : Get quotas
 // Get quotas for the targeted account.
 func (containerRegistry *ContainerRegistryV1) GetQuota(getQuotaOptions *GetQuotaOptions) (result *Quota, response *core.DetailedResponse, err error) {
+	return containerRegistry.GetQuotaWithContext(context.Background(), getQuotaOptions)
+}
+
+// GetQuotaWithContext is an alternate form of the GetQuota method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) GetQuotaWithContext(ctx context.Context, getQuotaOptions *GetQuotaOptions) (result *Quota, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(getQuotaOptions, "getQuotaOptions")
 	if err != nil {
 		return
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/quotas`, nil)
 	if err != nil {
 		return
@@ -1030,6 +1205,11 @@ func (containerRegistry *ContainerRegistryV1) GetQuota(getQuotaOptions *GetQuota
 // UpdateQuota : Update quotas
 // Update quotas for the targeted account.
 func (containerRegistry *ContainerRegistryV1) UpdateQuota(updateQuotaOptions *UpdateQuotaOptions) (response *core.DetailedResponse, err error) {
+	return containerRegistry.UpdateQuotaWithContext(context.Background(), updateQuotaOptions)
+}
+
+// UpdateQuotaWithContext is an alternate form of the UpdateQuota method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) UpdateQuotaWithContext(ctx context.Context, updateQuotaOptions *UpdateQuotaOptions) (response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(updateQuotaOptions, "updateQuotaOptions cannot be nil")
 	if err != nil {
 		return
@@ -1040,6 +1220,8 @@ func (containerRegistry *ContainerRegistryV1) UpdateQuota(updateQuotaOptions *Up
 	}
 
 	builder := core.NewRequestBuilder(core.PATCH)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/quotas`, nil)
 	if err != nil {
 		return
@@ -1083,12 +1265,19 @@ func (containerRegistry *ContainerRegistryV1) UpdateQuota(updateQuotaOptions *Up
 // ListRetentionPolicies : List retention policies
 // List retention policies for all namespaces in the targeted IBM Cloud account.
 func (containerRegistry *ContainerRegistryV1) ListRetentionPolicies(listRetentionPoliciesOptions *ListRetentionPoliciesOptions) (result map[string]RetentionPolicy, response *core.DetailedResponse, err error) {
+	return containerRegistry.ListRetentionPoliciesWithContext(context.Background(), listRetentionPoliciesOptions)
+}
+
+// ListRetentionPoliciesWithContext is an alternate form of the ListRetentionPolicies method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) ListRetentionPoliciesWithContext(ctx context.Context, listRetentionPoliciesOptions *ListRetentionPoliciesOptions) (result map[string]RetentionPolicy, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(listRetentionPoliciesOptions, "listRetentionPoliciesOptions")
 	if err != nil {
 		return
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/retentions`, nil)
 	if err != nil {
 		return
@@ -1129,6 +1318,11 @@ func (containerRegistry *ContainerRegistryV1) ListRetentionPolicies(listRetentio
 // SetRetentionPolicy : Set retention policy
 // Set the retention policy for the specified namespace.
 func (containerRegistry *ContainerRegistryV1) SetRetentionPolicy(setRetentionPolicyOptions *SetRetentionPolicyOptions) (response *core.DetailedResponse, err error) {
+	return containerRegistry.SetRetentionPolicyWithContext(context.Background(), setRetentionPolicyOptions)
+}
+
+// SetRetentionPolicyWithContext is an alternate form of the SetRetentionPolicy method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) SetRetentionPolicyWithContext(ctx context.Context, setRetentionPolicyOptions *SetRetentionPolicyOptions) (response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(setRetentionPolicyOptions, "setRetentionPolicyOptions cannot be nil")
 	if err != nil {
 		return
@@ -1139,6 +1333,8 @@ func (containerRegistry *ContainerRegistryV1) SetRetentionPolicy(setRetentionPol
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/retentions`, nil)
 	if err != nil {
 		return
@@ -1185,6 +1381,11 @@ func (containerRegistry *ContainerRegistryV1) SetRetentionPolicy(setRetentionPol
 // AnalyzeRetentionPolicy : Analyze retention policy
 // Analyze a retention policy, and get a list of what would be deleted by it.
 func (containerRegistry *ContainerRegistryV1) AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions *AnalyzeRetentionPolicyOptions) (result map[string][]string, response *core.DetailedResponse, err error) {
+	return containerRegistry.AnalyzeRetentionPolicyWithContext(context.Background(), analyzeRetentionPolicyOptions)
+}
+
+// AnalyzeRetentionPolicyWithContext is an alternate form of the AnalyzeRetentionPolicy method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) AnalyzeRetentionPolicyWithContext(ctx context.Context, analyzeRetentionPolicyOptions *AnalyzeRetentionPolicyOptions) (result map[string][]string, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(analyzeRetentionPolicyOptions, "analyzeRetentionPolicyOptions cannot be nil")
 	if err != nil {
 		return
@@ -1195,6 +1396,8 @@ func (containerRegistry *ContainerRegistryV1) AnalyzeRetentionPolicy(analyzeRete
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/retentions/analyze`, nil)
 	if err != nil {
 		return
@@ -1242,6 +1445,11 @@ func (containerRegistry *ContainerRegistryV1) AnalyzeRetentionPolicy(analyzeRete
 // GetRetentionPolicy : Get retention policy
 // Get the retention policy for the specified namespace.
 func (containerRegistry *ContainerRegistryV1) GetRetentionPolicy(getRetentionPolicyOptions *GetRetentionPolicyOptions) (result *RetentionPolicy, response *core.DetailedResponse, err error) {
+	return containerRegistry.GetRetentionPolicyWithContext(context.Background(), getRetentionPolicyOptions)
+}
+
+// GetRetentionPolicyWithContext is an alternate form of the GetRetentionPolicy method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) GetRetentionPolicyWithContext(ctx context.Context, getRetentionPolicyOptions *GetRetentionPolicyOptions) (result *RetentionPolicy, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(getRetentionPolicyOptions, "getRetentionPolicyOptions cannot be nil")
 	if err != nil {
 		return
@@ -1256,6 +1464,8 @@ func (containerRegistry *ContainerRegistryV1) GetRetentionPolicy(getRetentionPol
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/retentions/{namespace}`, pathParamsMap)
 	if err != nil {
 		return
@@ -1293,9 +1503,124 @@ func (containerRegistry *ContainerRegistryV1) GetRetentionPolicy(getRetentionPol
 	return
 }
 
+// GetSettings : Get account settings
+// Get account settings for the targeted account.
+func (containerRegistry *ContainerRegistryV1) GetSettings(getSettingsOptions *GetSettingsOptions) (result *AccountSettings, response *core.DetailedResponse, err error) {
+	return containerRegistry.GetSettingsWithContext(context.Background(), getSettingsOptions)
+}
+
+// GetSettingsWithContext is an alternate form of the GetSettings method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) GetSettingsWithContext(ctx context.Context, getSettingsOptions *GetSettingsOptions) (result *AccountSettings, response *core.DetailedResponse, err error) {
+	err = core.ValidateStruct(getSettingsOptions, "getSettingsOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/settings`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range getSettingsOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("container_registry", "V1", "GetSettings")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Accept", "application/json")
+	if containerRegistry.Account != nil {
+		builder.AddHeader("Account", fmt.Sprint(*containerRegistry.Account))
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	var rawResponse map[string]json.RawMessage
+	response, err = containerRegistry.Service.Request(request, &rawResponse)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalAccountSettings)
+	if err != nil {
+		return
+	}
+	response.Result = result
+
+	return
+}
+
+// UpdateSettings : Update account settings
+// Update settings for the targeted account.
+func (containerRegistry *ContainerRegistryV1) UpdateSettings(updateSettingsOptions *UpdateSettingsOptions) (response *core.DetailedResponse, err error) {
+	return containerRegistry.UpdateSettingsWithContext(context.Background(), updateSettingsOptions)
+}
+
+// UpdateSettingsWithContext is an alternate form of the UpdateSettings method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) UpdateSettingsWithContext(ctx context.Context, updateSettingsOptions *UpdateSettingsOptions) (response *core.DetailedResponse, err error) {
+	err = core.ValidateNotNil(updateSettingsOptions, "updateSettingsOptions cannot be nil")
+	if err != nil {
+		return
+	}
+	err = core.ValidateStruct(updateSettingsOptions, "updateSettingsOptions")
+	if err != nil {
+		return
+	}
+
+	builder := core.NewRequestBuilder(core.PATCH)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/settings`, nil)
+	if err != nil {
+		return
+	}
+
+	for headerName, headerValue := range updateSettingsOptions.Headers {
+		builder.AddHeader(headerName, headerValue)
+	}
+
+	sdkHeaders := common.GetSdkHeaders("container_registry", "V1", "UpdateSettings")
+	for headerName, headerValue := range sdkHeaders {
+		builder.AddHeader(headerName, headerValue)
+	}
+	builder.AddHeader("Content-Type", "application/json")
+	if containerRegistry.Account != nil {
+		builder.AddHeader("Account", fmt.Sprint(*containerRegistry.Account))
+	}
+
+	body := make(map[string]interface{})
+	if updateSettingsOptions.PlatformMetrics != nil {
+		body["platform_metrics"] = updateSettingsOptions.PlatformMetrics
+	}
+	_, err = builder.SetBodyContentJSON(body)
+	if err != nil {
+		return
+	}
+
+	request, err := builder.Build()
+	if err != nil {
+		return
+	}
+
+	response, err = containerRegistry.Service.Request(request, nil)
+
+	return
+}
+
 // DeleteImageTag : Delete tag
 // Untag a container image in the registry.
 func (containerRegistry *ContainerRegistryV1) DeleteImageTag(deleteImageTagOptions *DeleteImageTagOptions) (result *ImageDeleteResult, response *core.DetailedResponse, err error) {
+	return containerRegistry.DeleteImageTagWithContext(context.Background(), deleteImageTagOptions)
+}
+
+// DeleteImageTagWithContext is an alternate form of the DeleteImageTag method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) DeleteImageTagWithContext(ctx context.Context, deleteImageTagOptions *DeleteImageTagOptions) (result *ImageDeleteResult, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(deleteImageTagOptions, "deleteImageTagOptions cannot be nil")
 	if err != nil {
 		return
@@ -1310,6 +1635,8 @@ func (containerRegistry *ContainerRegistryV1) DeleteImageTag(deleteImageTagOptio
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/tags/{image}`, pathParamsMap)
 	if err != nil {
 		return
@@ -1350,12 +1677,19 @@ func (containerRegistry *ContainerRegistryV1) DeleteImageTag(deleteImageTagOptio
 // ListDeletedImages : List deleted images
 // List all images that are in the trash can.
 func (containerRegistry *ContainerRegistryV1) ListDeletedImages(listDeletedImagesOptions *ListDeletedImagesOptions) (result map[string]Trash, response *core.DetailedResponse, err error) {
+	return containerRegistry.ListDeletedImagesWithContext(context.Background(), listDeletedImagesOptions)
+}
+
+// ListDeletedImagesWithContext is an alternate form of the ListDeletedImages method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) ListDeletedImagesWithContext(ctx context.Context, listDeletedImagesOptions *ListDeletedImagesOptions) (result map[string]Trash, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(listDeletedImagesOptions, "listDeletedImagesOptions")
 	if err != nil {
 		return
 	}
 
 	builder := core.NewRequestBuilder(core.GET)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/trash`, nil)
 	if err != nil {
 		return
@@ -1400,6 +1734,11 @@ func (containerRegistry *ContainerRegistryV1) ListDeletedImages(listDeletedImage
 // RestoreTags : Restore a digest and all associated tags
 // In the targeted region, restore a digest, and all of its tags in the same repository, from the trash.
 func (containerRegistry *ContainerRegistryV1) RestoreTags(restoreTagsOptions *RestoreTagsOptions) (result *RestoreResult, response *core.DetailedResponse, err error) {
+	return containerRegistry.RestoreTagsWithContext(context.Background(), restoreTagsOptions)
+}
+
+// RestoreTagsWithContext is an alternate form of the RestoreTags method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) RestoreTagsWithContext(ctx context.Context, restoreTagsOptions *RestoreTagsOptions) (result *RestoreResult, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(restoreTagsOptions, "restoreTagsOptions cannot be nil")
 	if err != nil {
 		return
@@ -1414,6 +1753,8 @@ func (containerRegistry *ContainerRegistryV1) RestoreTags(restoreTagsOptions *Re
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/trash/{digest}/restoretags`, pathParamsMap)
 	if err != nil {
 		return
@@ -1454,6 +1795,11 @@ func (containerRegistry *ContainerRegistryV1) RestoreTags(restoreTagsOptions *Re
 // RestoreImage : Restore deleted image
 // Restore an image from the trash can.
 func (containerRegistry *ContainerRegistryV1) RestoreImage(restoreImageOptions *RestoreImageOptions) (response *core.DetailedResponse, err error) {
+	return containerRegistry.RestoreImageWithContext(context.Background(), restoreImageOptions)
+}
+
+// RestoreImageWithContext is an alternate form of the RestoreImage method which supports a Context parameter
+func (containerRegistry *ContainerRegistryV1) RestoreImageWithContext(ctx context.Context, restoreImageOptions *RestoreImageOptions) (response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(restoreImageOptions, "restoreImageOptions cannot be nil")
 	if err != nil {
 		return
@@ -1468,6 +1814,8 @@ func (containerRegistry *ContainerRegistryV1) RestoreImage(restoreImageOptions *
 	}
 
 	builder := core.NewRequestBuilder(core.POST)
+	builder = builder.WithContext(ctx)
+	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
 	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/trash/{image}/restore`, pathParamsMap)
 	if err != nil {
 		return
@@ -1495,17 +1843,34 @@ func (containerRegistry *ContainerRegistryV1) RestoreImage(restoreImageOptions *
 	return
 }
 
+// AccountSettings : Account settings for the targeted IBM Cloud account.
+type AccountSettings struct {
+	// Opt in to IBM Cloud Container Registry publishing platform metrics.
+	PlatformMetrics *bool `json:"platform_metrics,omitempty"`
+}
+
+// UnmarshalAccountSettings unmarshals an instance of AccountSettings from the specified map of raw messages.
+func UnmarshalAccountSettings(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(AccountSettings)
+	err = core.UnmarshalPrimitive(m, "platform_metrics", &obj.PlatformMetrics)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
 // AnalyzeRetentionPolicyOptions : The AnalyzeRetentionPolicy options.
 type AnalyzeRetentionPolicyOptions struct {
 	// Determines how many images will be retained for each repository when the retention policy is executed. The value -1
 	// denotes 'Unlimited' (all images are retained).
-	ImagesPerRepo *int64 `json:"images_per_repo,omitempty"`
+	ImagesPerRepo *int64
 
-	Namespace *string `json:"namespace,omitempty"`
+	Namespace *string
 
 	// Determines if untagged images are retained when executing the retention policy. This is false by default meaning
 	// untagged images will be deleted when the policy is executed.
-	RetainUntagged *bool `json:"retain_untagged,omitempty"`
+	RetainUntagged *bool
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1543,10 +1908,10 @@ func (options *AnalyzeRetentionPolicyOptions) SetHeaders(param map[string]string
 // AssignNamespaceOptions : The AssignNamespace options.
 type AssignNamespaceOptions struct {
 	// The ID of the resource group that the namespace will be created within.
-	XAuthResourceGroup *string `json:"X-Auth-Resource-Group" validate:"required"`
+	XAuthResourceGroup *string `validate:"required"`
 
 	// Adds the specified namespace to your IBM Cloud account.
-	Namespace *string `json:"namespace" validate:"required,ne="`
+	Namespace *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1606,7 +1971,7 @@ func UnmarshalAuthOptions(m map[string]json.RawMessage, result interface{}) (err
 type BulkDeleteImagesOptions struct {
 	// The full IBM Cloud registry path to the images that you want to delete, including its digest. All tags for the
 	// supplied digest are removed.
-	BulkDelete []string `json:"BulkDelete" validate:"required"`
+	BulkDelete []string `validate:"required"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1819,10 +2184,10 @@ func UnmarshalConfig(m map[string]json.RawMessage, result interface{}) (err erro
 // CreateNamespaceOptions : The CreateNamespace options.
 type CreateNamespaceOptions struct {
 	// Adds the specified namespace to your IBM Cloud account.
-	Namespace *string `json:"namespace" validate:"required,ne="`
+	Namespace *string `validate:"required,ne="`
 
 	// The ID of the resource group that the namespace will be created within.
-	XAuthResourceGroup *string `json:"X-Auth-Resource-Group,omitempty"`
+	XAuthResourceGroup *string
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1857,7 +2222,7 @@ func (options *CreateNamespaceOptions) SetHeaders(param map[string]string) *Crea
 type DeleteImageOptions struct {
 	// The full IBM Cloud registry path to the image that you want to delete, including its tag. If you do not provide a
 	// specific tag, the version with the `latest` tag is removed.
-	Image *string `json:"image" validate:"required,ne="`
+	Image *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1885,7 +2250,7 @@ func (options *DeleteImageOptions) SetHeaders(param map[string]string) *DeleteIm
 // DeleteImageTagOptions : The DeleteImageTag options.
 type DeleteImageTagOptions struct {
 	// The name of the image that you want to delete, in the format &lt;REPOSITORY&gt;:&lt;TAG&gt;.
-	Image *string `json:"image" validate:"required,ne="`
+	Image *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -1913,7 +2278,7 @@ func (options *DeleteImageTagOptions) SetHeaders(param map[string]string) *Delet
 // DeleteNamespaceOptions : The DeleteNamespace options.
 type DeleteNamespaceOptions struct {
 	// The namespace that you want to delete.
-	Namespace *string `json:"namespace" validate:"required,ne="`
+	Namespace *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2005,7 +2370,7 @@ func (options *GetAuthOptions) SetHeaders(param map[string]string) *GetAuthOptio
 type GetImageManifestOptions struct {
 	// The full IBM Cloud registry path to the image that you want to inspect. Run `ibmcloud cr images` or call the `GET
 	// /images/json` endpoint to review images that are in the registry.
-	Image *string `json:"image" validate:"required,ne="`
+	Image *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2087,7 +2452,7 @@ func (options *GetQuotaOptions) SetHeaders(param map[string]string) *GetQuotaOpt
 // GetRetentionPolicyOptions : The GetRetentionPolicy options.
 type GetRetentionPolicyOptions struct {
 	// Gets the retention policy for the specified namespace.
-	Namespace *string `json:"namespace" validate:"required,ne="`
+	Namespace *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2108,6 +2473,24 @@ func (options *GetRetentionPolicyOptions) SetNamespace(namespace string) *GetRet
 
 // SetHeaders : Allow user to set Headers
 func (options *GetRetentionPolicyOptions) SetHeaders(param map[string]string) *GetRetentionPolicyOptions {
+	options.Headers = param
+	return options
+}
+
+// GetSettingsOptions : The GetSettings options.
+type GetSettingsOptions struct {
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewGetSettingsOptions : Instantiate GetSettingsOptions
+func (*ContainerRegistryV1) NewGetSettingsOptions() *GetSettingsOptions {
+	return &GetSettingsOptions{}
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *GetSettingsOptions) SetHeaders(param map[string]string) *GetSettingsOptions {
 	options.Headers = param
 	return options
 }
@@ -2345,7 +2728,7 @@ func UnmarshalImageInspection(m map[string]json.RawMessage, result interface{}) 
 type InspectImageOptions struct {
 	// The full IBM Cloud registry path to the image that you want to inspect. Run `ibmcloud cr images` or call the `GET
 	// /images/json` endpoint to review images that are in the registry.
-	Image *string `json:"image" validate:"required,ne="`
+	Image *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2373,7 +2756,7 @@ func (options *InspectImageOptions) SetHeaders(param map[string]string) *Inspect
 // ListDeletedImagesOptions : The ListDeletedImages options.
 type ListDeletedImagesOptions struct {
 	// Limit results to trash can images in the given namespace only.
-	Namespace *string `json:"namespace,omitempty"`
+	Namespace *string
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2399,16 +2782,16 @@ func (options *ListDeletedImagesOptions) SetHeaders(param map[string]string) *Li
 // ListImageDigestsOptions : The ListImageDigests options.
 type ListImageDigestsOptions struct {
 	// ExcludeTagged returns only untagged digests.
-	ExcludeTagged *bool `json:"exclude_tagged,omitempty"`
+	ExcludeTagged *bool
 
 	// ExcludeVA returns the digest list with no VA scan results.
-	ExcludeVa *bool `json:"exclude_va,omitempty"`
+	ExcludeVa *bool
 
 	// When true, API will return the IBM public images if they exist in the targeted region.
-	IncludeIbm *bool `json:"include_ibm,omitempty"`
+	IncludeIbm *bool
 
 	// Repositories in which to restrict the output. If left empty all images for the account will be returned.
-	Repositories []string `json:"repositories,omitempty"`
+	Repositories []string
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2454,28 +2837,28 @@ type ListImagesOptions struct {
 	// Lists images that are stored in the specified namespace only. Query multiple namespaces by specifying this option
 	// for each namespace. If this option is not specified, images from all namespaces in the specified IBM Cloud account
 	// are listed.
-	Namespace *string `json:"namespace,omitempty"`
+	Namespace *string
 
 	// Includes IBM-provided public images in the list of images. If this option is not specified, private images are
 	// listed only. If this option is specified more than once, the last parsed setting is the setting that is used.
-	IncludeIBM *bool `json:"includeIBM,omitempty"`
+	IncludeIBM *bool
 
 	// Includes private images in the list of images. If this option is not specified, private images are listed. If this
 	// option is specified more than once, the last parsed setting is the setting that is used.
-	IncludePrivate *bool `json:"includePrivate,omitempty"`
+	IncludePrivate *bool
 
 	// Includes tags that reference multi-architecture manifest lists in the image list. If this option is not specified,
 	// tagged manifest lists are not shown in the list. If this option is specified more than once, the last parsed setting
 	// is the setting that is used.
-	IncludeManifestLists *bool `json:"includeManifestLists,omitempty"`
+	IncludeManifestLists *bool
 
 	// Displays Vulnerability Advisor status for the listed images. If this option is specified more than once, the last
 	// parsed setting is the setting that is used.
-	Vulnerabilities *bool `json:"vulnerabilities,omitempty"`
+	Vulnerabilities *bool
 
 	// Lists images that are stored in the specified repository, under your namespaces. Query multiple repositories by
 	// specifying this option for each repository. If this option is not specified, images from all repos are listed.
-	Repository *string `json:"repository,omitempty"`
+	Repository *string
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2822,7 +3205,7 @@ func UnmarshalRemoteAPIImage(m map[string]json.RawMessage, result interface{}) (
 type RestoreImageOptions struct {
 	// The name of the image that you want to restore, in the format &lt;REPOSITORY&gt;:&lt;TAG&gt;. Run `ibmcloud cr
 	// trash-list` or call the `GET /trash/json` endpoint to review images that are in the trash.
-	Image *string `json:"image" validate:"required,ne="`
+	Image *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2877,7 +3260,7 @@ type RestoreTagsOptions struct {
 	// The full IBM Cloud registry digest reference for the digest that you want to restore such as
 	// `icr.io/namespace/repo@sha256:a9be...`. Call the `GET /trash/json` endpoint to review digests that are in the trash
 	// and their tags in the same repository.
-	Digest *string `json:"digest" validate:"required,ne="`
+	Digest *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -2969,13 +3352,13 @@ func UnmarshalRootFS(m map[string]json.RawMessage, result interface{}) (err erro
 type SetRetentionPolicyOptions struct {
 	// Determines how many images will be retained for each repository when the retention policy is executed. The value -1
 	// denotes 'Unlimited' (all images are retained).
-	ImagesPerRepo *int64 `json:"images_per_repo,omitempty"`
+	ImagesPerRepo *int64
 
-	Namespace *string `json:"namespace,omitempty"`
+	Namespace *string
 
 	// Determines if untagged images are retained when executing the retention policy. This is false by default meaning
 	// untagged images will be deleted when the policy is executed.
-	RetainUntagged *bool `json:"retain_untagged,omitempty"`
+	RetainUntagged *bool
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -3014,10 +3397,10 @@ func (options *SetRetentionPolicyOptions) SetHeaders(param map[string]string) *S
 type TagImageOptions struct {
 	// The name of the image that you want to create a new tag for, in the format &lt;REPOSITORY&gt;:&lt;TAG&gt;. Run
 	// `ibmcloud cr images` or call the `GET /images/json` endpoint to review images that are in the registry.
-	Fromimage *string `json:"fromimage" validate:"required"`
+	Fromimage *string `validate:"required"`
 
 	// The new tag for the image, in the format &lt;REPOSITORY&gt;:&lt;TAG&gt;.
-	Toimage *string `json:"toimage" validate:"required"`
+	Toimage *string `validate:"required"`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -3074,10 +3457,10 @@ func UnmarshalTrash(m map[string]json.RawMessage, result interface{}) (err error
 // UpdateAuthOptions : The UpdateAuth options.
 type UpdateAuthOptions struct {
 	// Enable role based authorization when authenticating with IBM Cloud IAM.
-	IamAuthz *bool `json:"iam_authz,omitempty"`
+	IamAuthz *bool
 
 	// Restrict account to only be able to push and pull images over private connections.
-	PrivateOnly *bool `json:"private_only,omitempty"`
+	PrivateOnly *bool
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -3108,7 +3491,7 @@ func (options *UpdateAuthOptions) SetHeaders(param map[string]string) *UpdateAut
 
 // UpdatePlansOptions : The UpdatePlans options.
 type UpdatePlansOptions struct {
-	Plan *string `json:"plan,omitempty"`
+	Plan *string
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -3134,10 +3517,10 @@ func (options *UpdatePlansOptions) SetHeaders(param map[string]string) *UpdatePl
 // UpdateQuotaOptions : The UpdateQuota options.
 type UpdateQuotaOptions struct {
 	// Storage quota in megabytes. The value -1 denotes "Unlimited".
-	StorageMegabytes *int64 `json:"storage_megabytes,omitempty"`
+	StorageMegabytes *int64
 
 	// Traffic quota in megabytes. The value -1 denotes "Unlimited".
-	TrafficMegabytes *int64 `json:"traffic_megabytes,omitempty"`
+	TrafficMegabytes *int64
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
@@ -3162,6 +3545,32 @@ func (options *UpdateQuotaOptions) SetTrafficMegabytes(trafficMegabytes int64) *
 
 // SetHeaders : Allow user to set Headers
 func (options *UpdateQuotaOptions) SetHeaders(param map[string]string) *UpdateQuotaOptions {
+	options.Headers = param
+	return options
+}
+
+// UpdateSettingsOptions : The UpdateSettings options.
+type UpdateSettingsOptions struct {
+	// Opt in to IBM Cloud Container Registry publishing platform metrics.
+	PlatformMetrics *bool
+
+	// Allows users to set headers on API requests
+	Headers map[string]string
+}
+
+// NewUpdateSettingsOptions : Instantiate UpdateSettingsOptions
+func (*ContainerRegistryV1) NewUpdateSettingsOptions() *UpdateSettingsOptions {
+	return &UpdateSettingsOptions{}
+}
+
+// SetPlatformMetrics : Allow user to set PlatformMetrics
+func (options *UpdateSettingsOptions) SetPlatformMetrics(platformMetrics bool) *UpdateSettingsOptions {
+	options.PlatformMetrics = core.BoolPtr(platformMetrics)
+	return options
+}
+
+// SetHeaders : Allow user to set Headers
+func (options *UpdateSettingsOptions) SetHeaders(param map[string]string) *UpdateSettingsOptions {
 	options.Headers = param
 	return options
 }

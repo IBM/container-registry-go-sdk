@@ -63,7 +63,7 @@ Use this command to download and install the SDK to allow your Go application to
 use it:
 
 ```
-go get -u github.ibm.com/ibmcloud/container-registry-go-sdk
+go get -u github.com/IBM/container-registry-go-sdk
 ```
 
 #### Go modules  
@@ -72,7 +72,7 @@ Go application, like this:
 
 ```go
 import (
-	"github.ibm.com/ibmcloud/container-registry-go-sdk/exampleservicev1"
+	"github.com/IBM/container-registry-go-sdk/exampleservicev1"
 )
 ```
 
@@ -85,7 +85,7 @@ to your `Gopkg.toml` file.  Here is an example:
 
 ```
 [[constraint]]
-  name = "github.ibm.com/ibmcloud/container-registry-go-sdk"
+  name = "github.com/IBM/container-registry-go-sdk"
   version = "0.0.5"
 
 ```
@@ -103,7 +103,7 @@ please ask a question at
 
 ## Issues
 If you encounter an issue with the project, you are welcome to submit a
-[bug report](https://github.ibm.com/ibmcloud/container-registry-go-sdk/issues).
+[bug report](https://github.com/IBM/container-registry-go-sdk/issues).
 Before that, please search for similar issues. It's possible that someone has already reported the problem.
 
 ## Open source @ IBM
