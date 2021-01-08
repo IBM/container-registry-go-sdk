@@ -57,7 +57,13 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				Skip("External configuration file not found, skipping tests: " + err.Error())
 			}
-
+			/**
+			Your configuration file (container_registry_v1.env) should contain the following variables.
+			CONTAINER_REGISTRY_URL=[Registry URL, eg https://uk.icr.io]
+			CONTAINER_REGISTRY_AUTH_TYPE=iam
+			CONTAINER_REGISTRY_AUTH_URL=https://iam.cloud.ibm.com/identity/token
+			CONTAINER_REGISTRY_APIKEY=[An IAM Apikey]
+			*/
 			os.Setenv("IBM_CREDENTIALS_FILE", externalConfigFile)
 			config, err = core.GetServiceProperties(containerregistryv1.DefaultServiceName)
 			if err != nil {
