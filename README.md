@@ -75,7 +75,8 @@ Go application, like this:
 
 ```go
 import (
-	"github.com/IBM/container-registry-go-sdk/exampleservicev1"
+  "github.com/IBM/container-registry-go-sdk/containerregistryv1"
+  "github.com/IBM/container-registry-go-sdk/vulnerabilityadvisorv3"
 )
 ```
 
