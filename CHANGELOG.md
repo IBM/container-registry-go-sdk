@@ -1,3 +1,10 @@
+## [0.0.6](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.5...v0.0.6) (2021-01-11)
+
+
+### Bug Fixes
+
+* **Project:** Hygiene change to bump release version ([#5](https://github.com/IBM/container-registry-go-sdk/issues/5)) ([2fb6575](https://github.com/IBM/container-registry-go-sdk/commit/2fb65751e5beb35057a68a668c8a051231266f7b))
+
 ## [0.0.5]([secure]/ibmcloud/container-registry-go-sdk/compare/v0.0.4...v0.0.5) (2020-10-05)
 
 
