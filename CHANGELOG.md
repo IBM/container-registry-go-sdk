@@ -1,3 +1,11 @@
+## [0.0.7](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.6...v0.0.7) (2021-02-09)
+
+
+### Bug Fixes
+
+* **project:** minor update to Readme ([32c7251](https://github.com/IBM/container-registry-go-sdk/commit/32c725114665adba8e6a6f9f7fa3ed5015ef0703))
+* **Registry:** Pull in updated openapi doc ([467fc94](https://github.com/IBM/container-registry-go-sdk/commit/467fc94e4d6646c48108b0b5686e16589473339a))
+
 ## [0.0.6](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.5...v0.0.6) (2021-01-11)
 
 
