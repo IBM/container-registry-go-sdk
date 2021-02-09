@@ -491,9 +491,8 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 		It(`SetRetentionPolicy request example`, func() {
 			// begin-set_retention_policy
 
-			setRetentionPolicyOptions := containerRegistryService.NewSetRetentionPolicyOptions()
+			setRetentionPolicyOptions := containerRegistryService.NewSetRetentionPolicyOptions("birds")
 			setRetentionPolicyOptions.SetImagesPerRepo(int64(10))
-			setRetentionPolicyOptions.SetNamespace("birds")
 			setRetentionPolicyOptions.SetRetainUntagged(false)
 
 			response, err := containerRegistryService.SetRetentionPolicy(setRetentionPolicyOptions)
@@ -510,9 +509,8 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 		It(`AnalyzeRetentionPolicy request example`, func() {
 			// begin-analyze_retention_policy
 
-			analyzeRetentionPolicyOptions := containerRegistryService.NewAnalyzeRetentionPolicyOptions()
+			analyzeRetentionPolicyOptions := containerRegistryService.NewAnalyzeRetentionPolicyOptions("birds")
 			analyzeRetentionPolicyOptions.SetImagesPerRepo(int64(10))
-			analyzeRetentionPolicyOptions.SetNamespace("birds")
 			analyzeRetentionPolicyOptions.SetRetainUntagged(false)
 
 			mapStringstring, response, err := containerRegistryService.AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions)

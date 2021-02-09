@@ -144,7 +144,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`CreateNamespace(createNamespaceOptions *CreateNamespaceOptions)`, func() {
 
 			createNamespaceOptions := &containerregistryv1.CreateNamespaceOptions{
-				Namespace: core.StringPtr(baseNamespace),
+				Name: core.StringPtr(baseNamespace),
 			}
 
 			namespace, response, err := containerRegistry.CreateNamespace(createNamespaceOptions)
@@ -414,7 +414,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`AssignNamespace(assignNamespaceOptions *AssignNamespaceOptions)`, func() {
 
 			assignNamespaceOptions := &containerregistryv1.AssignNamespaceOptions{
-				Namespace:          core.StringPtr(namespaceLink),
+				Name:               core.StringPtr(namespaceLink),
 				XAuthResourceGroup: core.StringPtr(resouceGroupID),
 			}
 
@@ -677,7 +677,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 		It(`DeleteNamespace(deleteNamespaceOptions *DeleteNamespaceOptions)`, func() {
 
 			deleteNamespaceOptions := &containerregistryv1.DeleteNamespaceOptions{
-				Namespace: core.StringPtr(namespaceLink),
+				Name: core.StringPtr(namespaceLink),
 			}
 
 			response, err := containerRegistry.DeleteNamespace(deleteNamespaceOptions)
