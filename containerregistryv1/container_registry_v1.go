@@ -122,7 +122,19 @@ func NewContainerRegistryV1(options *ContainerRegistryV1Options) (service *Conta
 
 // GetServiceURLForRegion returns the service URL to be used for the specified region
 func GetServiceURLForRegion(region string) (string, error) {
-	return "", fmt.Errorf("service does not support regional URLs")
+	var endpoints = map[string]string{
+		"us-south":   "https://us.icr.io", // us-south
+		"uk-south":   "https://uk.icr.io", // uk-south
+		"eu-central": "https://de.icr.io", // eu-central
+		"ap-north":   "https://jp.icr.io", // ap-north
+		"ap-south":   "https://au.icr.io", // ap-south
+		"global":     "https://icr.io",    // global
+	}
+
+	if url, ok := endpoints[region]; ok {
+		return url, nil
+	}
+	return "", fmt.Errorf("service URL for region '%s' not found", region)
 }
 
 // Clone makes a copy of "containerRegistry" suitable for processing requests.
@@ -421,12 +433,12 @@ func (containerRegistry *ContainerRegistryV1) BulkDeleteImagesWithContext(ctx co
 
 // ListImageDigests : List images by digest
 // List all images by digest in namespaces in a targeted IBM Cloud account.
-func (containerRegistry *ContainerRegistryV1) ListImageDigests(listImageDigestsOptions *ListImageDigestsOptions) (result []DigestListImage, response *core.DetailedResponse, err error) {
+func (containerRegistry *ContainerRegistryV1) ListImageDigests(listImageDigestsOptions *ListImageDigestsOptions) (result []ImageDigest, response *core.DetailedResponse, err error) {
 	return containerRegistry.ListImageDigestsWithContext(context.Background(), listImageDigestsOptions)
 }
 
 // ListImageDigestsWithContext is an alternate form of the ListImageDigests method which supports a Context parameter
-func (containerRegistry *ContainerRegistryV1) ListImageDigestsWithContext(ctx context.Context, listImageDigestsOptions *ListImageDigestsOptions) (result []DigestListImage, response *core.DetailedResponse, err error) {
+func (containerRegistry *ContainerRegistryV1) ListImageDigestsWithContext(ctx context.Context, listImageDigestsOptions *ListImageDigestsOptions) (result []ImageDigest, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(listImageDigestsOptions, "listImageDigestsOptions cannot be nil")
 	if err != nil {
 		return
@@ -486,7 +498,7 @@ func (containerRegistry *ContainerRegistryV1) ListImageDigestsWithContext(ctx co
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalDigestListImage)
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalImageDigest)
 	if err != nil {
 		return
 	}
@@ -808,12 +820,12 @@ func (containerRegistry *ContainerRegistryV1) ListNamespacesWithContext(ctx cont
 
 // ListNamespaceDetails : Detailed namespace list
 // Retrieves details, such as resource group, for all your namespaces in the targeted registry.
-func (containerRegistry *ContainerRegistryV1) ListNamespaceDetails(listNamespaceDetailsOptions *ListNamespaceDetailsOptions) (result []NamespaceDetail, response *core.DetailedResponse, err error) {
+func (containerRegistry *ContainerRegistryV1) ListNamespaceDetails(listNamespaceDetailsOptions *ListNamespaceDetailsOptions) (result []NamespaceDetails, response *core.DetailedResponse, err error) {
 	return containerRegistry.ListNamespaceDetailsWithContext(context.Background(), listNamespaceDetailsOptions)
 }
 
 // ListNamespaceDetailsWithContext is an alternate form of the ListNamespaceDetails method which supports a Context parameter
-func (containerRegistry *ContainerRegistryV1) ListNamespaceDetailsWithContext(ctx context.Context, listNamespaceDetailsOptions *ListNamespaceDetailsOptions) (result []NamespaceDetail, response *core.DetailedResponse, err error) {
+func (containerRegistry *ContainerRegistryV1) ListNamespaceDetailsWithContext(ctx context.Context, listNamespaceDetailsOptions *ListNamespaceDetailsOptions) (result []NamespaceDetails, response *core.DetailedResponse, err error) {
 	err = core.ValidateStruct(listNamespaceDetailsOptions, "listNamespaceDetailsOptions")
 	if err != nil {
 		return
@@ -850,7 +862,7 @@ func (containerRegistry *ContainerRegistryV1) ListNamespaceDetailsWithContext(ct
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalNamespaceDetail)
+	err = core.UnmarshalModel(rawResponse, "", &result, UnmarshalNamespaceDetails)
 	if err != nil {
 		return
 	}
@@ -877,13 +889,13 @@ func (containerRegistry *ContainerRegistryV1) CreateNamespaceWithContext(ctx con
 	}
 
 	pathParamsMap := map[string]string{
-		"namespace": *createNamespaceOptions.Namespace,
+		"name": *createNamespaceOptions.Name,
 	}
 
 	builder := core.NewRequestBuilder(core.PUT)
 	builder = builder.WithContext(ctx)
 	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
-	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{namespace}`, pathParamsMap)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{name}`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -941,13 +953,13 @@ func (containerRegistry *ContainerRegistryV1) AssignNamespaceWithContext(ctx con
 	}
 
 	pathParamsMap := map[string]string{
-		"namespace": *assignNamespaceOptions.Namespace,
+		"name": *assignNamespaceOptions.Name,
 	}
 
 	builder := core.NewRequestBuilder(core.PATCH)
 	builder = builder.WithContext(ctx)
 	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
-	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{namespace}`, pathParamsMap)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{name}`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -1006,13 +1018,13 @@ func (containerRegistry *ContainerRegistryV1) DeleteNamespaceWithContext(ctx con
 	}
 
 	pathParamsMap := map[string]string{
-		"namespace": *deleteNamespaceOptions.Namespace,
+		"name": *deleteNamespaceOptions.Name,
 	}
 
 	builder := core.NewRequestBuilder(core.DELETE)
 	builder = builder.WithContext(ctx)
 	builder.EnableGzipCompression = containerRegistry.GetEnableGzipCompression()
-	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{namespace}`, pathParamsMap)
+	_, err = builder.ResolveRequestURL(containerRegistry.Service.Options.URL, `/api/v1/namespaces/{name}`, pathParamsMap)
 	if err != nil {
 		return
 	}
@@ -1354,11 +1366,11 @@ func (containerRegistry *ContainerRegistryV1) SetRetentionPolicyWithContext(ctx 
 	}
 
 	body := make(map[string]interface{})
-	if setRetentionPolicyOptions.ImagesPerRepo != nil {
-		body["images_per_repo"] = setRetentionPolicyOptions.ImagesPerRepo
-	}
 	if setRetentionPolicyOptions.Namespace != nil {
 		body["namespace"] = setRetentionPolicyOptions.Namespace
+	}
+	if setRetentionPolicyOptions.ImagesPerRepo != nil {
+		body["images_per_repo"] = setRetentionPolicyOptions.ImagesPerRepo
 	}
 	if setRetentionPolicyOptions.RetainUntagged != nil {
 		body["retain_untagged"] = setRetentionPolicyOptions.RetainUntagged
@@ -1418,11 +1430,11 @@ func (containerRegistry *ContainerRegistryV1) AnalyzeRetentionPolicyWithContext(
 	}
 
 	body := make(map[string]interface{})
-	if analyzeRetentionPolicyOptions.ImagesPerRepo != nil {
-		body["images_per_repo"] = analyzeRetentionPolicyOptions.ImagesPerRepo
-	}
 	if analyzeRetentionPolicyOptions.Namespace != nil {
 		body["namespace"] = analyzeRetentionPolicyOptions.Namespace
+	}
+	if analyzeRetentionPolicyOptions.ImagesPerRepo != nil {
+		body["images_per_repo"] = analyzeRetentionPolicyOptions.ImagesPerRepo
 	}
 	if analyzeRetentionPolicyOptions.RetainUntagged != nil {
 		body["retain_untagged"] = analyzeRetentionPolicyOptions.RetainUntagged
@@ -1862,11 +1874,12 @@ func UnmarshalAccountSettings(m map[string]json.RawMessage, result interface{}) 
 
 // AnalyzeRetentionPolicyOptions : The AnalyzeRetentionPolicy options.
 type AnalyzeRetentionPolicyOptions struct {
+	// The namespace to which the retention policy is attached.
+	Namespace *string `validate:"required"`
+
 	// Determines how many images will be retained for each repository when the retention policy is executed. The value -1
 	// denotes 'Unlimited' (all images are retained).
 	ImagesPerRepo *int64
-
-	Namespace *string
 
 	// Determines if untagged images are retained when executing the retention policy. This is false by default meaning
 	// untagged images will be deleted when the policy is executed.
@@ -1877,19 +1890,21 @@ type AnalyzeRetentionPolicyOptions struct {
 }
 
 // NewAnalyzeRetentionPolicyOptions : Instantiate AnalyzeRetentionPolicyOptions
-func (*ContainerRegistryV1) NewAnalyzeRetentionPolicyOptions() *AnalyzeRetentionPolicyOptions {
-	return &AnalyzeRetentionPolicyOptions{}
-}
-
-// SetImagesPerRepo : Allow user to set ImagesPerRepo
-func (options *AnalyzeRetentionPolicyOptions) SetImagesPerRepo(imagesPerRepo int64) *AnalyzeRetentionPolicyOptions {
-	options.ImagesPerRepo = core.Int64Ptr(imagesPerRepo)
-	return options
+func (*ContainerRegistryV1) NewAnalyzeRetentionPolicyOptions(namespace string) *AnalyzeRetentionPolicyOptions {
+	return &AnalyzeRetentionPolicyOptions{
+		Namespace: core.StringPtr(namespace),
+	}
 }
 
 // SetNamespace : Allow user to set Namespace
 func (options *AnalyzeRetentionPolicyOptions) SetNamespace(namespace string) *AnalyzeRetentionPolicyOptions {
 	options.Namespace = core.StringPtr(namespace)
+	return options
+}
+
+// SetImagesPerRepo : Allow user to set ImagesPerRepo
+func (options *AnalyzeRetentionPolicyOptions) SetImagesPerRepo(imagesPerRepo int64) *AnalyzeRetentionPolicyOptions {
+	options.ImagesPerRepo = core.Int64Ptr(imagesPerRepo)
 	return options
 }
 
@@ -1910,18 +1925,18 @@ type AssignNamespaceOptions struct {
 	// The ID of the resource group that the namespace will be created within.
 	XAuthResourceGroup *string `validate:"required"`
 
-	// Adds the specified namespace to your IBM Cloud account.
-	Namespace *string `validate:"required,ne="`
+	// The name of the namespace to be updated.
+	Name *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
 
 // NewAssignNamespaceOptions : Instantiate AssignNamespaceOptions
-func (*ContainerRegistryV1) NewAssignNamespaceOptions(xAuthResourceGroup string, namespace string) *AssignNamespaceOptions {
+func (*ContainerRegistryV1) NewAssignNamespaceOptions(xAuthResourceGroup string, name string) *AssignNamespaceOptions {
 	return &AssignNamespaceOptions{
 		XAuthResourceGroup: core.StringPtr(xAuthResourceGroup),
-		Namespace:          core.StringPtr(namespace),
+		Name:               core.StringPtr(name),
 	}
 }
 
@@ -1931,9 +1946,9 @@ func (options *AssignNamespaceOptions) SetXAuthResourceGroup(xAuthResourceGroup 
 	return options
 }
 
-// SetNamespace : Allow user to set Namespace
-func (options *AssignNamespaceOptions) SetNamespace(namespace string) *AssignNamespaceOptions {
-	options.Namespace = core.StringPtr(namespace)
+// SetName : Allow user to set Name
+func (options *AssignNamespaceOptions) SetName(name string) *AssignNamespaceOptions {
+	options.Name = core.StringPtr(name)
 	return options
 }
 
@@ -2183,8 +2198,8 @@ func UnmarshalConfig(m map[string]json.RawMessage, result interface{}) (err erro
 
 // CreateNamespaceOptions : The CreateNamespace options.
 type CreateNamespaceOptions struct {
-	// Adds the specified namespace to your IBM Cloud account.
-	Namespace *string `validate:"required,ne="`
+	// The name of the namespace.
+	Name *string `validate:"required,ne="`
 
 	// The ID of the resource group that the namespace will be created within.
 	XAuthResourceGroup *string
@@ -2194,15 +2209,15 @@ type CreateNamespaceOptions struct {
 }
 
 // NewCreateNamespaceOptions : Instantiate CreateNamespaceOptions
-func (*ContainerRegistryV1) NewCreateNamespaceOptions(namespace string) *CreateNamespaceOptions {
+func (*ContainerRegistryV1) NewCreateNamespaceOptions(name string) *CreateNamespaceOptions {
 	return &CreateNamespaceOptions{
-		Namespace: core.StringPtr(namespace),
+		Name: core.StringPtr(name),
 	}
 }
 
-// SetNamespace : Allow user to set Namespace
-func (options *CreateNamespaceOptions) SetNamespace(namespace string) *CreateNamespaceOptions {
-	options.Namespace = core.StringPtr(namespace)
+// SetName : Allow user to set Name
+func (options *CreateNamespaceOptions) SetName(name string) *CreateNamespaceOptions {
+	options.Name = core.StringPtr(name)
 	return options
 }
 
@@ -2277,23 +2292,23 @@ func (options *DeleteImageTagOptions) SetHeaders(param map[string]string) *Delet
 
 // DeleteNamespaceOptions : The DeleteNamespace options.
 type DeleteNamespaceOptions struct {
-	// The namespace that you want to delete.
-	Namespace *string `validate:"required,ne="`
+	// The name of the namespace that you want to delete.
+	Name *string `validate:"required,ne="`
 
 	// Allows users to set headers on API requests
 	Headers map[string]string
 }
 
 // NewDeleteNamespaceOptions : Instantiate DeleteNamespaceOptions
-func (*ContainerRegistryV1) NewDeleteNamespaceOptions(namespace string) *DeleteNamespaceOptions {
+func (*ContainerRegistryV1) NewDeleteNamespaceOptions(name string) *DeleteNamespaceOptions {
 	return &DeleteNamespaceOptions{
-		Namespace: core.StringPtr(namespace),
+		Name: core.StringPtr(name),
 	}
 }
 
-// SetNamespace : Allow user to set Namespace
-func (options *DeleteNamespaceOptions) SetNamespace(namespace string) *DeleteNamespaceOptions {
-	options.Namespace = core.StringPtr(namespace)
+// SetName : Allow user to set Name
+func (options *DeleteNamespaceOptions) SetName(name string) *DeleteNamespaceOptions {
+	options.Name = core.StringPtr(name)
 	return options
 }
 
@@ -2301,51 +2316,6 @@ func (options *DeleteNamespaceOptions) SetNamespace(namespace string) *DeleteNam
 func (options *DeleteNamespaceOptions) SetHeaders(param map[string]string) *DeleteNamespaceOptions {
 	options.Headers = param
 	return options
-}
-
-// DigestListImage : Important information about an image.
-type DigestListImage struct {
-	// The build date of the image.
-	Created *int64 `json:"created,omitempty"`
-
-	// The image digest.
-	ID *string `json:"id,omitempty"`
-
-	// The type of the image, such as 'Docker Image Manifest V2, Schema 2' or 'OCI Image Manifest v1'.
-	ManifestType *string `json:"manifestType,omitempty"`
-
-	// A map of image repositories to tags.
-	RepoTags map[string]interface{} `json:"repoTags,omitempty"`
-
-	// The size of the image in bytes.
-	Size *int64 `json:"size,omitempty"`
-}
-
-// UnmarshalDigestListImage unmarshals an instance of DigestListImage from the specified map of raw messages.
-func UnmarshalDigestListImage(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(DigestListImage)
-	err = core.UnmarshalPrimitive(m, "created", &obj.Created)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "manifestType", &obj.ManifestType)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "repoTags", &obj.RepoTags)
-	if err != nil {
-		return
-	}
-	err = core.UnmarshalPrimitive(m, "size", &obj.Size)
-	if err != nil {
-		return
-	}
-	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
-	return
 }
 
 // GetAuthOptions : The GetAuth options.
@@ -2595,6 +2565,51 @@ type ImageDeleteResult struct {
 func UnmarshalImageDeleteResult(m map[string]json.RawMessage, result interface{}) (err error) {
 	obj := new(ImageDeleteResult)
 	err = core.UnmarshalPrimitive(m, "Untagged", &obj.Untagged)
+	if err != nil {
+		return
+	}
+	reflect.ValueOf(result).Elem().Set(reflect.ValueOf(obj))
+	return
+}
+
+// ImageDigest : Important information about an image.
+type ImageDigest struct {
+	// The build date of the image.
+	Created *int64 `json:"created,omitempty"`
+
+	// The image digest.
+	ID *string `json:"id,omitempty"`
+
+	// The type of the image, such as 'Docker Image Manifest V2, Schema 2' or 'OCI Image Manifest v1'.
+	ManifestType *string `json:"manifestType,omitempty"`
+
+	// A map of image repositories to tags.
+	RepoTags map[string]interface{} `json:"repoTags,omitempty"`
+
+	// The size of the image in bytes.
+	Size *int64 `json:"size,omitempty"`
+}
+
+// UnmarshalImageDigest unmarshals an instance of ImageDigest from the specified map of raw messages.
+func UnmarshalImageDigest(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(ImageDigest)
+	err = core.UnmarshalPrimitive(m, "created", &obj.Created)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "id", &obj.ID)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "manifestType", &obj.ManifestType)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "repoTags", &obj.RepoTags)
+	if err != nil {
+		return
+	}
+	err = core.UnmarshalPrimitive(m, "size", &obj.Size)
 	if err != nil {
 		return
 	}
@@ -2981,8 +2996,8 @@ func UnmarshalNamespace(m map[string]json.RawMessage, result interface{}) (err e
 	return
 }
 
-// NamespaceDetail : Details of a namespace.
-type NamespaceDetail struct {
+// NamespaceDetails : Details of a namespace.
+type NamespaceDetails struct {
 	// The IBM Cloud account that owns the namespace.
 	Account *string `json:"account,omitempty"`
 
@@ -3004,9 +3019,9 @@ type NamespaceDetail struct {
 	UpdatedDate *string `json:"updated_date,omitempty"`
 }
 
-// UnmarshalNamespaceDetail unmarshals an instance of NamespaceDetail from the specified map of raw messages.
-func UnmarshalNamespaceDetail(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(NamespaceDetail)
+// UnmarshalNamespaceDetails unmarshals an instance of NamespaceDetails from the specified map of raw messages.
+func UnmarshalNamespaceDetails(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(NamespaceDetails)
 	err = core.UnmarshalPrimitive(m, "account", &obj.Account)
 	if err != nil {
 		return
@@ -3291,11 +3306,21 @@ type RetentionPolicy struct {
 	// denotes 'Unlimited' (all images are retained).
 	ImagesPerRepo *int64 `json:"images_per_repo,omitempty"`
 
-	Namespace *string `json:"namespace,omitempty"`
+	// The namespace to which the retention policy is attached.
+	Namespace *string `json:"namespace" validate:"required"`
 
 	// Determines if untagged images are retained when executing the retention policy. This is false by default meaning
 	// untagged images will be deleted when the policy is executed.
 	RetainUntagged *bool `json:"retain_untagged,omitempty"`
+}
+
+// NewRetentionPolicy : Instantiate RetentionPolicy (Generic Model Constructor)
+func (*ContainerRegistryV1) NewRetentionPolicy(namespace string) (model *RetentionPolicy, err error) {
+	model = &RetentionPolicy{
+		Namespace: core.StringPtr(namespace),
+	}
+	err = core.ValidateStruct(model, "required parameters")
+	return
 }
 
 // UnmarshalRetentionPolicy unmarshals an instance of RetentionPolicy from the specified map of raw messages.
@@ -3350,11 +3375,12 @@ func UnmarshalRootFS(m map[string]json.RawMessage, result interface{}) (err erro
 
 // SetRetentionPolicyOptions : The SetRetentionPolicy options.
 type SetRetentionPolicyOptions struct {
+	// The namespace to which the retention policy is attached.
+	Namespace *string `validate:"required"`
+
 	// Determines how many images will be retained for each repository when the retention policy is executed. The value -1
 	// denotes 'Unlimited' (all images are retained).
 	ImagesPerRepo *int64
-
-	Namespace *string
 
 	// Determines if untagged images are retained when executing the retention policy. This is false by default meaning
 	// untagged images will be deleted when the policy is executed.
@@ -3365,19 +3391,21 @@ type SetRetentionPolicyOptions struct {
 }
 
 // NewSetRetentionPolicyOptions : Instantiate SetRetentionPolicyOptions
-func (*ContainerRegistryV1) NewSetRetentionPolicyOptions() *SetRetentionPolicyOptions {
-	return &SetRetentionPolicyOptions{}
-}
-
-// SetImagesPerRepo : Allow user to set ImagesPerRepo
-func (options *SetRetentionPolicyOptions) SetImagesPerRepo(imagesPerRepo int64) *SetRetentionPolicyOptions {
-	options.ImagesPerRepo = core.Int64Ptr(imagesPerRepo)
-	return options
+func (*ContainerRegistryV1) NewSetRetentionPolicyOptions(namespace string) *SetRetentionPolicyOptions {
+	return &SetRetentionPolicyOptions{
+		Namespace: core.StringPtr(namespace),
+	}
 }
 
 // SetNamespace : Allow user to set Namespace
 func (options *SetRetentionPolicyOptions) SetNamespace(namespace string) *SetRetentionPolicyOptions {
 	options.Namespace = core.StringPtr(namespace)
+	return options
+}
+
+// SetImagesPerRepo : Allow user to set ImagesPerRepo
+func (options *SetRetentionPolicyOptions) SetImagesPerRepo(imagesPerRepo int64) *SetRetentionPolicyOptions {
+	options.ImagesPerRepo = core.Int64Ptr(imagesPerRepo)
 	return options
 }
 
