@@ -244,7 +244,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			listImageDigestsOptions := containerRegistryService.NewListImageDigestsOptions()
 			listImageDigestsOptions.SetExcludeTagged(false)
 			listImageDigestsOptions.SetExcludeVa(false)
-			listImageDigestsOptions.SetIncludeIbm(false)
+			listImageDigestsOptions.SetIncludeIBM(false)
 
 			digestListImage, response, err := containerRegistryService.ListImageDigests(listImageDigestsOptions)
 			if err != nil {

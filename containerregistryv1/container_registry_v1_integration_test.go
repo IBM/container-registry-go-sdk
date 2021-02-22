@@ -255,7 +255,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			listImagesOptions := &containerregistryv1.ListImagesOptions{
 				Namespace:            core.StringPtr(namespaceLink),
-				IncludeIBM:           core.BoolPtr(true),
+				IncludeIBM:           core.BoolPtr(false),
 				IncludePrivate:       core.BoolPtr(true),
 				IncludeManifestLists: core.BoolPtr(true),
 				Vulnerabilities:      core.BoolPtr(true),
@@ -299,7 +299,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			listImageDigestsOptions := &containerregistryv1.ListImageDigestsOptions{
 				ExcludeTagged: core.BoolPtr(false),
 				ExcludeVa:     core.BoolPtr(false),
-				IncludeIbm:    core.BoolPtr(false),
+				IncludeIBM:    core.BoolPtr(false),
 			}
 
 			digestListImage, response, err := containerRegistry.ListImageDigests(listImageDigestsOptions)
@@ -307,7 +307,13 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(digestListImage).ToNot(BeNil())
-			Expect(digestListImage[0].RepoTags[fmt.Sprintf("%s/%s/sdktest", registryDNSName, namespaceLink)]).ToNot(BeNil())
+			found := false
+			for _, img := range digestListImage {
+				if img.RepoTags[fmt.Sprintf("%s/%s/sdktest", registryDNSName, namespaceLink)] != nil {
+					found = true
+				}
+			}
+			Expect(found).To(BeTrue())
 		})
 	})
 
