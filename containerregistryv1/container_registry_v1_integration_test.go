@@ -45,6 +45,7 @@ CONTAINER_REGISTRY_RESOURCE_GROUP_ID=[Your resource group ID]
 CONTAINER_REGISTRY_NAMESPACE=[Namespace name, to be created and deleted by the test]
 CONTAINER_REGISTRY_SEED_IMAGE=[An existing namespace/repo:tag to copy in this test, eg: my_existing_namespace/seedimage:1234]
 CONTAINER_REGISTRY_SEED_DIGEST=[The digest of the seed image, eg: sha256:aaaaaa9e4044327fd101ca1fd4043e6f3ad921ae7ee901e9142e6e36deadbeef]
+APIKEY=432hklhklj432432
  *
  * The integration test will automatically skip tests if the required config file is not available.
 */
