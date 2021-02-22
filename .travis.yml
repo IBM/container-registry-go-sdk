@@ -32,7 +32,6 @@ script:
 
 # To enable semantic-release, uncomment these sections.
 before_deploy:
-- pyenv global 2.7.15
 - pip install --user bump2version
 - npm install @semantic-release/changelog
 - npm install @semantic-release/exec
