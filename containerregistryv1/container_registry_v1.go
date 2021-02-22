@@ -15,7 +15,7 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.23.0-cea909d1-20201230-184314
+ * IBM OpenAPI SDK Code Generator Version: 3.28.0-55613c9e-20210220-164656
  */
 
 // Package containerregistryv1 : Operations and models for the ContainerRegistryV1 service
@@ -30,7 +30,7 @@ import (
 	"time"
 
 	common "github.com/IBM/container-registry-go-sdk/common"
-	"github.com/IBM/go-sdk-core/v4/core"
+	"github.com/IBM/go-sdk-core/v5/core"
 )
 
 // ContainerRegistryV1 : Management interface for IBM Cloud Container Registry
@@ -123,12 +123,13 @@ func NewContainerRegistryV1(options *ContainerRegistryV1Options) (service *Conta
 // GetServiceURLForRegion returns the service URL to be used for the specified region
 func GetServiceURLForRegion(region string) (string, error) {
 	var endpoints = map[string]string{
-		"us-south":   "https://us.icr.io", // us-south
-		"uk-south":   "https://uk.icr.io", // uk-south
-		"eu-central": "https://de.icr.io", // eu-central
-		"ap-north":   "https://jp.icr.io", // ap-north
-		"ap-south":   "https://au.icr.io", // ap-south
-		"global":     "https://icr.io",    // global
+		"us-south":   "https://us.icr.io",  // us-south
+		"uk-south":   "https://uk.icr.io",  // uk-south
+		"eu-central": "https://de.icr.io",  // eu-central
+		"ap-north":   "https://jp.icr.io",  // ap-north
+		"ap-south":   "https://au.icr.io",  // ap-south
+		"global":     "https://icr.io",     // global
+		"jp-osa":     "https://jp2.icr.io", // jp-osa
 	}
 
 	if url, ok := endpoints[region]; ok {
@@ -477,8 +478,8 @@ func (containerRegistry *ContainerRegistryV1) ListImageDigestsWithContext(ctx co
 	if listImageDigestsOptions.ExcludeVa != nil {
 		body["exclude_va"] = listImageDigestsOptions.ExcludeVa
 	}
-	if listImageDigestsOptions.IncludeIbm != nil {
-		body["include_ibm"] = listImageDigestsOptions.IncludeIbm
+	if listImageDigestsOptions.IncludeIBM != nil {
+		body["include_ibm"] = listImageDigestsOptions.IncludeIBM
 	}
 	if listImageDigestsOptions.Repositories != nil {
 		body["repositories"] = listImageDigestsOptions.Repositories
@@ -2659,7 +2660,7 @@ type ImageInspection struct {
 	Parent *string `json:"Parent,omitempty"`
 
 	// RootFS contains information about the root filesystem of a container image.
-	RootFS *RootFS `json:"RootFS,omitempty"`
+	RootFs *RootFs `json:"RootFS,omitempty"`
 
 	// The size of the image in bytes.
 	Size *int64 `json:"Size,omitempty"`
@@ -2723,7 +2724,7 @@ func UnmarshalImageInspection(m map[string]json.RawMessage, result interface{}) 
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalModel(m, "RootFS", &obj.RootFS, UnmarshalRootFS)
+	err = core.UnmarshalModel(m, "RootFS", &obj.RootFs, UnmarshalRootFs)
 	if err != nil {
 		return
 	}
@@ -2803,7 +2804,7 @@ type ListImageDigestsOptions struct {
 	ExcludeVa *bool
 
 	// When true, API will return the IBM public images if they exist in the targeted region.
-	IncludeIbm *bool
+	IncludeIBM *bool
 
 	// Repositories in which to restrict the output. If left empty all images for the account will be returned.
 	Repositories []string
@@ -2829,9 +2830,9 @@ func (options *ListImageDigestsOptions) SetExcludeVa(excludeVa bool) *ListImageD
 	return options
 }
 
-// SetIncludeIbm : Allow user to set IncludeIbm
-func (options *ListImageDigestsOptions) SetIncludeIbm(includeIbm bool) *ListImageDigestsOptions {
-	options.IncludeIbm = core.BoolPtr(includeIbm)
+// SetIncludeIBM : Allow user to set IncludeIBM
+func (options *ListImageDigestsOptions) SetIncludeIBM(includeIBM bool) *ListImageDigestsOptions {
+	options.IncludeIBM = core.BoolPtr(includeIBM)
 	return options
 }
 
@@ -3005,7 +3006,7 @@ type NamespaceDetails struct {
 	CreatedDate *string `json:"created_date,omitempty"`
 
 	// If the namespace has been assigned to a resource group, this is the IBM Cloud CRN representing the namespace.
-	Crn *string `json:"crn,omitempty"`
+	CRN *string `json:"crn,omitempty"`
 
 	Name *string `json:"name,omitempty"`
 
@@ -3030,7 +3031,7 @@ func UnmarshalNamespaceDetails(m map[string]json.RawMessage, result interface{})
 	if err != nil {
 		return
 	}
-	err = core.UnmarshalPrimitive(m, "crn", &obj.Crn)
+	err = core.UnmarshalPrimitive(m, "crn", &obj.CRN)
 	if err != nil {
 		return
 	}
@@ -3342,8 +3343,8 @@ func UnmarshalRetentionPolicy(m map[string]json.RawMessage, result interface{}) 
 	return
 }
 
-// RootFS : RootFS contains information about the root filesystem of a container image.
-type RootFS struct {
+// RootFs : RootFS contains information about the root filesystem of a container image.
+type RootFs struct {
 	// Descriptor for the base layer in the image.
 	BaseLayer *string `json:"BaseLayer,omitempty"`
 
@@ -3354,9 +3355,9 @@ type RootFS struct {
 	Type *string `json:"Type,omitempty"`
 }
 
-// UnmarshalRootFS unmarshals an instance of RootFS from the specified map of raw messages.
-func UnmarshalRootFS(m map[string]json.RawMessage, result interface{}) (err error) {
-	obj := new(RootFS)
+// UnmarshalRootFs unmarshals an instance of RootFs from the specified map of raw messages.
+func UnmarshalRootFs(m map[string]json.RawMessage, result interface{}) (err error) {
+	obj := new(RootFs)
 	err = core.UnmarshalPrimitive(m, "BaseLayer", &obj.BaseLayer)
 	if err != nil {
 		return

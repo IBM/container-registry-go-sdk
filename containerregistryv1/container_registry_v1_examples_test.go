@@ -24,7 +24,7 @@ import (
 	"os"
 
 	"github.com/IBM/container-registry-go-sdk/containerregistryv1"
-	"github.com/IBM/go-sdk-core/v4/core"
+	"github.com/IBM/go-sdk-core/v5/core"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
@@ -244,7 +244,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			listImageDigestsOptions := containerRegistryService.NewListImageDigestsOptions()
 			listImageDigestsOptions.SetExcludeTagged(false)
 			listImageDigestsOptions.SetExcludeVa(false)
-			listImageDigestsOptions.SetIncludeIbm(false)
+			listImageDigestsOptions.SetIncludeIBM(false)
 
 			digestListImage, response, err := containerRegistryService.ListImageDigests(listImageDigestsOptions)
 			if err != nil {
