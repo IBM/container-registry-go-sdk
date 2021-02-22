@@ -24,7 +24,7 @@ import (
 	"os"
 
 	"github.com/IBM/container-registry-go-sdk/containerregistryv1"
-	"github.com/IBM/go-sdk-core/v4/core"
+	"github.com/IBM/go-sdk-core/v5/core"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 )
