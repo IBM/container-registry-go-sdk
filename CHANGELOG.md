@@ -1,3 +1,11 @@
+## [0.0.9](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.8...v0.0.9) (2021-02-22)
+
+
+### Bug Fixes
+
+* **Project:** inject detect secrets checker ([#8](https://github.com/IBM/container-registry-go-sdk/issues/8)) ([197e7ae](https://github.com/IBM/container-registry-go-sdk/commit/197e7ae585e5344ad0d056abf7bd1fd612877846))
+* **Project:** Unbreak semver tool ([#9](https://github.com/IBM/container-registry-go-sdk/issues/9)) ([c58f860](https://github.com/IBM/container-registry-go-sdk/commit/c58f8608d7a4bfe7695a45b3a07a85cbd8bace0d))
+
 ## [0.0.8](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.7...v0.0.8) (2021-02-22)
 
 
