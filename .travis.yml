@@ -1,7 +1,7 @@
 language: go
 
 go:
-  - "1.14.9"
+  - "1.14.12"
 
 dist: xenial
 
@@ -15,7 +15,9 @@ env:
 
 before_install:
   - sudo apt-get update
-  - sudo apt-get install python
+  - pyenv versions
+  - pyenv global 3.7.1
+  - pip3 install pre-commit
   - nvm install 12
   - npm install -g npm@6.x
   #- '[ "${TRAVIS_PULL_REQUEST}" == "false" ] && openssl aes-256-cbc -K $my_key -iv $my_iv -in myservice.env.enc -out myservice.env -d || true'
@@ -25,9 +27,12 @@ install:
 
 script:
   - make travis-ci
+  - pre-commit install
+  - pre-commit run detect-secrets
 
 # To enable semantic-release, uncomment these sections.
 before_deploy:
+- pyenv global 2.7.15
 - pip install --user bump2version
 - npm install @semantic-release/changelog
 - npm install @semantic-release/exec
