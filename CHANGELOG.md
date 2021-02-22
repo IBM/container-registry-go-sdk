@@ -1,3 +1,10 @@
+## [0.0.8](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.7...v0.0.8) (2021-02-22)
+
+
+### Bug Fixes
+
+* **Registry:** Update apis with latest apidoc and generator ([#7](https://github.com/IBM/container-registry-go-sdk/issues/7)) ([418f23f](https://github.com/IBM/container-registry-go-sdk/commit/418f23f4fa9870c7e237ba9db20810957c0f3e28))
+
 ## [0.0.7](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.6...v0.0.7) (2021-02-09)
 
 
