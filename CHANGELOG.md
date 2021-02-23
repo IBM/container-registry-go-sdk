@@ -1,3 +1,10 @@
+## [0.0.10](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.9...v0.0.10) (2021-02-23)
+
+
+### Bug Fixes
+
+* **Project:** Remove Travis steps for pre-commit hooks ([#11](https://github.com/IBM/container-registry-go-sdk/issues/11)) ([2c6eb0d](https://github.com/IBM/container-registry-go-sdk/commit/2c6eb0d9e5f7cfe8175cfb780f44bdbf8be529dd))
+
 ## [0.0.9](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.8...v0.0.9) (2021-02-22)
 
 
