@@ -17,7 +17,6 @@ before_install:
   - sudo apt-get update
   - pyenv versions
   - pyenv global 3.7.1
-  - pip3 install pre-commit
   - nvm install 12
   - npm install -g npm@6.x
   #- '[ "${TRAVIS_PULL_REQUEST}" == "false" ] && openssl aes-256-cbc -K $my_key -iv $my_iv -in myservice.env.enc -out myservice.env -d || true'
@@ -27,8 +26,6 @@ install:
 
 script:
   - make travis-ci
-  - pre-commit install
-  - pre-commit run detect-secrets
 
 # To enable semantic-release, uncomment these sections.
 before_deploy:
