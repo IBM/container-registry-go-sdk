@@ -1,3 +1,10 @@
+## [0.0.11](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.10...v0.0.11) (2021-03-11)
+
+
+### Bug Fixes
+
+* **Registry:** Ensure region aliases work ([#12](https://github.com/IBM/container-registry-go-sdk/issues/12)) ([3521ea6](https://github.com/IBM/container-registry-go-sdk/commit/3521ea6bd5ec47b112e3295991f8823bab84d672))
+
 ## [0.0.10](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.9...v0.0.10) (2021-02-23)
 
 
