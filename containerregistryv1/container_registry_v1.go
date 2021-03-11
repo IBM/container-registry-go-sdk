@@ -125,9 +125,13 @@ func GetServiceURLForRegion(region string) (string, error) {
 	var endpoints = map[string]string{
 		"us-south":   "https://us.icr.io",  // us-south
 		"uk-south":   "https://uk.icr.io",  // uk-south
+		"eu-gb":      "https://uk.icr.io",  // eu-gb
 		"eu-central": "https://de.icr.io",  // eu-central
+		"eu-de":      "https://de.icr.io",  // eu-de
 		"ap-north":   "https://jp.icr.io",  // ap-north
+		"jp-tok":     "https://jp.icr.io",  // jp-tok
 		"ap-south":   "https://au.icr.io",  // ap-south
+		"au-syd":     "https://au.icr.io",  // au-syd
 		"global":     "https://icr.io",     // global
 		"jp-osa":     "https://jp2.icr.io", // jp-osa
 	}

@@ -181,7 +181,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -189,7 +197,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -618,7 +634,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -626,7 +650,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -1996,7 +2028,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -2004,7 +2044,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -2295,7 +2343,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -2303,7 +2359,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -3254,7 +3318,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -3262,7 +3334,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -3689,7 +3769,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -3697,7 +3785,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -4126,7 +4222,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -4134,7 +4238,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -4993,7 +5105,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -5001,7 +5121,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -5428,7 +5556,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -5436,7 +5572,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -5790,7 +5934,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://uk.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
+			Expect(url).To(Equal("https://uk.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
+			Expect(url).To(Equal("https://de.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
 			Expect(url).To(Equal("https://de.icr.io"))
 			Expect(err).To(BeNil())
 
@@ -5798,7 +5950,15 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
+			Expect(url).To(Equal("https://jp.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
+			Expect(url).To(Equal("https://au.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
