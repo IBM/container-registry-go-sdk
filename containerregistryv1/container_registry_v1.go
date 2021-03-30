@@ -15,7 +15,7 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.28.0-55613c9e-20210220-164656
+ * IBM OpenAPI SDK Code Generator Version: 3.29.1-b338fb38-20210313-010605
  */
 
 // Package containerregistryv1 : Operations and models for the ContainerRegistryV1 service
@@ -686,12 +686,12 @@ func (containerRegistry *ContainerRegistryV1) InspectImageWithContext(ctx contex
 
 // GetImageManifest : Get image manifest
 // Get the manifest for a container image in the private registry.
-func (containerRegistry *ContainerRegistryV1) GetImageManifest(getImageManifestOptions *GetImageManifestOptions) (response *core.DetailedResponse, err error) {
+func (containerRegistry *ContainerRegistryV1) GetImageManifest(getImageManifestOptions *GetImageManifestOptions) (result map[string]interface{}, response *core.DetailedResponse, err error) {
 	return containerRegistry.GetImageManifestWithContext(context.Background(), getImageManifestOptions)
 }
 
 // GetImageManifestWithContext is an alternate form of the GetImageManifest method which supports a Context parameter
-func (containerRegistry *ContainerRegistryV1) GetImageManifestWithContext(ctx context.Context, getImageManifestOptions *GetImageManifestOptions) (response *core.DetailedResponse, err error) {
+func (containerRegistry *ContainerRegistryV1) GetImageManifestWithContext(ctx context.Context, getImageManifestOptions *GetImageManifestOptions) (result map[string]interface{}, response *core.DetailedResponse, err error) {
 	err = core.ValidateNotNil(getImageManifestOptions, "getImageManifestOptions cannot be nil")
 	if err != nil {
 		return
@@ -731,8 +731,6 @@ func (containerRegistry *ContainerRegistryV1) GetImageManifestWithContext(ctx co
 		return
 	}
 
-	// MANUALLY MODIFIED GENERATED CODE. To pass in a result object
-	var result []byte
 	response, err = containerRegistry.Service.Request(request, &result)
 
 	return
