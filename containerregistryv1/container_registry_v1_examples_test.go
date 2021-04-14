@@ -308,8 +308,9 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			)
 
 			// Because the content-type is not application/json, the map[string]interface{} response
-			// will not be populated by the core SDK libraries.
-			// You must use response.GetResult() and handle the bytes as youc choose.
+			//  will not be populated by the core SDK libraries.
+			// Use response.GetResult() and handle the bytes as you choose.
+			// The Content-Type header will tell you which type of Manifest is in the payload.
 			_, response, err := containerRegistryService.GetImageManifest(getImageManifestOptions)
 			if err != nil {
 				panic(err)
