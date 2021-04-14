@@ -346,7 +346,10 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 				Image: core.StringPtr(fmt.Sprintf("%s/%s/sdktest:1", registryDNSName, namespaceLink)),
 			}
 
-			response, err := containerRegistry.GetImageManifest(getImageManifestOptions)
+			// Because the content-type is not application/json, the map[string]interface{} response
+			// will not be populated by the core SDK libraries.
+			// We must use response.GetResult() and handle the bytes as we choose.
+			_, response, err := containerRegistry.GetImageManifest(getImageManifestOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
@@ -358,7 +361,6 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			jsErr := json.Unmarshal(response.GetResult().([]byte), &outputMap)
 			Expect(jsErr).To(BeNil())
 			Expect(outputMap["schemaVersion"]).To(Equal(float64(2)))
-
 		})
 	})
 

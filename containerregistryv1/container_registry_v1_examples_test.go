@@ -221,7 +221,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-bulk_delete_images
 
 			bulkDeleteImagesOptions := containerRegistryService.NewBulkDeleteImagesOptions(
-				[]string{"testString"},
+				[]string{"image name"},
 			)
 
 			imageBulkDeleteResult, response, err := containerRegistryService.BulkDeleteImages(bulkDeleteImagesOptions)
@@ -264,8 +264,8 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-tag_image
 
 			tagImageOptions := containerRegistryService.NewTagImageOptions(
-				"testString",
-				"testString",
+				"from image name",
+				"to image name",
 			)
 
 			response, err := containerRegistryService.TagImage(tagImageOptions)
@@ -283,7 +283,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-inspect_image
 
 			inspectImageOptions := containerRegistryService.NewInspectImageOptions(
-				"testString",
+				"image name",
 			)
 
 			imageInspection, response, err := containerRegistryService.InspectImage(inspectImageOptions)
@@ -304,13 +304,25 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-get_image_manifest
 
 			getImageManifestOptions := containerRegistryService.NewGetImageManifestOptions(
-				"testString",
+				"image name",
 			)
 
-			response, err := containerRegistryService.GetImageManifest(getImageManifestOptions)
+			// Because the content-type is not application/json, the map[string]interface{} response
+			//  will not be populated by the core SDK libraries.
+			// Use response.GetResult() and handle the bytes as you choose.
+			// The Content-Type header will tell you which type of Manifest is in the payload.
+			_, response, err := containerRegistryService.GetImageManifest(getImageManifestOptions)
 			if err != nil {
 				panic(err)
 			}
+
+			// contentType might be, for example, "application/vnd.docker.distribution.manifest.v2+json"
+			contentType := response.Headers.Get("Content-Type")
+			rawOutput := response.GetResult().([]byte)
+
+			// You could use "github.com/docker/distribution/manifest/schema2"
+			//  tempManifest := &schema2.DeserializedManifest{}
+			//  err := tempManifest.UnmarshalJSON(rawOutput)
 
 			// end-get_image_manifest
 
@@ -379,8 +391,8 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-assign_namespace
 
 			assignNamespaceOptions := containerRegistryService.NewAssignNamespaceOptions(
-				"testString",
-				"testString",
+				"Resource Group ID",
+				namespaceLink,
 			)
 
 			namespace, response, err := containerRegistryService.AssignNamespace(assignNamespaceOptions)
@@ -509,7 +521,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 		It(`AnalyzeRetentionPolicy request example`, func() {
 			// begin-analyze_retention_policy
 
-			analyzeRetentionPolicyOptions := containerRegistryService.NewAnalyzeRetentionPolicyOptions("birds")
+			analyzeRetentionPolicyOptions := containerRegistryService.NewAnalyzeRetentionPolicyOptions(namespaceLink)
 			analyzeRetentionPolicyOptions.SetImagesPerRepo(int64(10))
 			analyzeRetentionPolicyOptions.SetRetainUntagged(false)
 
@@ -531,7 +543,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-get_retention_policy
 
 			getRetentionPolicyOptions := containerRegistryService.NewGetRetentionPolicyOptions(
-				"testString",
+				namespaceLink,
 			)
 
 			retentionPolicy, response, err := containerRegistryService.GetRetentionPolicy(getRetentionPolicyOptions)
@@ -571,7 +583,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-restore_tags
 
 			restoreTagsOptions := containerRegistryService.NewRestoreTagsOptions(
-				"testString",
+				"image name", // Fully qualified including digest
 			)
 
 			restoreResult, response, err := containerRegistryService.RestoreTags(restoreTagsOptions)
@@ -592,7 +604,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-restore_image
 
 			restoreImageOptions := containerRegistryService.NewRestoreImageOptions(
-				"testString",
+				"image name",
 			)
 
 			response, err := containerRegistryService.RestoreImage(restoreImageOptions)
@@ -628,7 +640,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-delete_image_tag
 
 			deleteImageTagOptions := containerRegistryService.NewDeleteImageTagOptions(
-				"testString",
+				"image name",
 			)
 
 			imageDeleteResult, response, err := containerRegistryService.DeleteImageTag(deleteImageTagOptions)
@@ -649,7 +661,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			// begin-delete_image
 
 			deleteImageOptions := containerRegistryService.NewDeleteImageOptions(
-				"testString",
+				"image name",
 			)
 
 			imageDeleteResult, response, err := containerRegistryService.DeleteImage(deleteImageOptions)

@@ -1813,6 +1813,66 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`GetImageManifest(getImageManifestOptions *GetImageManifestOptions)`, func() {
 		account := "testString"
 		getImageManifestPath := "/api/v1/images/testString/manifest"
+		Context(`Using mock server endpoint with timeout`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Verify the contents of the request
+					Expect(req.URL.EscapedPath()).To(Equal(getImageManifestPath))
+					Expect(req.Method).To(Equal("GET"))
+
+					Expect(req.Header["Account"]).ToNot(BeNil())
+					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Sleep a short time to support a timeout test
+					time.Sleep(100 * time.Millisecond)
+
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
+					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"mapKey": "anyValue"}`)
+				}))
+			})
+			It(`Invoke GetImageManifest successfully with retries`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+				containerRegistryService.EnableRetries(0, 0)
+
+				// Construct an instance of the GetImageManifestOptions model
+				getImageManifestOptionsModel := new(containerregistryv1.GetImageManifestOptions)
+				getImageManifestOptionsModel.Image = core.StringPtr("testString")
+				getImageManifestOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation with a Context to test a timeout error
+				ctx, cancelFunc := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc()
+				_, _, operationErr := containerRegistryService.GetImageManifestWithContext(ctx, getImageManifestOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+
+				// Disable retries and test again
+				containerRegistryService.DisableRetries()
+				result, response, operationErr := containerRegistryService.GetImageManifest(getImageManifestOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
+				// Re-test the timeout error with retries disabled
+				ctx, cancelFunc2 := context.WithTimeout(context.Background(), 80*time.Millisecond)
+				defer cancelFunc2()
+				_, _, operationErr = containerRegistryService.GetImageManifestWithContext(ctx, getImageManifestOptionsModel)
+				Expect(operationErr).ToNot(BeNil())
+				Expect(operationErr.Error()).To(ContainSubstring("deadline exceeded"))
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
 		Context(`Using mock server endpoint`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
@@ -1824,7 +1884,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
+					// Set mock response
+					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
+					fmt.Fprintf(res, "%s", `{"mapKey": "anyValue"}`)
 				}))
 			})
 			It(`Invoke GetImageManifest successfully`, func() {
@@ -1837,9 +1900,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				Expect(containerRegistryService).ToNot(BeNil())
 
 				// Invoke operation with nil options model (negative test)
-				response, operationErr := containerRegistryService.GetImageManifest(nil)
+				result, response, operationErr := containerRegistryService.GetImageManifest(nil)
 				Expect(operationErr).NotTo(BeNil())
 				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
 
 				// Construct an instance of the GetImageManifestOptions model
 				getImageManifestOptionsModel := new(containerregistryv1.GetImageManifestOptions)
@@ -1847,9 +1911,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				getImageManifestOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
 
 				// Invoke operation with valid options model (positive test)
-				response, operationErr = containerRegistryService.GetImageManifest(getImageManifestOptionsModel)
+				result, response, operationErr = containerRegistryService.GetImageManifest(getImageManifestOptionsModel)
 				Expect(operationErr).To(BeNil())
 				Expect(response).ToNot(BeNil())
+				Expect(result).ToNot(BeNil())
+
 			})
 			It(`Invoke GetImageManifest with error: Operation validation and request error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
@@ -1867,16 +1933,18 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				// Invoke operation with empty URL (negative test)
 				err := containerRegistryService.SetServiceURL("")
 				Expect(err).To(BeNil())
-				response, operationErr := containerRegistryService.GetImageManifest(getImageManifestOptionsModel)
+				result, response, operationErr := containerRegistryService.GetImageManifest(getImageManifestOptionsModel)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(operationErr.Error()).To(ContainSubstring(core.ERRORMSG_SERVICE_URL_MISSING))
 				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
 				// Construct a second instance of the GetImageManifestOptions model with no property values
 				getImageManifestOptionsModelNew := new(containerregistryv1.GetImageManifestOptions)
 				// Invoke operation with invalid model (negative test)
-				response, operationErr = containerRegistryService.GetImageManifest(getImageManifestOptionsModelNew)
+				result, response, operationErr = containerRegistryService.GetImageManifest(getImageManifestOptionsModelNew)
 				Expect(operationErr).ToNot(BeNil())
 				Expect(response).To(BeNil())
+				Expect(result).To(BeNil())
 			})
 			AfterEach(func() {
 				testServer.Close()
