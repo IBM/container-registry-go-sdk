@@ -1,3 +1,10 @@
+## [0.0.12](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.11...v0.0.12) (2021-04-14)
+
+
+### Bug Fixes
+
+* **Registry:** Correct getImageManifest definition ([#15](https://github.com/IBM/container-registry-go-sdk/issues/15)) ([6100858](https://github.com/IBM/container-registry-go-sdk/commit/61008587e227095c149a724d0ecd1ef6892e3f9e))
+
 ## [0.0.11](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.10...v0.0.11) (2021-03-11)
 
 
