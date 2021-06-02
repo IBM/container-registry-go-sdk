@@ -1,3 +1,10 @@
+## [0.0.13](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.12...v0.0.13) (2021-06-02)
+
+
+### Bug Fixes
+
+* **project:** update detect-secrets and trigger new patch release ([d62754b](https://github.com/IBM/container-registry-go-sdk/commit/d62754b27dcc9c72dc122a3dab61ecebe1409ad4))
+
 ## [0.0.12](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.11...v0.0.12) (2021-04-14)
 
 
