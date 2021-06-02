@@ -217,6 +217,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp2.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())
@@ -668,6 +672,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 
 			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
 			Expect(url).To(Equal("https://jp2.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
 			Expect(err).To(BeNil())
 
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
@@ -2132,6 +2140,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp2.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())
@@ -2445,6 +2457,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 
 			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
 			Expect(url).To(Equal("https://jp2.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
 			Expect(err).To(BeNil())
 
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
@@ -3422,6 +3438,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp2.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())
@@ -3871,6 +3891,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 
 			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
 			Expect(url).To(Equal("https://jp2.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
 			Expect(err).To(BeNil())
 
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
@@ -4324,6 +4348,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 
 			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
 			Expect(url).To(Equal("https://jp2.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
 			Expect(err).To(BeNil())
 
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
@@ -5209,6 +5237,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp2.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())
@@ -5660,6 +5692,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://jp2.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())
@@ -6036,6 +6072,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 
 			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
 			Expect(url).To(Equal("https://jp2.icr.io"))
+			Expect(err).To(BeNil())
+
+			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
+			Expect(url).To(Equal("https://ca.icr.io"))
 			Expect(err).To(BeNil())
 
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
