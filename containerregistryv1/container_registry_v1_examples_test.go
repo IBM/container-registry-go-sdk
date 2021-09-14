@@ -339,14 +339,15 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
-			b, _ := json.MarshalIndent(getMessagesResponse, "", "  ")
-			fmt.Println(string(b))
+			if getMessagesResponse != nil {
+				b, _ := json.MarshalIndent(getMessagesResponse, "", "  ")
+				fmt.Println(string(b))
+			}
 
 			// end-get_messages
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(getMessagesResponse).ToNot(BeNil())
 
 		})
 		It(`ListNamespaces request example`, func() {

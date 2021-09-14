@@ -376,7 +376,10 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Or(Equal(200), Equal(204)))
-			Expect(result).ToNot(BeNil())
+
+			if result != nil {
+				Expect(*result).ToNot(BeEmpty())
+			}
 
 		})
 	})
