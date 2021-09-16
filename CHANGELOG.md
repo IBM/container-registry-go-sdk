@@ -1,3 +1,12 @@
+## [0.0.14](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.13...v0.0.14) (2021-09-16)
+
+
+### Bug Fixes
+
+* **project:** Bump go-sdk-core version, introduces a breaking change ([58d0b00](https://github.com/IBM/container-registry-go-sdk/commit/58d0b008a849e368eaf6cc37225d6bf6186ca16f))
+* **project:** Regenerate SDKs with generator 3.38.1 ([313f0d7](https://github.com/IBM/container-registry-go-sdk/commit/313f0d7b19817e4cb18b96a82b5442f8b4b961b0))
+* **registry:** Add support for br-sao region lookup ([74cfe8d](https://github.com/IBM/container-registry-go-sdk/commit/74cfe8d8c8a462b33a6ecfa28b6a8c88fc258f2f))
+
 ## [0.0.13](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.12...v0.0.13) (2021-06-02)
 
 
