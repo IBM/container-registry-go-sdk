@@ -221,6 +221,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://ca.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("br-sao")
+			Expect(url).To(Equal("https://br.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())
@@ -230,7 +234,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`GetAuth(getAuthOptions *GetAuthOptions) - Operation response error`, func() {
 		account := "testString"
 		getAuthPath := "/api/v1/auth"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -275,7 +279,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`GetAuth(getAuthOptions *GetAuthOptions)`, func() {
 		account := "testString"
 		getAuthPath := "/api/v1/auth"
@@ -406,8 +409,41 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke GetAuth successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the GetAuthOptions model
+				getAuthOptionsModel := new(containerregistryv1.GetAuthOptions)
+				getAuthOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.GetAuth(getAuthOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`UpdateAuth(updateAuthOptions *UpdateAuthOptions)`, func() {
 		account := "testString"
 		updateAuthPath := "/api/v1/auth"
@@ -493,201 +529,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-	Describe(`Service constructor tests`, func() {
-		account := "testString"
-		It(`Instantiate service client`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
-			})
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(serviceErr).To(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid URL`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid Auth`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
-				Account: core.StringPtr(account),
-				Authenticator: &core.BasicAuthenticator{
-					Username: "",
-					Password: "",
-				},
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Validation Error`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-	})
-	Describe(`Service constructor tests using external config`, func() {
-		account := "testString"
-		Context(`Using external config, construct service client instances`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
-			}
-
-			It(`Create service client using external config successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url from constructor successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url programatically successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				err := containerRegistryService.SetServiceURL("https://testService/api")
-				Expect(err).To(BeNil())
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-	})
-	Describe(`Regional endpoint tests`, func() {
-		It(`GetServiceURLForRegion(region string)`, func() {
-			var url string
-			var err error
-			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
-			Expect(url).To(Equal("https://us.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("uk-south")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-north")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
-			Expect(url).To(Equal("https://jp2.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
-			Expect(url).To(Equal("https://ca.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
-			Expect(url).To(BeEmpty())
-			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
-		})
-	})
 	Describe(`ListImages(listImagesOptions *ListImagesOptions) - Operation response error`, func() {
 		account := "testString"
 		listImagesPath := "/api/v1/images"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -744,7 +589,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`ListImages(listImagesOptions *ListImagesOptions)`, func() {
 		account := "testString"
 		listImagesPath := "/api/v1/images"
@@ -905,11 +749,51 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke ListImages successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the ListImagesOptions model
+				listImagesOptionsModel := new(containerregistryv1.ListImagesOptions)
+				listImagesOptionsModel.Namespace = core.StringPtr("testString")
+				listImagesOptionsModel.IncludeIBM = core.BoolPtr(true)
+				listImagesOptionsModel.IncludePrivate = core.BoolPtr(true)
+				listImagesOptionsModel.IncludeManifestLists = core.BoolPtr(true)
+				listImagesOptionsModel.Vulnerabilities = core.BoolPtr(true)
+				listImagesOptionsModel.Repository = core.StringPtr("testString")
+				listImagesOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.ListImages(listImagesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
 	})
 	Describe(`BulkDeleteImages(bulkDeleteImagesOptions *BulkDeleteImagesOptions) - Operation response error`, func() {
 		account := "testString"
 		bulkDeleteImagesPath := "/api/v1/images/bulkdelete"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -955,7 +839,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`BulkDeleteImages(bulkDeleteImagesOptions *BulkDeleteImagesOptions)`, func() {
 		account := "testString"
 		bulkDeleteImagesPath := "/api/v1/images/bulkdelete"
@@ -1128,11 +1011,46 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke BulkDeleteImages successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the BulkDeleteImagesOptions model
+				bulkDeleteImagesOptionsModel := new(containerregistryv1.BulkDeleteImagesOptions)
+				bulkDeleteImagesOptionsModel.BulkDelete = []string{"us.icr.io/birds/woodpecker@sha256:38f97dd92769b18ca82ad9ab6667af47306e66fea5b446937eea68b10ab4bbbb", "us.icr.io/birds/bird@sha256:38f97dd92769b18ca82ad9ab6667af47306e66fea5b446937eea68b10ab4dddd"}
+				bulkDeleteImagesOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.BulkDeleteImages(bulkDeleteImagesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
 	})
 	Describe(`ListImageDigests(listImageDigestsOptions *ListImageDigestsOptions) - Operation response error`, func() {
 		account := "testString"
 		listImageDigestsPath := "/api/v1/images/digests"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -1181,7 +1099,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`ListImageDigests(listImageDigestsOptions *ListImageDigestsOptions)`, func() {
 		account := "testString"
 		listImageDigestsPath := "/api/v1/images/digests"
@@ -1356,8 +1273,45 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke ListImageDigests successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the ListImageDigestsOptions model
+				listImageDigestsOptionsModel := new(containerregistryv1.ListImageDigestsOptions)
+				listImageDigestsOptionsModel.ExcludeTagged = core.BoolPtr(false)
+				listImageDigestsOptionsModel.ExcludeVa = core.BoolPtr(false)
+				listImageDigestsOptionsModel.IncludeIBM = core.BoolPtr(false)
+				listImageDigestsOptionsModel.Repositories = []string{"testString"}
+				listImageDigestsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.ListImageDigests(listImageDigestsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`TagImage(tagImageOptions *TagImageOptions)`, func() {
 		account := "testString"
 		tagImagePath := "/api/v1/images/tags"
@@ -1438,7 +1392,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`DeleteImage(deleteImageOptions *DeleteImageOptions) - Operation response error`, func() {
 		account := "testString"
 		deleteImagePath := "/api/v1/images/testString"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -1484,7 +1438,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`DeleteImage(deleteImageOptions *DeleteImageOptions)`, func() {
 		account := "testString"
 		deleteImagePath := "/api/v1/images/testString"
@@ -1625,11 +1578,46 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke DeleteImage successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the DeleteImageOptions model
+				deleteImageOptionsModel := new(containerregistryv1.DeleteImageOptions)
+				deleteImageOptionsModel.Image = core.StringPtr("testString")
+				deleteImageOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.DeleteImage(deleteImageOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
 	})
 	Describe(`InspectImage(inspectImageOptions *InspectImageOptions) - Operation response error`, func() {
 		account := "testString"
 		inspectImagePath := "/api/v1/images/testString/json"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -1675,7 +1663,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`InspectImage(inspectImageOptions *InspectImageOptions)`, func() {
 		account := "testString"
 		inspectImagePath := "/api/v1/images/testString/json"
@@ -1816,8 +1803,42 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke InspectImage successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the InspectImageOptions model
+				inspectImageOptionsModel := new(containerregistryv1.InspectImageOptions)
+				inspectImageOptionsModel.Image = core.StringPtr("testString")
+				inspectImageOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.InspectImage(inspectImageOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`GetImageManifest(getImageManifestOptions *GetImageManifestOptions)`, func() {
 		account := "testString"
 		getImageManifestPath := "/api/v1/images/testString/manifest"
@@ -1958,199 +1979,42 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
-	Describe(`Service constructor tests`, func() {
-		account := "testString"
-		It(`Instantiate service client`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
-			})
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(serviceErr).To(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid URL`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid Auth`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
-				Account: core.StringPtr(account),
-				Authenticator: &core.BasicAuthenticator{
-					Username: "",
-					Password: "",
-				},
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Validation Error`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-	})
-	Describe(`Service constructor tests using external config`, func() {
-		account := "testString"
-		Context(`Using external config, construct service client instances`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
-			}
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
-			It(`Create service client using external config successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke GetImageManifest successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
 				})
-				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url from constructor successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
-					Account: core.StringPtr(account),
-				})
 				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
 
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
+				// Construct an instance of the GetImageManifestOptions model
+				getImageManifestOptionsModel := new(containerregistryv1.GetImageManifestOptions)
+				getImageManifestOptionsModel.Image = core.StringPtr("testString")
+				getImageManifestOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.GetImageManifest(getImageManifestOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
 			})
-			It(`Create service client using external config and set url programatically successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				err := containerRegistryService.SetServiceURL("https://testService/api")
-				Expect(err).To(BeNil())
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
+			AfterEach(func() {
+				testServer.Close()
 			})
 		})
 	})
-	Describe(`Regional endpoint tests`, func() {
-		It(`GetServiceURLForRegion(region string)`, func() {
-			var url string
-			var err error
-			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
-			Expect(url).To(Equal("https://us.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("uk-south")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-north")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
-			Expect(url).To(Equal("https://jp2.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
-			Expect(url).To(Equal("https://ca.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
-			Expect(url).To(BeEmpty())
-			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
-		})
-	})
-
 	Describe(`GetMessages(getMessagesOptions *GetMessagesOptions)`, func() {
 		account := "testString"
 		getMessagesPath := "/api/v1/messages"
@@ -2169,7 +2033,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `"OperationResponse"`)
+					fmt.Fprintf(res, "%s", `"Hello, world!"`)
 				}))
 			})
 			It(`Invoke GetMessages successfully with retries`, func() {
@@ -2223,7 +2087,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `"OperationResponse"`)
+					fmt.Fprintf(res, "%s", `"Hello, world!"`)
 				}))
 			})
 			It(`Invoke GetMessages successfully`, func() {
@@ -2277,199 +2141,41 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
-	Describe(`Service constructor tests`, func() {
-		account := "testString"
-		It(`Instantiate service client`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
-			})
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(serviceErr).To(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid URL`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid Auth`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
-				Account: core.StringPtr(account),
-				Authenticator: &core.BasicAuthenticator{
-					Username: "",
-					Password: "",
-				},
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Validation Error`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-	})
-	Describe(`Service constructor tests using external config`, func() {
-		account := "testString"
-		Context(`Using external config, construct service client instances`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
-			}
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
-			It(`Create service client using external config successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke GetMessages successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
 				})
-				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url from constructor successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
-					Account: core.StringPtr(account),
-				})
 				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
 
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
+				// Construct an instance of the GetMessagesOptions model
+				getMessagesOptionsModel := new(containerregistryv1.GetMessagesOptions)
+				getMessagesOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.GetMessages(getMessagesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
 			})
-			It(`Create service client using external config and set url programatically successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				err := containerRegistryService.SetServiceURL("https://testService/api")
-				Expect(err).To(BeNil())
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
+			AfterEach(func() {
+				testServer.Close()
 			})
 		})
 	})
-	Describe(`Regional endpoint tests`, func() {
-		It(`GetServiceURLForRegion(region string)`, func() {
-			var url string
-			var err error
-			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
-			Expect(url).To(Equal("https://us.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("uk-south")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-north")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
-			Expect(url).To(Equal("https://jp2.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
-			Expect(url).To(Equal("https://ca.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
-			Expect(url).To(BeEmpty())
-			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
-		})
-	})
-
 	Describe(`ListNamespaces(listNamespacesOptions *ListNamespacesOptions)`, func() {
 		account := "testString"
 		listNamespacesPath := "/api/v1/namespaces"
@@ -2600,11 +2306,45 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke ListNamespaces successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the ListNamespacesOptions model
+				listNamespacesOptionsModel := new(containerregistryv1.ListNamespacesOptions)
+				listNamespacesOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.ListNamespaces(listNamespacesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
 	})
 	Describe(`ListNamespaceDetails(listNamespaceDetailsOptions *ListNamespaceDetailsOptions) - Operation response error`, func() {
 		account := "testString"
 		listNamespaceDetailsPath := "/api/v1/namespaces/details"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -2649,7 +2389,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`ListNamespaceDetails(listNamespaceDetailsOptions *ListNamespaceDetailsOptions)`, func() {
 		account := "testString"
 		listNamespaceDetailsPath := "/api/v1/namespaces/details"
@@ -2780,11 +2519,45 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke ListNamespaceDetails successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the ListNamespaceDetailsOptions model
+				listNamespaceDetailsOptionsModel := new(containerregistryv1.ListNamespaceDetailsOptions)
+				listNamespaceDetailsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.ListNamespaceDetails(listNamespaceDetailsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
 	})
 	Describe(`CreateNamespace(createNamespaceOptions *CreateNamespaceOptions) - Operation response error`, func() {
 		account := "testString"
 		createNamespacePath := "/api/v1/namespaces/testString"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -2833,7 +2606,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`CreateNamespace(createNamespaceOptions *CreateNamespaceOptions)`, func() {
 		account := "testString"
 		createNamespacePath := "/api/v1/namespaces/testString"
@@ -2981,11 +2753,47 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke CreateNamespace successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the CreateNamespaceOptions model
+				createNamespaceOptionsModel := new(containerregistryv1.CreateNamespaceOptions)
+				createNamespaceOptionsModel.Name = core.StringPtr("testString")
+				createNamespaceOptionsModel.XAuthResourceGroup = core.StringPtr("testString")
+				createNamespaceOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.CreateNamespace(createNamespaceOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
 	})
 	Describe(`AssignNamespace(assignNamespaceOptions *AssignNamespaceOptions) - Operation response error`, func() {
 		account := "testString"
 		assignNamespacePath := "/api/v1/namespaces/testString"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -3034,7 +2842,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`AssignNamespace(assignNamespaceOptions *AssignNamespaceOptions)`, func() {
 		account := "testString"
 		assignNamespacePath := "/api/v1/namespaces/testString"
@@ -3182,8 +2989,43 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke AssignNamespace successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the AssignNamespaceOptions model
+				assignNamespaceOptionsModel := new(containerregistryv1.AssignNamespaceOptions)
+				assignNamespaceOptionsModel.XAuthResourceGroup = core.StringPtr("testString")
+				assignNamespaceOptionsModel.Name = core.StringPtr("testString")
+				assignNamespaceOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.AssignNamespace(assignNamespaceOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`DeleteNamespace(deleteNamespaceOptions *DeleteNamespaceOptions)`, func() {
 		account := "testString"
 		deleteNamespacePath := "/api/v1/namespaces/testString"
@@ -3257,201 +3099,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-	Describe(`Service constructor tests`, func() {
-		account := "testString"
-		It(`Instantiate service client`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
-			})
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(serviceErr).To(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid URL`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid Auth`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
-				Account: core.StringPtr(account),
-				Authenticator: &core.BasicAuthenticator{
-					Username: "",
-					Password: "",
-				},
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Validation Error`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-	})
-	Describe(`Service constructor tests using external config`, func() {
-		account := "testString"
-		Context(`Using external config, construct service client instances`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
-			}
-
-			It(`Create service client using external config successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url from constructor successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url programatically successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				err := containerRegistryService.SetServiceURL("https://testService/api")
-				Expect(err).To(BeNil())
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-	})
-	Describe(`Regional endpoint tests`, func() {
-		It(`GetServiceURLForRegion(region string)`, func() {
-			var url string
-			var err error
-			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
-			Expect(url).To(Equal("https://us.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("uk-south")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-north")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
-			Expect(url).To(Equal("https://jp2.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
-			Expect(url).To(Equal("https://ca.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
-			Expect(url).To(BeEmpty())
-			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
-		})
-	})
 	Describe(`GetPlans(getPlansOptions *GetPlansOptions) - Operation response error`, func() {
 		account := "testString"
 		getPlansPath := "/api/v1/plans"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -3496,7 +3147,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`GetPlans(getPlansOptions *GetPlansOptions)`, func() {
 		account := "testString"
 		getPlansPath := "/api/v1/plans"
@@ -3627,8 +3277,41 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke GetPlans successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the GetPlansOptions model
+				getPlansOptionsModel := new(containerregistryv1.GetPlansOptions)
+				getPlansOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.GetPlans(getPlansOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`UpdatePlans(updatePlansOptions *UpdatePlansOptions)`, func() {
 		account := "testString"
 		updatePlansPath := "/api/v1/plans"
@@ -3712,201 +3395,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-	Describe(`Service constructor tests`, func() {
-		account := "testString"
-		It(`Instantiate service client`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
-			})
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(serviceErr).To(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid URL`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid Auth`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
-				Account: core.StringPtr(account),
-				Authenticator: &core.BasicAuthenticator{
-					Username: "",
-					Password: "",
-				},
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Validation Error`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-	})
-	Describe(`Service constructor tests using external config`, func() {
-		account := "testString"
-		Context(`Using external config, construct service client instances`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
-			}
-
-			It(`Create service client using external config successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url from constructor successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url programatically successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				err := containerRegistryService.SetServiceURL("https://testService/api")
-				Expect(err).To(BeNil())
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-	})
-	Describe(`Regional endpoint tests`, func() {
-		It(`GetServiceURLForRegion(region string)`, func() {
-			var url string
-			var err error
-			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
-			Expect(url).To(Equal("https://us.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("uk-south")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-north")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
-			Expect(url).To(Equal("https://jp2.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
-			Expect(url).To(Equal("https://ca.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
-			Expect(url).To(BeEmpty())
-			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
-		})
-	})
 	Describe(`GetQuota(getQuotaOptions *GetQuotaOptions) - Operation response error`, func() {
 		account := "testString"
 		getQuotaPath := "/api/v1/quotas"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -3951,7 +3443,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`GetQuota(getQuotaOptions *GetQuotaOptions)`, func() {
 		account := "testString"
 		getQuotaPath := "/api/v1/quotas"
@@ -4082,8 +3573,41 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke GetQuota successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the GetQuotaOptions model
+				getQuotaOptionsModel := new(containerregistryv1.GetQuotaOptions)
+				getQuotaOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.GetQuota(getQuotaOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`UpdateQuota(updateQuotaOptions *UpdateQuotaOptions)`, func() {
 		account := "testString"
 		updateQuotaPath := "/api/v1/quotas"
@@ -4169,201 +3693,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-	Describe(`Service constructor tests`, func() {
-		account := "testString"
-		It(`Instantiate service client`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
-			})
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(serviceErr).To(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid URL`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid Auth`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
-				Account: core.StringPtr(account),
-				Authenticator: &core.BasicAuthenticator{
-					Username: "",
-					Password: "",
-				},
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Validation Error`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-	})
-	Describe(`Service constructor tests using external config`, func() {
-		account := "testString"
-		Context(`Using external config, construct service client instances`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
-			}
-
-			It(`Create service client using external config successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url from constructor successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url programatically successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				err := containerRegistryService.SetServiceURL("https://testService/api")
-				Expect(err).To(BeNil())
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-	})
-	Describe(`Regional endpoint tests`, func() {
-		It(`GetServiceURLForRegion(region string)`, func() {
-			var url string
-			var err error
-			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
-			Expect(url).To(Equal("https://us.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("uk-south")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-north")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
-			Expect(url).To(Equal("https://jp2.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
-			Expect(url).To(Equal("https://ca.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
-			Expect(url).To(BeEmpty())
-			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
-		})
-	})
 	Describe(`ListRetentionPolicies(listRetentionPoliciesOptions *ListRetentionPoliciesOptions) - Operation response error`, func() {
 		account := "testString"
 		listRetentionPoliciesPath := "/api/v1/retentions"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -4408,7 +3741,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`ListRetentionPolicies(listRetentionPoliciesOptions *ListRetentionPoliciesOptions)`, func() {
 		account := "testString"
 		listRetentionPoliciesPath := "/api/v1/retentions"
@@ -4539,8 +3871,41 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke ListRetentionPolicies successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the ListRetentionPoliciesOptions model
+				listRetentionPoliciesOptionsModel := new(containerregistryv1.ListRetentionPoliciesOptions)
+				listRetentionPoliciesOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.ListRetentionPolicies(listRetentionPoliciesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`SetRetentionPolicy(setRetentionPolicyOptions *SetRetentionPolicyOptions)`, func() {
 		account := "testString"
 		setRetentionPolicyPath := "/api/v1/retentions"
@@ -4637,7 +4002,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 	Describe(`AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions *AnalyzeRetentionPolicyOptions) - Operation response error`, func() {
 		account := "testString"
 		analyzeRetentionPolicyPath := "/api/v1/retentions/analyze"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -4685,7 +4050,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`AnalyzeRetentionPolicy(analyzeRetentionPolicyOptions *AnalyzeRetentionPolicyOptions)`, func() {
 		account := "testString"
 		analyzeRetentionPolicyPath := "/api/v1/retentions/analyze"
@@ -4864,11 +4228,48 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke AnalyzeRetentionPolicy successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the AnalyzeRetentionPolicyOptions model
+				analyzeRetentionPolicyOptionsModel := new(containerregistryv1.AnalyzeRetentionPolicyOptions)
+				analyzeRetentionPolicyOptionsModel.Namespace = core.StringPtr("birds")
+				analyzeRetentionPolicyOptionsModel.ImagesPerRepo = core.Int64Ptr(int64(10))
+				analyzeRetentionPolicyOptionsModel.RetainUntagged = core.BoolPtr(false)
+				analyzeRetentionPolicyOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.AnalyzeRetentionPolicy(analyzeRetentionPolicyOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
 	})
 	Describe(`GetRetentionPolicy(getRetentionPolicyOptions *GetRetentionPolicyOptions) - Operation response error`, func() {
 		account := "testString"
 		getRetentionPolicyPath := "/api/v1/retentions/testString"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -4914,7 +4315,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`GetRetentionPolicy(getRetentionPolicyOptions *GetRetentionPolicyOptions)`, func() {
 		account := "testString"
 		getRetentionPolicyPath := "/api/v1/retentions/testString"
@@ -5055,202 +4455,46 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
-	Describe(`Service constructor tests`, func() {
-		account := "testString"
-		It(`Instantiate service client`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
-			})
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(serviceErr).To(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid URL`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid Auth`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
-				Account: core.StringPtr(account),
-				Authenticator: &core.BasicAuthenticator{
-					Username: "",
-					Password: "",
-				},
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Validation Error`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-	})
-	Describe(`Service constructor tests using external config`, func() {
-		account := "testString"
-		Context(`Using external config, construct service client instances`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
-			}
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
-			It(`Create service client using external config successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke GetRetentionPolicy successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
 				})
-				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url from constructor successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
-					Account: core.StringPtr(account),
-				})
 				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
 
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
+				// Construct an instance of the GetRetentionPolicyOptions model
+				getRetentionPolicyOptionsModel := new(containerregistryv1.GetRetentionPolicyOptions)
+				getRetentionPolicyOptionsModel.Namespace = core.StringPtr("testString")
+				getRetentionPolicyOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.GetRetentionPolicy(getRetentionPolicyOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
 			})
-			It(`Create service client using external config and set url programatically successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				err := containerRegistryService.SetServiceURL("https://testService/api")
-				Expect(err).To(BeNil())
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
+			AfterEach(func() {
+				testServer.Close()
 			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-	})
-	Describe(`Regional endpoint tests`, func() {
-		It(`GetServiceURLForRegion(region string)`, func() {
-			var url string
-			var err error
-			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
-			Expect(url).To(Equal("https://us.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("uk-south")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-north")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
-			Expect(url).To(Equal("https://jp2.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
-			Expect(url).To(Equal("https://ca.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
-			Expect(url).To(BeEmpty())
-			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`GetSettings(getSettingsOptions *GetSettingsOptions) - Operation response error`, func() {
 		account := "testString"
 		getSettingsPath := "/api/v1/settings"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -5295,7 +4539,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`GetSettings(getSettingsOptions *GetSettingsOptions)`, func() {
 		account := "testString"
 		getSettingsPath := "/api/v1/settings"
@@ -5426,8 +4669,41 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke GetSettings successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the GetSettingsOptions model
+				getSettingsOptionsModel := new(containerregistryv1.GetSettingsOptions)
+				getSettingsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.GetSettings(getSettingsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`UpdateSettings(updateSettingsOptions *UpdateSettingsOptions)`, func() {
 		account := "testString"
 		updateSettingsPath := "/api/v1/settings"
@@ -5511,201 +4787,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-	Describe(`Service constructor tests`, func() {
-		account := "testString"
-		It(`Instantiate service client`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
-			})
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(serviceErr).To(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid URL`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid Auth`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
-				Account: core.StringPtr(account),
-				Authenticator: &core.BasicAuthenticator{
-					Username: "",
-					Password: "",
-				},
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Validation Error`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-	})
-	Describe(`Service constructor tests using external config`, func() {
-		account := "testString"
-		Context(`Using external config, construct service client instances`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
-			}
-
-			It(`Create service client using external config successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url from constructor successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
-					Account: core.StringPtr(account),
-				})
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url programatically successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				err := containerRegistryService.SetServiceURL("https://testService/api")
-				Expect(err).To(BeNil())
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-	})
-	Describe(`Regional endpoint tests`, func() {
-		It(`GetServiceURLForRegion(region string)`, func() {
-			var url string
-			var err error
-			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
-			Expect(url).To(Equal("https://us.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("uk-south")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-north")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
-			Expect(url).To(Equal("https://jp2.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
-			Expect(url).To(Equal("https://ca.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
-			Expect(url).To(BeEmpty())
-			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
-		})
-	})
 	Describe(`DeleteImageTag(deleteImageTagOptions *DeleteImageTagOptions) - Operation response error`, func() {
 		account := "testString"
 		deleteImageTagPath := "/api/v1/tags/testString"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -5751,7 +4836,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`DeleteImageTag(deleteImageTagOptions *DeleteImageTagOptions)`, func() {
 		account := "testString"
 		deleteImageTagPath := "/api/v1/tags/testString"
@@ -5892,202 +4976,46 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
-	Describe(`Service constructor tests`, func() {
-		account := "testString"
-		It(`Instantiate service client`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
-			})
-			Expect(containerRegistryService).ToNot(BeNil())
-			Expect(serviceErr).To(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid URL`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Invalid Auth`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
-				Account: core.StringPtr(account),
-				Authenticator: &core.BasicAuthenticator{
-					Username: "",
-					Password: "",
-				},
-			})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-		It(`Instantiate service client with error: Validation Error`, func() {
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{})
-			Expect(containerRegistryService).To(BeNil())
-			Expect(serviceErr).ToNot(BeNil())
-		})
-	})
-	Describe(`Service constructor tests using external config`, func() {
-		account := "testString"
-		Context(`Using external config, construct service client instances`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
-			}
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
-			It(`Create service client using external config successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke DeleteImageTag successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
 				})
-				Expect(containerRegistryService).ToNot(BeNil())
 				Expect(serviceErr).To(BeNil())
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
-			})
-			It(`Create service client using external config and set url from constructor successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
-					Account: core.StringPtr(account),
-				})
 				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
 
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
+				// Construct an instance of the DeleteImageTagOptions model
+				deleteImageTagOptionsModel := new(containerregistryv1.DeleteImageTagOptions)
+				deleteImageTagOptionsModel.Image = core.StringPtr("testString")
+				deleteImageTagOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.DeleteImageTag(deleteImageTagOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
 			})
-			It(`Create service client using external config and set url programatically successfully`, func() {
-				SetTestEnvironment(testEnvironment)
-				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					Account: core.StringPtr(account),
-				})
-				err := containerRegistryService.SetServiceURL("https://testService/api")
-				Expect(err).To(BeNil())
-				Expect(containerRegistryService).ToNot(BeNil())
-				Expect(serviceErr).To(BeNil())
-				Expect(containerRegistryService.Service.GetServiceURL()).To(Equal("https://testService/api"))
-				ClearTestEnvironment(testEnvironment)
-
-				clone := containerRegistryService.Clone()
-				Expect(clone).ToNot(BeNil())
-				Expect(clone.Service != containerRegistryService.Service).To(BeTrue())
-				Expect(clone.GetServiceURL()).To(Equal(containerRegistryService.GetServiceURL()))
-				Expect(clone.Service.Options.Authenticator).To(Equal(containerRegistryService.Service.Options.Authenticator))
+			AfterEach(func() {
+				testServer.Close()
 			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
-				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
-			// Map containing environment variables used in testing.
-			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
-			}
-
-			SetTestEnvironment(testEnvironment)
-			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
-				Account: core.StringPtr(account),
-			})
-
-			It(`Instantiate service client with error`, func() {
-				Expect(containerRegistryService).To(BeNil())
-				Expect(serviceErr).ToNot(BeNil())
-				ClearTestEnvironment(testEnvironment)
-			})
-		})
-	})
-	Describe(`Regional endpoint tests`, func() {
-		It(`GetServiceURLForRegion(region string)`, func() {
-			var url string
-			var err error
-			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
-			Expect(url).To(Equal("https://us.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("uk-south")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-gb")
-			Expect(url).To(Equal("https://uk.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-central")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("eu-de")
-			Expect(url).To(Equal("https://de.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-north")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-tok")
-			Expect(url).To(Equal("https://jp.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ap-south")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("au-syd")
-			Expect(url).To(Equal("https://au.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
-			Expect(url).To(Equal("https://jp2.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("ca-tor")
-			Expect(url).To(Equal("https://ca.icr.io"))
-			Expect(err).To(BeNil())
-
-			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
-			Expect(url).To(BeEmpty())
-			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`ListDeletedImages(listDeletedImagesOptions *ListDeletedImagesOptions) - Operation response error`, func() {
 		account := "testString"
 		listDeletedImagesPath := "/api/v1/trash"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -6134,7 +5062,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`ListDeletedImages(listDeletedImagesOptions *ListDeletedImagesOptions)`, func() {
 		account := "testString"
 		listDeletedImagesPath := "/api/v1/trash"
@@ -6270,11 +5197,46 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
+
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke ListDeletedImages successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the ListDeletedImagesOptions model
+				listDeletedImagesOptionsModel := new(containerregistryv1.ListDeletedImagesOptions)
+				listDeletedImagesOptionsModel.Namespace = core.StringPtr("testString")
+				listDeletedImagesOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.ListDeletedImages(listDeletedImagesOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
 	})
 	Describe(`RestoreTags(restoreTagsOptions *RestoreTagsOptions) - Operation response error`, func() {
 		account := "testString"
 		restoreTagsPath := "/api/v1/trash/testString/restoretags"
-		Context(`Using mock server endpoint`, func() {
+		Context(`Using mock server endpoint with invalid JSON response`, func() {
 			BeforeEach(func() {
 				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
 					defer GinkgoRecover()
@@ -6320,7 +5282,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 		})
 	})
-
 	Describe(`RestoreTags(restoreTagsOptions *RestoreTagsOptions)`, func() {
 		account := "testString"
 		restoreTagsPath := "/api/v1/trash/testString/restoretags"
@@ -6461,8 +5422,42 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				testServer.Close()
 			})
 		})
-	})
+		Context(`Using mock server endpoint with missing response body`, func() {
+			BeforeEach(func() {
+				testServer = httptest.NewServer(http.HandlerFunc(func(res http.ResponseWriter, req *http.Request) {
+					defer GinkgoRecover()
 
+					// Set success status code with no respoonse body
+					res.WriteHeader(200)
+				}))
+			})
+			It(`Invoke RestoreTags successfully`, func() {
+				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
+					URL:           testServer.URL,
+					Authenticator: &core.NoAuthAuthenticator{},
+					Account:       core.StringPtr(account),
+				})
+				Expect(serviceErr).To(BeNil())
+				Expect(containerRegistryService).ToNot(BeNil())
+
+				// Construct an instance of the RestoreTagsOptions model
+				restoreTagsOptionsModel := new(containerregistryv1.RestoreTagsOptions)
+				restoreTagsOptionsModel.Digest = core.StringPtr("testString")
+				restoreTagsOptionsModel.Headers = map[string]string{"x-custom-header": "x-custom-value"}
+
+				// Invoke operation
+				result, response, operationErr := containerRegistryService.RestoreTags(restoreTagsOptionsModel)
+				Expect(operationErr).To(BeNil())
+				Expect(response).ToNot(BeNil())
+
+				// Verify a nil result
+				Expect(result).To(BeNil())
+			})
+			AfterEach(func() {
+				testServer.Close()
+			})
+		})
+	})
 	Describe(`RestoreImage(restoreImageOptions *RestoreImageOptions)`, func() {
 		account := "testString"
 		restoreImagePath := "/api/v1/trash/testString/restore"
@@ -6774,8 +5769,8 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			})
 			It(`Invoke NewRetentionPolicy successfully`, func() {
 				namespace := "testString"
-				model, err := containerRegistryService.NewRetentionPolicy(namespace)
-				Expect(model).ToNot(BeNil())
+				_model, err := containerRegistryService.NewRetentionPolicy(namespace)
+				Expect(_model).ToNot(BeNil())
 				Expect(err).To(BeNil())
 			})
 			It(`Invoke NewSetRetentionPolicyOptions successfully`, func() {
@@ -6861,11 +5856,11 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(mockReader).ToNot(BeNil())
 		})
 		It(`Invoke CreateMockDate() successfully`, func() {
-			mockDate := CreateMockDate()
+			mockDate := CreateMockDate("2019-01-01")
 			Expect(mockDate).ToNot(BeNil())
 		})
 		It(`Invoke CreateMockDateTime() successfully`, func() {
-			mockDateTime := CreateMockDateTime()
+			mockDateTime := CreateMockDateTime("2019-01-01T12:00:00.000Z")
 			Expect(mockDateTime).ToNot(BeNil())
 		})
 	})
@@ -6890,13 +5885,19 @@ func CreateMockReader(mockData string) io.ReadCloser {
 	return ioutil.NopCloser(bytes.NewReader([]byte(mockData)))
 }
 
-func CreateMockDate() *strfmt.Date {
-	d := strfmt.Date(time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC))
+func CreateMockDate(mockData string) *strfmt.Date {
+	d, err := core.ParseDate(mockData)
+	if err != nil {
+		return nil
+	}
 	return &d
 }
 
-func CreateMockDateTime() *strfmt.DateTime {
-	d := strfmt.DateTime(time.Date(2009, time.November, 10, 23, 0, 0, 0, time.UTC))
+func CreateMockDateTime(mockData string) *strfmt.DateTime {
+	d, err := core.ParseDateTime(mockData)
+	if err != nil {
+		return nil
+	}
 	return &d
 }
 

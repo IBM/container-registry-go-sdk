@@ -307,22 +307,13 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 				"image name",
 			)
 
-			// Because the content-type is not application/json, the map[string]interface{} response
-			//  will not be populated by the core SDK libraries.
-			// Use response.GetResult() and handle the bytes as you choose.
-			// The Content-Type header will tell you which type of Manifest is in the payload.
-			_, response, err := containerRegistryService.GetImageManifest(getImageManifestOptions)
+			result, response, err := containerRegistryService.GetImageManifest(getImageManifestOptions)
 			if err != nil {
 				panic(err)
 			}
-
-			// contentType might be, for example, "application/vnd.docker.distribution.manifest.v2+json"
-			contentType := response.Headers.Get("Content-Type")
-			rawOutput := response.GetResult().([]byte)
-
-			// You could use "github.com/docker/distribution/manifest/schema2"
-			//  tempManifest := &schema2.DeserializedManifest{}
-			//  err := tempManifest.UnmarshalJSON(rawOutput)
+			// result contains a map[string]interface{} representation of the manifest
+			// The following test will simply check that it is a V2 manifest
+			Expect(result["schemaVersion"]).To(Equal(float64(2)))
 
 			// end-get_image_manifest
 
@@ -339,14 +330,15 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
-			b, _ := json.MarshalIndent(getMessagesResponse, "", "  ")
-			fmt.Println(string(b))
+			if getMessagesResponse != nil {
+				b, _ := json.MarshalIndent(getMessagesResponse, "", "  ")
+				fmt.Println(string(b))
+			}
 
 			// end-get_messages
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(getMessagesResponse).ToNot(BeNil())
 
 		})
 		It(`ListNamespaces request example`, func() {
