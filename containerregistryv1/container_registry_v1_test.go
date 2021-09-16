@@ -41,14 +41,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -56,7 +56,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "https://containerregistryv1/api",
+				URL:     "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -77,7 +77,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -99,7 +99,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL: "https://testService/api",
+					URL:     "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -135,7 +135,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -153,12 +153,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL: "{BAD_URL_STRING",
+				URL:     "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -221,6 +221,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://ca.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("br-sao")
+			Expect(url).To(Equal("https://br.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())
@@ -249,7 +253,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -302,7 +306,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -358,7 +362,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -384,7 +388,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -418,7 +422,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -477,7 +481,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -502,7 +506,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -553,7 +557,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -618,7 +622,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -686,7 +690,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -718,7 +722,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -758,7 +762,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -808,7 +812,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -878,7 +882,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -951,7 +955,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -978,7 +982,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1020,7 +1024,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1065,7 +1069,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1138,7 +1142,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1214,7 +1218,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1244,7 +1248,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1282,7 +1286,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1331,7 +1335,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1356,7 +1360,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1407,7 +1411,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1461,7 +1465,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1518,7 +1522,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1545,7 +1549,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1587,7 +1591,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1632,7 +1636,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1686,7 +1690,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1743,7 +1747,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1770,7 +1774,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1812,7 +1816,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1862,7 +1866,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1919,7 +1923,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1946,7 +1950,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1988,7 +1992,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2036,7 +2040,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2090,7 +2094,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2116,7 +2120,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2150,7 +2154,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2199,7 +2203,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2255,7 +2259,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2281,7 +2285,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2315,7 +2319,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2359,7 +2363,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2412,7 +2416,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2468,7 +2472,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2494,7 +2498,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2528,7 +2532,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2574,7 +2578,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2631,7 +2635,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2691,7 +2695,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2719,7 +2723,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2762,7 +2766,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2810,7 +2814,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2867,7 +2871,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2927,7 +2931,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2955,7 +2959,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2998,7 +3002,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3043,7 +3047,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3067,7 +3071,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3117,7 +3121,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3170,7 +3174,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3226,7 +3230,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3252,7 +3256,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3286,7 +3290,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3345,7 +3349,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3369,7 +3373,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3413,7 +3417,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3466,7 +3470,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3522,7 +3526,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3548,7 +3552,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3582,7 +3586,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3641,7 +3645,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3666,7 +3670,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3711,7 +3715,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3764,7 +3768,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3820,7 +3824,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3846,7 +3850,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3880,7 +3884,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3939,7 +3943,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3965,7 +3969,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4017,7 +4021,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4089,7 +4093,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4164,7 +4168,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4193,7 +4197,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4237,7 +4241,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4284,7 +4288,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4338,7 +4342,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4395,7 +4399,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4422,7 +4426,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4464,7 +4468,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4509,7 +4513,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4562,7 +4566,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4618,7 +4622,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4644,7 +4648,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4678,7 +4682,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4737,7 +4741,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4761,7 +4765,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4805,7 +4809,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4859,7 +4863,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4916,7 +4920,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4943,7 +4947,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4985,7 +4989,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5031,7 +5035,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5086,7 +5090,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5144,7 +5148,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5171,7 +5175,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5206,7 +5210,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5251,7 +5255,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5305,7 +5309,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5362,7 +5366,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5389,7 +5393,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5431,7 +5435,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5475,7 +5479,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5499,7 +5503,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account: core.StringPtr(account),
+					Account:       core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5533,7 +5537,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			containerRegistryService, _ := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				URL:           "http://containerregistryv1modelgenerator.com",
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account: core.StringPtr(account),
+				Account:       core.StringPtr(account),
 			})
 			It(`Invoke NewAnalyzeRetentionPolicyOptions successfully`, func() {
 				// Construct an instance of the AnalyzeRetentionPolicyOptions model

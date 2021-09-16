@@ -135,6 +135,7 @@ func GetServiceURLForRegion(region string) (string, error) {
 		"global":     "https://icr.io",     // global
 		"jp-osa":     "https://jp2.icr.io", // jp-osa
 		"ca-tor":     "https://ca.icr.io",  // ca-tor
+		"br-sao":     "https://br.icr.io",  // br-sao
 	}
 
 	if url, ok := endpoints[region]; ok {
@@ -1916,12 +1917,12 @@ type AnalyzeRetentionPolicyOptions struct {
 	// The namespace to which the retention policy is attached.
 	Namespace *string `json:"namespace" validate:"required"`
 
-	// Determines how many images will be retained for each repository when the retention policy is executed. The value -1
+	// Determines how many images are retained in each repository when the retention policy is processed. The value -1
 	// denotes 'Unlimited' (all images are retained).
 	ImagesPerRepo *int64 `json:"images_per_repo,omitempty"`
 
-	// Determines if untagged images are retained when executing the retention policy. This is false by default meaning
-	// untagged images will be deleted when the policy is executed.
+	// Determines whether untagged images are retained when the retention policy is processed. The value is false by
+	// default, which means that  untagged images can be deleted when the policy runs.
 	RetainUntagged *bool `json:"retain_untagged,omitempty"`
 
 	// Allows users to set headers on API requests
@@ -1961,10 +1962,10 @@ func (options *AnalyzeRetentionPolicyOptions) SetHeaders(param map[string]string
 
 // AssignNamespaceOptions : The AssignNamespace options.
 type AssignNamespaceOptions struct {
-	// The ID of the resource group that the namespace will be created within.
+	// The ID of the resource group to which you want to add the namespace.
 	XAuthResourceGroup *string `json:"-" validate:"required"`
 
-	// The name of the namespace to be updated.
+	// The name of the namespace that you want to udpate.
 	Name *string `json:"-" validate:"required,ne="`
 
 	// Allows users to set headers on API requests
@@ -2237,10 +2238,10 @@ func UnmarshalConfig(m map[string]json.RawMessage, result interface{}) (err erro
 
 // CreateNamespaceOptions : The CreateNamespace options.
 type CreateNamespaceOptions struct {
-	// The name of the namespace.
+	// The name of the namespace that you want to create.
 	Name *string `json:"-" validate:"required,ne="`
 
-	// The ID of the resource group that the namespace will be created within.
+	// The ID of the resource group to which you want to add the namespace.
 	XAuthResourceGroup *string `json:"-"`
 
 	// Allows users to set headers on API requests
@@ -3040,21 +3041,21 @@ type NamespaceDetails struct {
 	// The IBM Cloud account that owns the namespace.
 	Account *string `json:"account,omitempty"`
 
-	// When the namespace was created.
+	// The creation date of the namespace.
 	CreatedDate *string `json:"created_date,omitempty"`
 
-	// If the namespace has been assigned to a resource group, this is the IBM Cloud CRN representing the namespace.
+	// If the namespace is assigned to a resource group, the IBM Cloud CRN representing the namespace.
 	CRN *string `json:"crn,omitempty"`
 
 	Name *string `json:"name,omitempty"`
 
-	// When the namespace was assigned to a resource group.
+	// The date that the namespace was assigned to a resource group.
 	ResourceCreatedDate *string `json:"resource_created_date,omitempty"`
 
-	// The resource group that the namespace is assigned to.
+	// The ID of the resource group to which the namespace is assigned.
 	ResourceGroup *string `json:"resource_group,omitempty"`
 
-	// When the namespace was last updated.
+	// The date that the namespace was last updated.
 	UpdatedDate *string `json:"updated_date,omitempty"`
 }
 
@@ -3341,15 +3342,15 @@ func (options *RestoreTagsOptions) SetHeaders(param map[string]string) *RestoreT
 
 // RetentionPolicy : A document that contains the image retention settings for a namespace.
 type RetentionPolicy struct {
-	// Determines how many images will be retained for each repository when the retention policy is executed. The value -1
+	// Determines how many images are retained in each repository when the retention policy is processed. The value -1
 	// denotes 'Unlimited' (all images are retained).
 	ImagesPerRepo *int64 `json:"images_per_repo,omitempty"`
 
 	// The namespace to which the retention policy is attached.
 	Namespace *string `json:"namespace" validate:"required"`
 
-	// Determines if untagged images are retained when executing the retention policy. This is false by default meaning
-	// untagged images will be deleted when the policy is executed.
+	// Determines whether untagged images are retained when the retention policy is processed. The value is false by
+	// default, which means that  untagged images can be deleted when the policy runs.
 	RetainUntagged *bool `json:"retain_untagged,omitempty"`
 }
 
@@ -3417,12 +3418,12 @@ type SetRetentionPolicyOptions struct {
 	// The namespace to which the retention policy is attached.
 	Namespace *string `json:"namespace" validate:"required"`
 
-	// Determines how many images will be retained for each repository when the retention policy is executed. The value -1
+	// Determines how many images are retained in each repository when the retention policy is processed. The value -1
 	// denotes 'Unlimited' (all images are retained).
 	ImagesPerRepo *int64 `json:"images_per_repo,omitempty"`
 
-	// Determines if untagged images are retained when executing the retention policy. This is false by default meaning
-	// untagged images will be deleted when the policy is executed.
+	// Determines whether untagged images are retained when the retention policy is processed. The value is false by
+	// default, which means that  untagged images can be deleted when the policy runs.
 	RetainUntagged *bool `json:"retain_untagged,omitempty"`
 
 	// Allows users to set headers on API requests
