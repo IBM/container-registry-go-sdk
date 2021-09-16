@@ -19,7 +19,6 @@
 package containerregistryv1_test
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -346,21 +345,16 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 				Image: core.StringPtr(fmt.Sprintf("%s/%s/sdktest:1", registryDNSName, namespaceLink)),
 			}
 
-			// Because the content-type is not application/json, the map[string]interface{} response
-			// will not be populated by the core SDK libraries.
-			// We must use response.GetResult() and handle the bytes as we choose.
-			_, response, err := containerRegistry.GetImageManifest(getImageManifestOptions)
+			// The result variable is a map[string]interface{} containing the unmarshalled manifest
+			result, response, err := containerRegistry.GetImageManifest(getImageManifestOptions)
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 
+			Expect(result["schemaVersion"]).To(Equal(float64(2)))
+
 			contentType := response.Headers.Get("Content-Type")
 			Expect(contentType).To(Equal("application/vnd.docker.distribution.manifest.v2+json"))
-			// Alternatively import the relevant schema definition (based on schema type) and unmarshal directly into that
-			var outputMap map[string]interface{}
-			jsErr := json.Unmarshal(response.GetResult().([]byte), &outputMap)
-			Expect(jsErr).To(BeNil())
-			Expect(outputMap["schemaVersion"]).To(Equal(float64(2)))
 		})
 	})
 

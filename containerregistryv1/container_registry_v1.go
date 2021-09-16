@@ -735,7 +735,7 @@ func (containerRegistry *ContainerRegistryV1) GetImageManifestWithContext(ctx co
 	for headerName, headerValue := range sdkHeaders {
 		builder.AddHeader(headerName, headerValue)
 	}
-	// builder.AddHeader("Accept", "application/json")
+	builder.AddHeader("Accept", "application/json")
 	if containerRegistry.Account != nil {
 		builder.AddHeader("Account", fmt.Sprint(*containerRegistry.Account))
 	}
