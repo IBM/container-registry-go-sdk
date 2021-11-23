@@ -17,7 +17,7 @@ before_install:
   - sudo apt-get update
   - pyenv versions
   - pyenv global 3.7.1
-  - nvm install 12
+  - nvm install 14
   - npm install -g npm@6.x
   #- '[ "${TRAVIS_PULL_REQUEST}" == "false" ] && openssl aes-256-cbc -K $my_key -iv $my_iv -in myservice.env.enc -out myservice.env -d || true'
 
