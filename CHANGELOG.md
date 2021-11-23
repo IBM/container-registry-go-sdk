@@ -1,3 +1,11 @@
+## [0.0.15](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.14...v0.0.15) (2021-11-23)
+
+
+### Bug Fixes
+
+* **project:** Bump npm version used by semantic-release tool ([bc4eebf](https://github.com/IBM/container-registry-go-sdk/commit/bc4eebf9d84970dadc55fd32351f4aef29d0d4b3))
+* **registry:** Update default service URL ([#19](https://github.com/IBM/container-registry-go-sdk/issues/19)) ([dd2937d](https://github.com/IBM/container-registry-go-sdk/commit/dd2937d2e5af13d2cdcbec7a5cf09a80b171c597))
+
 ## [0.0.14](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.13...v0.0.14) (2021-09-16)
 
 
