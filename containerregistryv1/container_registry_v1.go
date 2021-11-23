@@ -44,7 +44,7 @@ type ContainerRegistryV1 struct {
 }
 
 // DefaultServiceURL is the default URL to make service requests to.
-const DefaultServiceURL = "https://us.icr.io"
+const DefaultServiceURL = "https://icr.io"
 
 // DefaultServiceName is the default key used to find external configuration information.
 const DefaultServiceName = "container_registry"
