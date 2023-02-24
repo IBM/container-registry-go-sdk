@@ -53,7 +53,7 @@ Service Name | Package name
 
 * An [IBM Cloud][ibm-cloud-onboarding] account.
 * An IAM API key to allow the SDK to access your account. Create one [here](https://cloud.ibm.com/iam/apikeys).
-* Go version 1.14 or above.
+* Go version 1.17 or above.
 
 ## Installation
 The current version of this SDK: 0.0.16
@@ -66,7 +66,7 @@ Use this command to download and install the SDK to allow your Go application to
 use it:
 
 ```
-go get -u github.com/IBM/container-registry-go-sdk
+go get github.com/IBM/container-registry-go-sdk
 ```
 
 #### Go modules  
