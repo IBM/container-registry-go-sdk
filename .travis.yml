@@ -1,11 +1,11 @@
 language: go
 
 go:
-  - "1.18"
-  - stable
+  - "1.18.x"
+  - "1.19.x"
+  - "1.20.x"
 
 dist: xenial
-
 
 notifications:
   email: true
@@ -13,27 +13,23 @@ notifications:
 before_install:
   - sudo apt-get update
   - pyenv versions
-  - nvm install 14
-  - npm install -g npm@6.x
-  #- '[ "${TRAVIS_PULL_REQUEST}" == "false" ] && openssl aes-256-cbc -K $my_key -iv $my_iv -in myservice.env.enc -out myservice.env -d || true'
+  - curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.51.2
 
 install:
-- curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s -- -b $(go env GOPATH)/bin v1.21.0
-
-script:
+- provider script
+  script:
   - make travis-ci
 
 # To enable semantic-release, uncomment these sections.
 before_deploy:
 - pip install --user bump2version
-- npm install @semantic-release/changelog
-- npm install @semantic-release/exec
-- npm install @semantic-release/git
-- npm install @semantic-release/github
 
 deploy:
 - provider: script
-  script: npx semantic-release
+  script:
+    # Use nvm to install and use the Node LTS version (nvm is installed on all Travis images)
+    - nvm install lts/*
+    - npx semantic-release
   skip_cleanup: true
   on:
     branch: main
