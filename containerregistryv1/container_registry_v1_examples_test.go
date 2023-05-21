@@ -1,7 +1,8 @@
+//go:build examples
 // +build examples
 
 /**
- * (C) Copyright IBM Corp. 2020, 2021.
+ * (C) Copyright IBM Corp. 2020, 2023.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,33 +30,39 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-const externalConfigFile = "../container_registry_v1.env"
-
-var (
-	containerRegistryService *containerregistryv1.ContainerRegistryV1
-	config                   map[string]string
-	configLoaded             bool = false
-)
-
-// Globlal variables to hold link values
-var (
-	namespaceLink string
-)
-
-func shouldSkipTest() {
-	Skip("Container Registry examples are not intended to be runnable tests")
-	if !configLoaded {
-		Skip("External configuration is not available, skipping tests...")
-	}
-}
-
+// This file provides an example of how to use the Container Registry service.
+//
+// The following configuration properties are assumed to be defined:
+// CONTAINER_REGISTRY_URL=<service base url>
+// CONTAINER_REGISTRY_AUTH_TYPE=iam
+// CONTAINER_REGISTRY_APIKEY=<IAM apikey>
+// CONTAINER_REGISTRY_AUTH_URL=<IAM token service base URL - omit this if using the production environment>
+//
+// These configuration properties can be exported as environment variables, or stored
+// in a configuration file and then:
+// export IBM_CREDENTIALS_FILE=<name of configuration file>
 var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
+
+	const externalConfigFile = "../container_registry_v1.env"
+
+	var (
+		containerRegistryService *containerregistryv1.ContainerRegistryV1
+		config                   map[string]string
+
+		// Variables to hold link values
+		namespaceLink string
+	)
+
+	var shouldSkipTest = func() {
+		Skip("External configuration is not available, skipping examples...")
+	}
+
 	Describe(`External configuration`, func() {
 		It("Successfully load the configuration", func() {
 			var err error
 			_, err = os.Stat(externalConfigFile)
 			if err != nil {
-				Skip("External configuration file not found, skipping tests: " + err.Error())
+				Skip("External configuration file not found, skipping examples: " + err.Error())
 			}
 			/**
 			Your configuration file (container_registry_v1.env) should contain the following variables.
@@ -67,10 +74,15 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			os.Setenv("IBM_CREDENTIALS_FILE", externalConfigFile)
 			config, err = core.GetServiceProperties(containerregistryv1.DefaultServiceName)
 			if err != nil {
-				Skip("Error loading service properties, skipping tests: " + err.Error())
+				Skip("Error loading service properties, skipping examples: " + err.Error())
+			} else if len(config) == 0 {
+				Skip("Unable to load service properties, skipping examples")
 			}
 
-			configLoaded = len(config) > 0
+			// we have config but we dont want these tests to run anyway
+			shouldSkipTest = func() {
+				Skip("Container Registry examples are not intended to be runnable")
+			}
 		})
 	})
 
@@ -104,6 +116,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			shouldSkipTest()
 		})
 		It(`CreateNamespace request example`, func() {
+			fmt.Println("\nCreateNamespace() result:")
 			// begin-create_namespace
 
 			createNamespaceOptions := containerRegistryService.NewCreateNamespaceOptions(
@@ -124,9 +137,10 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(namespace).ToNot(BeNil())
 
 			namespaceLink = *namespace.Namespace
-
+			fmt.Fprintf(GinkgoWriter, "Saved namespaceLink value: %v\n", namespaceLink)
 		})
 		It(`GetAuth request example`, func() {
+			fmt.Println("\nGetAuth() result:")
 			// begin-get_auth
 
 			getAuthOptions := containerRegistryService.NewGetAuthOptions()
@@ -143,7 +157,6 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(authOptions).ToNot(BeNil())
-
 		})
 		It(`UpdateAuth request example`, func() {
 			// begin-update_auth
@@ -155,14 +168,17 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
+			if response.StatusCode != 204 {
+				fmt.Printf("\nUnexpected response status code received from UpdateAuth(): %d\n", response.StatusCode)
+			}
 
 			// end-update_auth
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))
-
 		})
 		It(`GetSettings request example`, func() {
+			fmt.Println("\nGetSettings() result:")
 			// begin-get_settings
 
 			getSettingsOptions := containerRegistryService.NewGetSettingsOptions()
@@ -179,7 +195,6 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(accountSettings).ToNot(BeNil())
-
 		})
 		It(`UpdateSettings request example`, func() {
 			// begin-update_settings
@@ -191,33 +206,36 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
+			if response.StatusCode != 204 {
+				fmt.Printf("\nUnexpected response status code received from UpdateSettings(): %d\n", response.StatusCode)
+			}
 
 			// end-update_settings
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))
-
 		})
 		It(`ListImages request example`, func() {
+			fmt.Println("\nListImages() result:")
 			// begin-list_images
 
 			listImagesOptions := containerRegistryService.NewListImagesOptions()
 
-			remoteApiImage, response, err := containerRegistryService.ListImages(listImagesOptions)
+			remoteAPIImage, response, err := containerRegistryService.ListImages(listImagesOptions)
 			if err != nil {
 				panic(err)
 			}
-			b, _ := json.MarshalIndent(remoteApiImage, "", "  ")
+			b, _ := json.MarshalIndent(remoteAPIImage, "", "  ")
 			fmt.Println(string(b))
 
 			// end-list_images
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(remoteApiImage).ToNot(BeNil())
-
+			Expect(remoteAPIImage).ToNot(BeNil())
 		})
 		It(`BulkDeleteImages request example`, func() {
+			fmt.Println("\nBulkDeleteImages() result:")
 			// begin-bulk_delete_images
 
 			bulkDeleteImagesOptions := containerRegistryService.NewBulkDeleteImagesOptions(
@@ -236,9 +254,9 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(imageBulkDeleteResult).ToNot(BeNil())
-
 		})
 		It(`ListImageDigests request example`, func() {
+			fmt.Println("\nListImageDigests() result:")
 			// begin-list_image_digests
 
 			listImageDigestsOptions := containerRegistryService.NewListImageDigestsOptions()
@@ -246,19 +264,18 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			listImageDigestsOptions.SetExcludeVa(false)
 			listImageDigestsOptions.SetIncludeIBM(false)
 
-			digestListImage, response, err := containerRegistryService.ListImageDigests(listImageDigestsOptions)
+			imageDigest, response, err := containerRegistryService.ListImageDigests(listImageDigestsOptions)
 			if err != nil {
 				panic(err)
 			}
-			b, _ := json.MarshalIndent(digestListImage, "", "  ")
+			b, _ := json.MarshalIndent(imageDigest, "", "  ")
 			fmt.Println(string(b))
 
 			// end-list_image_digests
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(digestListImage).ToNot(BeNil())
-
+			Expect(imageDigest).ToNot(BeNil())
 		})
 		It(`TagImage request example`, func() {
 			// begin-tag_image
@@ -272,14 +289,17 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
+			if response.StatusCode != 201 {
+				fmt.Printf("\nUnexpected response status code received from TagImage(): %d\n", response.StatusCode)
+			}
 
 			// end-tag_image
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(201))
-
 		})
 		It(`InspectImage request example`, func() {
+			fmt.Println("\nInspectImage() result:")
 			// begin-inspect_image
 
 			inspectImageOptions := containerRegistryService.NewInspectImageOptions(
@@ -298,30 +318,31 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(imageInspection).ToNot(BeNil())
-
 		})
 		It(`GetImageManifest request example`, func() {
+			fmt.Println("\nGetImageManifest() result:")
 			// begin-get_image_manifest
 
 			getImageManifestOptions := containerRegistryService.NewGetImageManifestOptions(
 				"image name",
 			)
 
-			result, response, err := containerRegistryService.GetImageManifest(getImageManifestOptions)
+			imageManifest, response, err := containerRegistryService.GetImageManifest(getImageManifestOptions)
 			if err != nil {
 				panic(err)
 			}
 			// result contains a map[string]interface{} representation of the manifest
 			// The following test will simply check that it is a V2 manifest
-			Expect(result["schemaVersion"]).To(Equal(float64(2)))
+			Expect(imageManifest["schemaVersion"]).To(Equal(float64(2)))
 
 			// end-get_image_manifest
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-
+			Expect(imageManifest).ToNot(BeNil())
 		})
 		It(`GetMessages request example`, func() {
+			fmt.Println("\nGetMessages() result:")
 			// begin-get_messages
 
 			getMessagesOptions := containerRegistryService.NewGetMessagesOptions()
@@ -330,56 +351,55 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
-			if getMessagesResponse != nil {
-				b, _ := json.MarshalIndent(getMessagesResponse, "", "  ")
-				fmt.Println(string(b))
-			}
+			b, _ := json.MarshalIndent(getMessagesResponse, "", "  ")
+			fmt.Println(string(b))
 
 			// end-get_messages
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-
+			Expect(getMessagesResponse).ToNot(BeNil())
 		})
 		It(`ListNamespaces request example`, func() {
+			fmt.Println("\nListNamespaces() result:")
 			// begin-list_namespaces
 
 			listNamespacesOptions := containerRegistryService.NewListNamespacesOptions()
 
-			result, response, err := containerRegistryService.ListNamespaces(listNamespacesOptions)
+			namespaces, response, err := containerRegistryService.ListNamespaces(listNamespacesOptions)
 			if err != nil {
 				panic(err)
 			}
-			b, _ := json.MarshalIndent(result, "", "  ")
+			b, _ := json.MarshalIndent(namespaces, "", "  ")
 			fmt.Println(string(b))
 
 			// end-list_namespaces
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(result).ToNot(BeNil())
-
+			Expect(namespaces).ToNot(BeNil())
 		})
 		It(`ListNamespaceDetails request example`, func() {
+			fmt.Println("\nListNamespaceDetails() result:")
 			// begin-list_namespace_details
 
 			listNamespaceDetailsOptions := containerRegistryService.NewListNamespaceDetailsOptions()
 
-			namespaceDetail, response, err := containerRegistryService.ListNamespaceDetails(listNamespaceDetailsOptions)
+			namespaceDetails, response, err := containerRegistryService.ListNamespaceDetails(listNamespaceDetailsOptions)
 			if err != nil {
 				panic(err)
 			}
-			b, _ := json.MarshalIndent(namespaceDetail, "", "  ")
+			b, _ := json.MarshalIndent(namespaceDetails, "", "  ")
 			fmt.Println(string(b))
 
 			// end-list_namespace_details
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-			Expect(namespaceDetail).ToNot(BeNil())
-
+			Expect(namespaceDetails).ToNot(BeNil())
 		})
 		It(`AssignNamespace request example`, func() {
+			fmt.Println("\nAssignNamespace() result:")
 			// begin-assign_namespace
 
 			assignNamespaceOptions := containerRegistryService.NewAssignNamespaceOptions(
@@ -399,9 +419,9 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(namespace).ToNot(BeNil())
-
 		})
 		It(`GetPlans request example`, func() {
+			fmt.Println("\nGetPlans() result:")
 			// begin-get_plans
 
 			getPlansOptions := containerRegistryService.NewGetPlansOptions()
@@ -418,7 +438,6 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(plan).ToNot(BeNil())
-
 		})
 		It(`UpdatePlans request example`, func() {
 			// begin-update_plans
@@ -430,14 +449,17 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
+			if response.StatusCode != 200 {
+				fmt.Printf("\nUnexpected response status code received from UpdatePlans(): %d\n", response.StatusCode)
+			}
 
 			// end-update_plans
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-
 		})
 		It(`GetQuota request example`, func() {
+			fmt.Println("\nGetQuota() result:")
 			// begin-get_quota
 
 			getQuotaOptions := containerRegistryService.NewGetQuotaOptions()
@@ -454,7 +476,6 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(quota).ToNot(BeNil())
-
 		})
 		It(`UpdateQuota request example`, func() {
 			// begin-update_quota
@@ -466,14 +487,17 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
+			if response.StatusCode != 200 {
+				fmt.Printf("\nUnexpected response status code received from UpdateQuota(): %d\n", response.StatusCode)
+			}
 
 			// end-update_quota
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-
 		})
 		It(`ListRetentionPolicies request example`, func() {
+			fmt.Println("\nListRetentionPolicies() result:")
 			// begin-list_retention_policies
 
 			listRetentionPoliciesOptions := containerRegistryService.NewListRetentionPoliciesOptions()
@@ -490,12 +514,13 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(mapStringRetentionPolicy).ToNot(BeNil())
-
 		})
 		It(`SetRetentionPolicy request example`, func() {
 			// begin-set_retention_policy
 
-			setRetentionPolicyOptions := containerRegistryService.NewSetRetentionPolicyOptions("birds")
+			setRetentionPolicyOptions := containerRegistryService.NewSetRetentionPolicyOptions(
+				namespaceLink,
+			)
 			setRetentionPolicyOptions.SetImagesPerRepo(int64(10))
 			setRetentionPolicyOptions.SetRetainUntagged(false)
 
@@ -503,17 +528,22 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
+			if response.StatusCode != 200 {
+				fmt.Printf("\nUnexpected response status code received from SetRetentionPolicy(): %d\n", response.StatusCode)
+			}
 
 			// end-set_retention_policy
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-
 		})
 		It(`AnalyzeRetentionPolicy request example`, func() {
+			fmt.Println("\nAnalyzeRetentionPolicy() result:")
 			// begin-analyze_retention_policy
 
-			analyzeRetentionPolicyOptions := containerRegistryService.NewAnalyzeRetentionPolicyOptions(namespaceLink)
+			analyzeRetentionPolicyOptions := containerRegistryService.NewAnalyzeRetentionPolicyOptions(
+				namespaceLink,
+			)
 			analyzeRetentionPolicyOptions.SetImagesPerRepo(int64(10))
 			analyzeRetentionPolicyOptions.SetRetainUntagged(false)
 
@@ -529,9 +559,9 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(mapStringstring).ToNot(BeNil())
-
 		})
 		It(`GetRetentionPolicy request example`, func() {
+			fmt.Println("\nGetRetentionPolicy() result:")
 			// begin-get_retention_policy
 
 			getRetentionPolicyOptions := containerRegistryService.NewGetRetentionPolicyOptions(
@@ -550,9 +580,10 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(retentionPolicy).ToNot(BeNil())
-
 		})
+
 		It(`ListDeletedImages request example`, func() {
+			fmt.Println("\nListDeletedImages() result:")
 			// begin-list_deleted_images
 
 			listDeletedImagesOptions := containerRegistryService.NewListDeletedImagesOptions()
@@ -569,9 +600,9 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(mapStringTrash).ToNot(BeNil())
-
 		})
 		It(`RestoreTags request example`, func() {
+			fmt.Println("\nRestoreTags() result:")
 			// begin-restore_tags
 
 			restoreTagsOptions := containerRegistryService.NewRestoreTagsOptions(
@@ -590,7 +621,6 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(restoreResult).ToNot(BeNil())
-
 		})
 		It(`RestoreImage request example`, func() {
 			// begin-restore_image
@@ -603,12 +633,14 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
+			if response.StatusCode != 200 {
+				fmt.Printf("\nUnexpected response status code received from RestoreImage(): %d\n", response.StatusCode)
+			}
 
 			// end-restore_image
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
-
 		})
 		It(`DeleteNamespace request example`, func() {
 			// begin-delete_namespace
@@ -621,14 +653,18 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			if err != nil {
 				panic(err)
 			}
+			if response.StatusCode != 204 {
+				fmt.Printf("\nUnexpected response status code received from DeleteNamespace(): %d\n", response.StatusCode)
+			}
 
 			// end-delete_namespace
 
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(204))
-
 		})
+
 		It(`DeleteImageTag request example`, func() {
+			fmt.Println("\nDeleteImageTag() result:")
 			// begin-delete_image_tag
 
 			deleteImageTagOptions := containerRegistryService.NewDeleteImageTagOptions(
@@ -647,9 +683,9 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(imageDeleteResult).ToNot(BeNil())
-
 		})
 		It(`DeleteImage request example`, func() {
+			fmt.Println("\nDeleteImage() result:")
 			// begin-delete_image
 
 			deleteImageOptions := containerRegistryService.NewDeleteImageOptions(
@@ -668,7 +704,6 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(err).To(BeNil())
 			Expect(response.StatusCode).To(Equal(200))
 			Expect(imageDeleteResult).ToNot(BeNil())
-
 		})
 	})
 })
