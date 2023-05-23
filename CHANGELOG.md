@@ -1,3 +1,10 @@
+## [0.0.17](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.16...v0.0.17) (2023-05-23)
+
+
+### Bug Fixes
+
+* **project:** Remediate vulnerabilities ([aad0d14](https://github.com/IBM/container-registry-go-sdk/commit/aad0d1416b9e105b25f22b568dd6f237d753a526))
+
 ## [0.0.16](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.15...v0.0.16) (2022-05-27)
 
 
