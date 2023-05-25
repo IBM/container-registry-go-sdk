@@ -1,5 +1,5 @@
 /**
- * (C) Copyright IBM Corp. 2020, 2021.
+ * (C) Copyright IBM Corp. 2023.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import (
 	"context"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -41,14 +40,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`Instantiate service client`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
+				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).ToNot(BeNil())
 			Expect(serviceErr).To(BeNil())
 		})
 		It(`Instantiate service client with error: Invalid URL`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
+				URL: "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 			Expect(containerRegistryService).To(BeNil())
@@ -56,7 +55,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		})
 		It(`Instantiate service client with error: Invalid Auth`, func() {
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "https://containerregistryv1/api",
+				URL: "https://containerregistryv1/api",
 				Account: core.StringPtr(account),
 				Authenticator: &core.BasicAuthenticator{
 					Username: "",
@@ -77,7 +76,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "noauth",
 			}
 
@@ -99,7 +98,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			It(`Create service client using external config and set url from constructor successfully`, func() {
 				SetTestEnvironment(testEnvironment)
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-					URL:     "https://testService/api",
+					URL: "https://testService/api",
 					Account: core.StringPtr(account),
 				})
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -135,7 +134,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid Auth`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_URL":       "https://containerregistryv1/api",
+				"CONTAINER_REGISTRY_URL": "https://containerregistryv1/api",
 				"CONTAINER_REGISTRY_AUTH_TYPE": "someOtherAuth",
 			}
 
@@ -153,12 +152,12 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		Context(`Using external config, construct service client instances with error: Invalid URL`, func() {
 			// Map containing environment variables used in testing.
 			var testEnvironment = map[string]string{
-				"CONTAINER_REGISTRY_AUTH_TYPE": "NOAuth",
+				"CONTAINER_REGISTRY_AUTH_TYPE":   "NOAuth",
 			}
 
 			SetTestEnvironment(testEnvironment)
 			containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1UsingExternalConfig(&containerregistryv1.ContainerRegistryV1Options{
-				URL:     "{BAD_URL_STRING",
+				URL: "{BAD_URL_STRING",
 				Account: core.StringPtr(account),
 			})
 
@@ -173,6 +172,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 		It(`GetServiceURLForRegion(region string)`, func() {
 			var url string
 			var err error
+			url, err = containerregistryv1.GetServiceURLForRegion("global")
+			Expect(url).To(Equal("https://icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("us-south")
 			Expect(url).To(Equal("https://us.icr.io"))
 			Expect(err).To(BeNil())
@@ -209,10 +212,6 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://au.icr.io"))
 			Expect(err).To(BeNil())
 
-			url, err = containerregistryv1.GetServiceURLForRegion("global")
-			Expect(url).To(Equal("https://icr.io"))
-			Expect(err).To(BeNil())
-
 			url, err = containerregistryv1.GetServiceURLForRegion("jp-osa")
 			Expect(url).To(Equal("https://jp2.icr.io"))
 			Expect(err).To(BeNil())
@@ -246,14 +245,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetAuth with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -306,7 +305,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -362,7 +361,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -388,7 +387,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -422,7 +421,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -481,7 +480,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -506,7 +505,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -550,14 +549,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.URL.Query()["repository"]).To(Equal([]string{"testString"}))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListImages with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -622,7 +621,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -690,7 +689,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -722,7 +721,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -762,7 +761,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -805,14 +804,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke BulkDeleteImages with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -882,7 +881,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -955,7 +954,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -982,7 +981,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1024,7 +1023,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1062,14 +1061,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListImageDigests with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1135,14 +1134,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `[{"created": 7, "id": "ID", "manifestType": "ManifestType", "repoTags": {"mapKey": "anyValue"}, "size": 4}]`)
+					fmt.Fprintf(res, "%s", `[{"created": 7, "id": "ID", "manifestType": "ManifestType", "repoTags": {"anyKey": "anyValue"}, "size": 4}]`)
 				}))
 			})
 			It(`Invoke ListImageDigests successfully with retries`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1211,14 +1210,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `[{"created": 7, "id": "ID", "manifestType": "ManifestType", "repoTags": {"mapKey": "anyValue"}, "size": 4}]`)
+					fmt.Fprintf(res, "%s", `[{"created": 7, "id": "ID", "manifestType": "ManifestType", "repoTags": {"anyKey": "anyValue"}, "size": 4}]`)
 				}))
 			})
 			It(`Invoke ListImageDigests successfully`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1248,7 +1247,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1286,7 +1285,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1335,7 +1334,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1360,7 +1359,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1404,14 +1403,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke DeleteImage with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1465,7 +1464,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1522,7 +1521,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1549,7 +1548,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1591,7 +1590,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1629,14 +1628,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke InspectImage with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1683,14 +1682,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"Architecture": "Architecture", "Author": "Author", "Comment": "Comment", "Config": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"mapKey": {"anyKey": "anyValue"}}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"mapKey": {"anyKey": "anyValue"}}, "WorkingDir": "WorkingDir"}, "Container": "Container", "ContainerConfig": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"mapKey": {"anyKey": "anyValue"}}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"mapKey": {"anyKey": "anyValue"}}, "WorkingDir": "WorkingDir"}, "Created": "Created", "DockerVersion": "DockerVersion", "Id": "ID", "ManifestType": "ManifestType", "Os": "Os", "OsVersion": "OsVersion", "Parent": "Parent", "RootFS": {"BaseLayer": "BaseLayer", "Layers": ["Layers"], "Type": "Type"}, "Size": 4, "VirtualSize": 11}`)
+					fmt.Fprintf(res, "%s", `{"Architecture": "Architecture", "Author": "Author", "Comment": "Comment", "Config": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Container": "Container", "ContainerConfig": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Created": "Created", "DockerVersion": "DockerVersion", "Id": "ID", "ManifestType": "ManifestType", "Os": "Os", "OsVersion": "OsVersion", "Parent": "Parent", "RootFS": {"BaseLayer": "BaseLayer", "Layers": ["Layers"], "Type": "Type"}, "Size": 4, "VirtualSize": 11}`)
 				}))
 			})
 			It(`Invoke InspectImage successfully with retries`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1740,14 +1739,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"Architecture": "Architecture", "Author": "Author", "Comment": "Comment", "Config": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"mapKey": {"anyKey": "anyValue"}}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"mapKey": {"anyKey": "anyValue"}}, "WorkingDir": "WorkingDir"}, "Container": "Container", "ContainerConfig": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"mapKey": {"anyKey": "anyValue"}}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"mapKey": {"anyKey": "anyValue"}}, "WorkingDir": "WorkingDir"}, "Created": "Created", "DockerVersion": "DockerVersion", "Id": "ID", "ManifestType": "ManifestType", "Os": "Os", "OsVersion": "OsVersion", "Parent": "Parent", "RootFS": {"BaseLayer": "BaseLayer", "Layers": ["Layers"], "Type": "Type"}, "Size": 4, "VirtualSize": 11}`)
+					fmt.Fprintf(res, "%s", `{"Architecture": "Architecture", "Author": "Author", "Comment": "Comment", "Config": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Container": "Container", "ContainerConfig": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Created": "Created", "DockerVersion": "DockerVersion", "Id": "ID", "ManifestType": "ManifestType", "Os": "Os", "OsVersion": "OsVersion", "Parent": "Parent", "RootFS": {"BaseLayer": "BaseLayer", "Layers": ["Layers"], "Type": "Type"}, "Size": 4, "VirtualSize": 11}`)
 				}))
 			})
 			It(`Invoke InspectImage successfully`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1774,7 +1773,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1816,7 +1815,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1859,14 +1858,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": "anyValue"}`)
+					fmt.Fprintf(res, "%s", `{"anyKey": "anyValue"}`)
 				}))
 			})
 			It(`Invoke GetImageManifest successfully with retries`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1916,14 +1915,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": "anyValue"}`)
+					fmt.Fprintf(res, "%s", `{"anyKey": "anyValue"}`)
 				}))
 			})
 			It(`Invoke GetImageManifest successfully`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1950,7 +1949,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -1992,7 +1991,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2040,7 +2039,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2094,7 +2093,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2120,7 +2119,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2154,7 +2153,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2203,7 +2202,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2259,7 +2258,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2285,7 +2284,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2319,7 +2318,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2356,14 +2355,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListNamespaceDetails with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2416,7 +2415,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2472,7 +2471,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2498,7 +2497,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2532,7 +2531,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2571,14 +2570,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["X-Auth-Resource-Group"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke CreateNamespace with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2635,7 +2634,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2695,7 +2694,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2723,7 +2722,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2766,7 +2765,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2807,14 +2806,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["X-Auth-Resource-Group"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke AssignNamespace with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2871,7 +2870,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2931,7 +2930,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -2959,7 +2958,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3002,7 +3001,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3047,7 +3046,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3071,7 +3070,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3114,14 +3113,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetPlans with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3174,7 +3173,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3230,7 +3229,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3256,7 +3255,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3290,7 +3289,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3349,7 +3348,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3373,7 +3372,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3410,14 +3409,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetQuota with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3470,7 +3469,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3526,7 +3525,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3552,7 +3551,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3586,7 +3585,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3645,7 +3644,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3670,7 +3669,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3708,14 +3707,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListRetentionPolicies with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3768,7 +3767,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3824,7 +3823,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3850,7 +3849,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3884,7 +3883,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3943,7 +3942,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -3969,7 +3968,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4014,14 +4013,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke AnalyzeRetentionPolicy with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4093,7 +4092,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4168,7 +4167,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4197,7 +4196,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4241,7 +4240,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4281,14 +4280,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetRetentionPolicy with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4342,7 +4341,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4399,7 +4398,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4426,7 +4425,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4468,7 +4467,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4506,14 +4505,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetSettings with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4566,7 +4565,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4622,7 +4621,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4648,7 +4647,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4682,7 +4681,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4741,7 +4740,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4765,7 +4764,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4802,14 +4801,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke DeleteImageTag with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4863,7 +4862,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4920,7 +4919,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4947,7 +4946,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -4989,7 +4988,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5028,14 +5027,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.URL.Query()["namespace"]).To(Equal([]string{"testString"}))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListDeletedImages with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5090,7 +5089,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5148,7 +5147,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5175,7 +5174,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5210,7 +5209,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5248,14 +5247,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, `} this is not valid json {`)
+					fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke RestoreTags with error: Operation response processing error`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5309,7 +5308,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5366,7 +5365,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5393,7 +5392,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5435,7 +5434,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5479,7 +5478,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5503,7 +5502,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 				containerRegistryService, serviceErr := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 					URL:           testServer.URL,
 					Authenticator: &core.NoAuthAuthenticator{},
-					Account:       core.StringPtr(account),
+					Account: core.StringPtr(account),
 				})
 				Expect(serviceErr).To(BeNil())
 				Expect(containerRegistryService).ToNot(BeNil())
@@ -5537,7 +5536,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			containerRegistryService, _ := containerregistryv1.NewContainerRegistryV1(&containerregistryv1.ContainerRegistryV1Options{
 				URL:           "http://containerregistryv1modelgenerator.com",
 				Authenticator: &core.NoAuthAuthenticator{},
-				Account:       core.StringPtr(account),
+				Account: core.StringPtr(account),
 			})
 			It(`Invoke NewAnalyzeRetentionPolicyOptions successfully`, func() {
 				// Construct an instance of the AnalyzeRetentionPolicyOptions model
@@ -5882,7 +5881,7 @@ func CreateMockUUID(mockData string) *strfmt.UUID {
 }
 
 func CreateMockReader(mockData string) io.ReadCloser {
-	return ioutil.NopCloser(bytes.NewReader([]byte(mockData)))
+	return io.NopCloser(bytes.NewReader([]byte(mockData)))
 }
 
 func CreateMockDate(mockData string) *strfmt.Date {
