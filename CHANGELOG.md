@@ -1,3 +1,15 @@
+# [1.0.0](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.17...v1.0.0) (2023-05-25)
+
+
+* feat(upgrade) replace vav3 with vav4 ([cca8d61](https://github.com/IBM/container-registry-go-sdk/commit/cca8d619177a223226828f4f690291fa54824574))
+
+
+### BREAKING CHANGES
+
+* replace the deprecated vav3 API with vav4
+
+Signed-off-by: Stuart Hayton <stuart.hayton@uk.ibm.com>
+
 ## [0.0.17](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.16...v0.0.17) (2023-05-23)
 
 
