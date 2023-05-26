@@ -36,6 +36,8 @@ deploy:
   skip_cleanup: true
   on:
     branch: main
+    # only on 1 matrix job
+    condition: $TRAVIS_GO_VERSION =~ ^1\.20
 # ensure semantic-release is functional
 - provider: script
   script:
@@ -43,3 +45,5 @@ deploy:
   skip_cleanup: true
   on:
     all_branches: true
+    # only on 1 matrix job
+    condition: $TRAVIS_GO_VERSION =~ ^1\.20

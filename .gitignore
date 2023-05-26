@@ -11,3 +11,6 @@ vendor/
 
 # credentials files
 *.env
+
+# vscode
+.vscode/*

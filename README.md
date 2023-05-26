@@ -45,7 +45,7 @@ The IBM Cloud Container Registry Go SDK allows developers to programmatically in
 Service Name | Package name 
 --- | --- 
 [Container Registry image management API](https://cloud.ibm.com/apidocs/container-registry) | containerregistryv1
-[Container Registry Vulnerability Advisor API](https://cloud.ibm.com/apidocs/container-registry/va) | vulnerabilityadvisorv3
+[Container Registry Vulnerability Advisor API](https://cloud.ibm.com/apidocs/container-registry/va-v4) | vulnerabilityadvisorv4
 
 ## Prerequisites
 
@@ -76,7 +76,7 @@ Go application, like this:
 ```go
 import (
   "github.com/IBM/container-registry-go-sdk/containerregistryv1"
-  "github.com/IBM/container-registry-go-sdk/vulnerabilityadvisorv3"
+  "github.com/IBM/container-registry-go-sdk/vulnerabilityadvisorv4"
 )
 ```
 
