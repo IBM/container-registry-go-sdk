@@ -224,6 +224,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://br.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("eu-fr2")
+			Expect(url).To(Equal("https://fr2.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())

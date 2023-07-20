@@ -15,7 +15,7 @@
  */
 
 /*
- * IBM OpenAPI SDK Code Generator Version: 3.72.0-5d70f2bb-20230511-203609
+ * IBM OpenAPI SDK Code Generator Version: 3.75.0-726bc7e3-20230713-221716
  */
 
 // Package containerregistryv1 : Operations and models for the ContainerRegistryV1 service
@@ -136,6 +136,7 @@ func GetServiceURLForRegion(region string) (string, error) {
 		"jp-osa": "https://jp2.icr.io", // jp-osa
 		"ca-tor": "https://ca.icr.io", // ca-tor
 		"br-sao": "https://br.icr.io", // br-sao
+		"eu-fr2": "https://fr2.icr.io", // eu-fr2
 	}
 
 	if url, ok := endpoints[region]; ok {
