@@ -1,3 +1,15 @@
+# [1.1.0](https://github.com/IBM/container-registry-go-sdk/compare/v1.0.0...v1.1.0) (2023-07-20)
+
+
+### Bug Fixes
+
+* **project:** Remediate vulnerabilities ([a8cf5bf](https://github.com/IBM/container-registry-go-sdk/commit/a8cf5bf4b7876a0db8d0d7ad5e1a6b3aa979e44a))
+
+
+### Features
+
+* **project:** Add eu-fr2 endpoint ([af85d5b](https://github.com/IBM/container-registry-go-sdk/commit/af85d5b384a2d0488ddbdc2ff710b02e975214a2))
+
 # [1.0.0](https://github.com/IBM/container-registry-go-sdk/compare/v0.0.17...v1.0.0) (2023-05-25)
 
 
