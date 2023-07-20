@@ -14,3 +14,6 @@ vendor/
 
 # vscode
 .vscode/*
+
+# semantic-release
+node_modules
