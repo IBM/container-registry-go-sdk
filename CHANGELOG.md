@@ -1,3 +1,10 @@
+## [1.1.1](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.0...v1.1.1) (2024-07-11)
+
+
+### Bug Fixes
+
+* **project:** Upgrade micromatch for CVE-2024-4067 ([45f59b9](https://github.com/IBM/container-registry-go-sdk/commit/45f59b912de73b5b89a8f783dc04d6874a858ad2))
+
 # [1.1.0](https://github.com/IBM/container-registry-go-sdk/compare/v1.0.0...v1.1.0) (2023-07-20)
 
 
