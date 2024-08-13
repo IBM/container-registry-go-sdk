@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.1...v1.1.2) (2024-08-13)
+
+
+### Bug Fixes
+
+* **project:** Bump github.com/hashicorp/go-retryablehttp for CVE-2024-6104 ([2787b71](https://github.com/IBM/container-registry-go-sdk/commit/2787b71a72f7f0cef937401c615794e7a1084283))
+
 ## [1.1.1](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.0...v1.1.1) (2024-07-11)
 
 
