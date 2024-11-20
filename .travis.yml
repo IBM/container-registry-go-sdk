@@ -1,9 +1,9 @@
 language: go
 
 go:
-  - 1.18.x
-  - 1.19.x
-  - 1.20.x
+  - "1.18.10" # Highest minor version available according to https://pkg.go.dev/golang.org/dl#section-readme
+  - "1.19.13" # Highest minor version available according to https://pkg.go.dev/golang.org/dl#section-readme
+  - "1.20.14" # Highest minor version available according to https://pkg.go.dev/golang.org/dl#section-readme
 
 dist: jammy
 
