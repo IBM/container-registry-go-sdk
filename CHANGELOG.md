@@ -1,3 +1,11 @@
+## [1.1.3](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.2...v1.1.3) (2024-11-22)
+
+
+### Bug Fixes
+
+* **project:** bump cross-spawn for CVE-2024-21538 ([#37](https://github.com/IBM/container-registry-go-sdk/issues/37)) ([02cf363](https://github.com/IBM/container-registry-go-sdk/commit/02cf3632f229a039149393758de016de496ac545))
+* **release:** update go version conditional for deploy ([#39](https://github.com/IBM/container-registry-go-sdk/issues/39)) ([cf9d227](https://github.com/IBM/container-registry-go-sdk/commit/cf9d227bcdbc70f6903706b684fd4b7d4f387db1))
+
 ## [1.1.2](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.1...v1.1.2) (2024-08-13)
 
 
