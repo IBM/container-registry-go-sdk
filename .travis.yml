@@ -45,7 +45,7 @@ deploy:
   on:
     branch: main
     # only on 1 matrix job
-    condition: $TRAVIS_GO_VERSION =~ ^1\.20
+    condition: $TRAVIS_GO_VERSION =~ ^1\.21
 # ensure semantic-release is functional
 - provider: script
   script:
@@ -54,4 +54,4 @@ deploy:
   on:
     all_branches: true
     # only on 1 matrix job
-    condition: $TRAVIS_GO_VERSION =~ ^1\.20
+    condition: $TRAVIS_GO_VERSION =~ ^1\.21
