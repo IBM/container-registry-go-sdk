@@ -1,3 +1,10 @@
+## [1.1.4](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.3...v1.1.4) (2025-01-06)
+
+
+### Bug Fixes
+
+* **project:** update golang.org/x/crypto via github.com/IBM/go-sdk-core/v5 ([6b819f0](https://github.com/IBM/container-registry-go-sdk/commit/6b819f05a679b8c00439c0c7e04af7b764d8cb63))
+
 ## [1.1.3](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.2...v1.1.3) (2024-11-22)
 
 
