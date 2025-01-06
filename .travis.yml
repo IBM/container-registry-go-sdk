@@ -2,7 +2,6 @@ language: go
 
 env:
   - GO_VERSION="module" # The oldest version we claim to support
-  - GO_VERSION="1.21.x" # The oldest version that enforces the minimum version of imported modules
   - GO_VERSION="stable" # The latest version
 
 dist: jammy
