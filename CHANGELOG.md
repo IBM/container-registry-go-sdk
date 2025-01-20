@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.4...v1.1.5) (2025-01-20)
+
+
+### Bug Fixes
+
+* **project:** update golang.org/x/net for vuln fix ([#41](https://github.com/IBM/container-registry-go-sdk/issues/41)) ([1993c01](https://github.com/IBM/container-registry-go-sdk/commit/1993c018f7bb7d1aa242f073d1fbe4ce600617be))
+
 ## [1.1.4](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.3...v1.1.4) (2025-01-06)
 
 
