@@ -1,3 +1,10 @@
+## [1.1.6](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.5...v1.1.6) (2025-03-06)
+
+
+### Bug Fixes
+
+* **project:** release dependency vuln fix ([#43](https://github.com/IBM/container-registry-go-sdk/issues/43)) ([11db9c9](https://github.com/IBM/container-registry-go-sdk/commit/11db9c9982a096786c4f8c0fa4750373f96c756f))
+
 ## [1.1.5](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.4...v1.1.5) (2025-01-20)
 
 
