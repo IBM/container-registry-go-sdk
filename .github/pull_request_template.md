@@ -6,6 +6,7 @@
 ## PR Checklist
 Please make sure that your PR fulfills the following requirements:  
 - [ ] The commit message follows the [Angular Commit Message Guidelines](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#-commit-message-guidelines).
+- [ ] Intending to **create a release**. Only commit messages prefixed with one of: `fix:`, `feat:`, `perf:` or `BREAKING CHANGE:` will trigger the creation of a release. See [semantic-release docs](https://github.com/semantic-release/semantic-release?tab=readme-ov-file#how-does-it-work).
 - [ ] Tests for the changes have been added (for bug fixes / features)
 - [ ] Docs have been added / updated (for bug fixes / features)
 
