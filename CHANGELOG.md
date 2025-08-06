@@ -1,3 +1,10 @@
+## [1.1.7](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.6...v1.1.7) (2025-08-06)
+
+
+### Bug Fixes
+
+* **project:** bump Node.js dependencies, and move to devDependencies rather than build dependencies ([2e988a6](https://github.com/IBM/container-registry-go-sdk/commit/2e988a618d49b4021c7886bb5ef794be95e8bcdf))
+
 ## [1.1.6](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.5...v1.1.6) (2025-03-06)
 
 
