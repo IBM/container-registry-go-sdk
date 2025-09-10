@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.7...v1.2.0) (2025-09-10)
+
+
+### Features
+
+* **containerregistryv1:** Add eu-es and ca-mon endpoints to SDK ([e473264](https://github.com/IBM/container-registry-go-sdk/commit/e473264033721d2cbce6ebbd5e17d975adbf9769))
+
 ## [1.1.7](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.6...v1.1.7) (2025-08-06)
 
 
