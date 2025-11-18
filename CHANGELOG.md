@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/IBM/container-registry-go-sdk/compare/v1.2.0...v1.2.1) (2025-11-18)
+
+
+### Bug Fixes
+
+* **project:** upgrade golang.org/x/crypto for CVE-2025-22869 ([ca46b26](https://github.com/IBM/container-registry-go-sdk/commit/ca46b2655a2fb24879f3d208ede82ee299f1a45c))
+
 # [1.2.0](https://github.com/IBM/container-registry-go-sdk/compare/v1.1.7...v1.2.0) (2025-09-10)
 
 
