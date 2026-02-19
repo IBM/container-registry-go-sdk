@@ -2,7 +2,10 @@
 
 all: build unittest lint tidy
 
-travis-ci: build unittest lint tidy
+ci: build unittest lint tidy
+
+# Deprecated: Use 'ci' target instead
+travis-ci: ci
 
 build:
 	go build ./...

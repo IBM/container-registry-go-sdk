@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.com/IBM/container-registry-go-sdk.svg?branch=main)](https://travis-ci.com/IBM/container-registry-go-sdk)
+[![CI](https://github.com/IBM/container-registry-go-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/IBM/container-registry-go-sdk/actions/workflows/ci.yml)
 [![Release](https://img.shields.io/github/v/release/IBM/container-registry-go-sdk)](https://github.com/IBM/container-registry-go-sdk/releases/latest)
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/IBM/container-registry-go-sdk)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
@@ -39,8 +39,8 @@ Go client library to interact with the [IBM Cloud Container Registry API](https:
 
 The IBM Cloud Container Registry Go SDK allows developers to programmatically interact with the following IBM Cloud services:
 
-Service Name | Package name 
---- | --- 
+Service Name | Package name
+--- | ---
 [Container Registry image management API](https://cloud.ibm.com/apidocs/container-registry) | containerregistryv1
 [Container Registry Vulnerability Advisor API](https://cloud.ibm.com/apidocs/container-registry/va-v4) | vulnerabilityadvisorv4
 
@@ -58,7 +58,7 @@ The current version of this SDK: 1.2.0
 There are a few different ways to download and install the Container Registry Go SDK project for use by your
 Go application:
 
-#### `go get` command  
+#### `go get` command
 Use this command to download and install the SDK to allow your Go application to
 use it:
 
@@ -66,7 +66,7 @@ use it:
 go get github.com/IBM/container-registry-go-sdk
 ```
 
-#### Go modules  
+#### Go modules
 If your application is using Go modules, you can add a suitable import to your
 Go application, like this:
 
@@ -80,7 +80,7 @@ import (
 then run `go mod tidy` to download and install the new dependency and update your Go application's
 `go.mod` file.
 
-#### `dep` dependency manager  
+#### `dep` dependency manager
 If your application is using the `dep` dependency management tool, you can add a dependency
 to your `Gopkg.toml` file.  Here is an example:
 
@@ -99,7 +99,7 @@ For general SDK usage information, please see [this link](https://github.com/IBM
 ## Questions
 
 If you are having difficulties using this SDK or have a question about the IBM Cloud services,
-please ask a question at 
+please ask a question at
 [Stack Overflow](http://stackoverflow.com/questions/ask?tags=ibm-cloud).
 
 ## Issues
