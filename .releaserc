@@ -11,12 +11,6 @@
         "prepareCmd": "bump-my-version bump --allow-dirty --current-version ${lastRelease.version} --new-version ${nextRelease.version} patch"
       }
     ],
-    [
-      "@semantic-release/git",
-      {
-        "message": "chore(release): ${nextRelease.version} release notes [skip ci]\n\n${nextRelease.notes}"
-      }
-    ],
     "@semantic-release/github"
   ]
 }

@@ -1,6 +1,6 @@
 [tool.bumpversion]
 current_version = "1.2.1"
-commit = true
+commit = false
 message = "Update version {current_version} -> {new_version} [skip ci]"
 
 [[tool.bumpversion.files]]
