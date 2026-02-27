@@ -123,20 +123,22 @@ func NewContainerRegistryV1(options *ContainerRegistryV1Options) (service *Conta
 // GetServiceURLForRegion returns the service URL to be used for the specified region
 func GetServiceURLForRegion(region string) (string, error) {
 	var endpoints = map[string]string{
-		"global": "https://icr.io", // global
-		"us-south": "https://us.icr.io", // us-south
-		"uk-south": "https://uk.icr.io", // uk-south
-		"eu-gb": "https://uk.icr.io", // eu-gb
-		"eu-central": "https://de.icr.io", // eu-central
-		"eu-de": "https://de.icr.io", // eu-de
-		"ap-north": "https://jp.icr.io", // ap-north
-		"jp-tok": "https://jp.icr.io", // jp-tok
-		"ap-south": "https://au.icr.io", // ap-south
-		"au-syd": "https://au.icr.io", // au-syd
-		"jp-osa": "https://jp2.icr.io", // jp-osa
-		"ca-tor": "https://ca.icr.io", // ca-tor
-		"br-sao": "https://br.icr.io", // br-sao
-		"eu-fr2": "https://fr2.icr.io", // eu-fr2
+		"global":     "https://icr.io",     // global
+		"us-south":   "https://us.icr.io",  // us-south
+		"uk-south":   "https://uk.icr.io",  // uk-south
+		"eu-gb":      "https://uk.icr.io",  // eu-gb
+		"eu-central": "https://de.icr.io",  // eu-central
+		"eu-de":      "https://de.icr.io",  // eu-de
+		"ap-north":   "https://jp.icr.io",  // ap-north
+		"jp-tok":     "https://jp.icr.io",  // jp-tok
+		"ap-south":   "https://au.icr.io",  // ap-south
+		"au-syd":     "https://au.icr.io",  // au-syd
+		"jp-osa":     "https://jp2.icr.io", // jp-osa
+		"ca-tor":     "https://ca.icr.io",  // ca-tor
+		"br-sao":     "https://br.icr.io",  // br-sao
+		"eu-fr2":     "https://fr2.icr.io", // eu-fr2
+		"ca-mon":     "https://ca2.icr.io", // eu-fr2
+		"eu-es":      "https://es.icr.io",  // eu-fr2
 	}
 
 	if url, ok := endpoints[region]; ok {
@@ -1977,7 +1979,7 @@ type AssignNamespaceOptions struct {
 func (*ContainerRegistryV1) NewAssignNamespaceOptions(xAuthResourceGroup string, name string) *AssignNamespaceOptions {
 	return &AssignNamespaceOptions{
 		XAuthResourceGroup: core.StringPtr(xAuthResourceGroup),
-		Name: core.StringPtr(name),
+		Name:               core.StringPtr(name),
 	}
 }
 
@@ -3479,7 +3481,7 @@ type TagImageOptions struct {
 func (*ContainerRegistryV1) NewTagImageOptions(fromimage string, toimage string) *TagImageOptions {
 	return &TagImageOptions{
 		Fromimage: core.StringPtr(fromimage),
-		Toimage: core.StringPtr(toimage),
+		Toimage:   core.StringPtr(toimage),
 	}
 }
 
