@@ -236,10 +236,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://ca2.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("in-che")
+			Expect(url).To(Equal("https://in.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())
-			fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
+			_, _ = fmt.Fprintf(GinkgoWriter, "Expected error: %s\n", err.Error())
 		})
 	})
 	Describe(`GetAuth(getAuthOptions *GetAuthOptions) - Operation response error`, func() {
@@ -257,7 +261,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetAuth with error: Operation response processing error`, func() {
@@ -310,7 +314,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"iam_authz": true, "private_only": false}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"iam_authz": true, "private_only": false}`)
 				}))
 			})
 			It(`Invoke GetAuth successfully with retries`, func() {
@@ -366,7 +370,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"iam_authz": true, "private_only": false}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"iam_authz": true, "private_only": false}`)
 				}))
 			})
 			It(`Invoke GetAuth successfully`, func() {
@@ -481,7 +485,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -561,7 +565,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.URL.Query()["repository"]).To(Equal([]string{"testString"}))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListImages with error: Operation response processing error`, func() {
@@ -626,7 +630,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `[{"ConfigurationIssueCount": 23, "Created": 7, "DigestTags": {"mapKey": ["Inner"]}, "ExemptIssueCount": 16, "Id": "ID", "IssueCount": 10, "Labels": {"mapKey": "Inner"}, "ManifestType": "ManifestType", "ParentId": "ParentID", "RepoDigests": ["RepoDigests"], "RepoTags": ["RepoTags"], "Size": 4, "VirtualSize": 11, "VulnerabilityCount": 18, "Vulnerable": "Vulnerable"}]`)
+					_, _ = fmt.Fprintf(res, "%s", `[{"ConfigurationIssueCount": 23, "Created": 7, "DigestTags": {"mapKey": ["Inner"]}, "ExemptIssueCount": 16, "Id": "ID", "IssueCount": 10, "Labels": {"mapKey": "Inner"}, "ManifestType": "ManifestType", "ParentId": "ParentID", "RepoDigests": ["RepoDigests"], "RepoTags": ["RepoTags"], "Size": 4, "VirtualSize": 11, "VulnerabilityCount": 18, "Vulnerable": "Vulnerable"}]`)
 				}))
 			})
 			It(`Invoke ListImages successfully with retries`, func() {
@@ -694,7 +698,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `[{"ConfigurationIssueCount": 23, "Created": 7, "DigestTags": {"mapKey": ["Inner"]}, "ExemptIssueCount": 16, "Id": "ID", "IssueCount": 10, "Labels": {"mapKey": "Inner"}, "ManifestType": "ManifestType", "ParentId": "ParentID", "RepoDigests": ["RepoDigests"], "RepoTags": ["RepoTags"], "Size": 4, "VirtualSize": 11, "VulnerabilityCount": 18, "Vulnerable": "Vulnerable"}]`)
+					_, _ = fmt.Fprintf(res, "%s", `[{"ConfigurationIssueCount": 23, "Created": 7, "DigestTags": {"mapKey": ["Inner"]}, "ExemptIssueCount": 16, "Id": "ID", "IssueCount": 10, "Labels": {"mapKey": "Inner"}, "ManifestType": "ManifestType", "ParentId": "ParentID", "RepoDigests": ["RepoDigests"], "RepoTags": ["RepoTags"], "Size": 4, "VirtualSize": 11, "VulnerabilityCount": 18, "Vulnerable": "Vulnerable"}]`)
 				}))
 			})
 			It(`Invoke ListImages successfully`, func() {
@@ -816,7 +820,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke BulkDeleteImages with error: Operation response processing error`, func() {
@@ -876,7 +880,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -886,7 +890,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"error": {"mapKey": {"code": "Code", "message": "Message"}}, "success": ["Success"]}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"error": {"mapKey": {"code": "Code", "message": "Message"}}, "success": ["Success"]}`)
 				}))
 			})
 			It(`Invoke BulkDeleteImages successfully with retries`, func() {
@@ -952,14 +956,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"error": {"mapKey": {"code": "Code", "message": "Message"}}, "success": ["Success"]}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"error": {"mapKey": {"code": "Code", "message": "Message"}}, "success": ["Success"]}`)
 				}))
 			})
 			It(`Invoke BulkDeleteImages successfully`, func() {
@@ -1073,7 +1077,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListImageDigests with error: Operation response processing error`, func() {
@@ -1136,7 +1140,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -1146,7 +1150,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `[{"created": 7, "id": "ID", "manifestType": "ManifestType", "repoTags": {"anyKey": "anyValue"}, "size": 4}]`)
+					_, _ = fmt.Fprintf(res, "%s", `[{"created": 7, "id": "ID", "manifestType": "ManifestType", "repoTags": {"anyKey": "anyValue"}, "size": 4}]`)
 				}))
 			})
 			It(`Invoke ListImageDigests successfully with retries`, func() {
@@ -1215,14 +1219,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `[{"created": 7, "id": "ID", "manifestType": "ManifestType", "repoTags": {"anyKey": "anyValue"}, "size": 4}]`)
+					_, _ = fmt.Fprintf(res, "%s", `[{"created": 7, "id": "ID", "manifestType": "ManifestType", "repoTags": {"anyKey": "anyValue"}, "size": 4}]`)
 				}))
 			})
 			It(`Invoke ListImageDigests successfully`, func() {
@@ -1415,7 +1419,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke DeleteImage with error: Operation response processing error`, func() {
@@ -1469,7 +1473,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
 				}))
 			})
 			It(`Invoke DeleteImage successfully with retries`, func() {
@@ -1526,7 +1530,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
 				}))
 			})
 			It(`Invoke DeleteImage successfully`, func() {
@@ -1640,7 +1644,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke InspectImage with error: Operation response processing error`, func() {
@@ -1694,7 +1698,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"Architecture": "Architecture", "Author": "Author", "Comment": "Comment", "Config": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Container": "Container", "ContainerConfig": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Created": "Created", "DockerVersion": "DockerVersion", "Id": "ID", "ManifestType": "ManifestType", "Os": "Os", "OsVersion": "OsVersion", "Parent": "Parent", "RootFS": {"BaseLayer": "BaseLayer", "Layers": ["Layers"], "Type": "Type"}, "Size": 4, "VirtualSize": 11}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"Architecture": "Architecture", "Author": "Author", "Comment": "Comment", "Config": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Container": "Container", "ContainerConfig": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Created": "Created", "DockerVersion": "DockerVersion", "Id": "ID", "ManifestType": "ManifestType", "Os": "Os", "OsVersion": "OsVersion", "Parent": "Parent", "RootFS": {"BaseLayer": "BaseLayer", "Layers": ["Layers"], "Type": "Type"}, "Size": 4, "VirtualSize": 11}`)
 				}))
 			})
 			It(`Invoke InspectImage successfully with retries`, func() {
@@ -1751,7 +1755,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"Architecture": "Architecture", "Author": "Author", "Comment": "Comment", "Config": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Container": "Container", "ContainerConfig": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Created": "Created", "DockerVersion": "DockerVersion", "Id": "ID", "ManifestType": "ManifestType", "Os": "Os", "OsVersion": "OsVersion", "Parent": "Parent", "RootFS": {"BaseLayer": "BaseLayer", "Layers": ["Layers"], "Type": "Type"}, "Size": 4, "VirtualSize": 11}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"Architecture": "Architecture", "Author": "Author", "Comment": "Comment", "Config": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Container": "Container", "ContainerConfig": {"ArgsEscaped": false, "AttachStderr": true, "AttachStdin": false, "AttachStdout": true, "Cmd": ["Cmd"], "Domainname": "Domainname", "Entrypoint": ["Entrypoint"], "Env": ["Env"], "ExposedPorts": {"anyKey": "anyValue"}, "Healthcheck": {"Interval": 8, "Retries": 7, "Test": ["Test"], "Timeout": 7}, "Hostname": "Hostname", "Image": "Image", "Labels": {"mapKey": "Inner"}, "MacAddress": "MacAddress", "NetworkDisabled": false, "OnBuild": ["OnBuild"], "OpenStdin": false, "Shell": ["Shell"], "StdinOnce": false, "StopSignal": "StopSignal", "StopTimeout": 11, "Tty": false, "User": "User", "Volumes": {"anyKey": "anyValue"}, "WorkingDir": "WorkingDir"}, "Created": "Created", "DockerVersion": "DockerVersion", "Id": "ID", "ManifestType": "ManifestType", "Os": "Os", "OsVersion": "OsVersion", "Parent": "Parent", "RootFS": {"BaseLayer": "BaseLayer", "Layers": ["Layers"], "Type": "Type"}, "Size": 4, "VirtualSize": 11}`)
 				}))
 			})
 			It(`Invoke InspectImage successfully`, func() {
@@ -1870,7 +1874,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"anyKey": "anyValue"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"anyKey": "anyValue"}`)
 				}))
 			})
 			It(`Invoke GetImageManifest successfully with retries`, func() {
@@ -1927,7 +1931,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"anyKey": "anyValue"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"anyKey": "anyValue"}`)
 				}))
 			})
 			It(`Invoke GetImageManifest successfully`, func() {
@@ -2044,7 +2048,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `"Hello, world!"`)
+					_, _ = fmt.Fprintf(res, "%s", `"Hello, world!"`)
 				}))
 			})
 			It(`Invoke GetMessages successfully with retries`, func() {
@@ -2098,7 +2102,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `"Hello, world!"`)
+					_, _ = fmt.Fprintf(res, "%s", `"Hello, world!"`)
 				}))
 			})
 			It(`Invoke GetMessages successfully`, func() {
@@ -2207,7 +2211,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `["OperationResponse"]`)
+					_, _ = fmt.Fprintf(res, "%s", `["OperationResponse"]`)
 				}))
 			})
 			It(`Invoke ListNamespaces successfully with retries`, func() {
@@ -2263,7 +2267,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `["OperationResponse"]`)
+					_, _ = fmt.Fprintf(res, "%s", `["OperationResponse"]`)
 				}))
 			})
 			It(`Invoke ListNamespaces successfully`, func() {
@@ -2367,7 +2371,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListNamespaceDetails with error: Operation response processing error`, func() {
@@ -2420,7 +2424,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `[{"account": "Account", "created_date": "CreatedDate", "crn": "CRN", "name": "Name", "resource_created_date": "ResourceCreatedDate", "resource_group": "ResourceGroup", "updated_date": "UpdatedDate"}]`)
+					_, _ = fmt.Fprintf(res, "%s", `[{"account": "Account", "created_date": "CreatedDate", "crn": "CRN", "name": "Name", "resource_created_date": "ResourceCreatedDate", "resource_group": "ResourceGroup", "updated_date": "UpdatedDate"}]`)
 				}))
 			})
 			It(`Invoke ListNamespaceDetails successfully with retries`, func() {
@@ -2476,7 +2480,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `[{"account": "Account", "created_date": "CreatedDate", "crn": "CRN", "name": "Name", "resource_created_date": "ResourceCreatedDate", "resource_group": "ResourceGroup", "updated_date": "UpdatedDate"}]`)
+					_, _ = fmt.Fprintf(res, "%s", `[{"account": "Account", "created_date": "CreatedDate", "crn": "CRN", "name": "Name", "resource_created_date": "ResourceCreatedDate", "resource_group": "ResourceGroup", "updated_date": "UpdatedDate"}]`)
 				}))
 			})
 			It(`Invoke ListNamespaceDetails successfully`, func() {
@@ -2582,7 +2586,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["X-Auth-Resource-Group"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke CreateNamespace with error: Operation response processing error`, func() {
@@ -2639,7 +2643,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
 				}))
 			})
 			It(`Invoke CreateNamespace successfully with retries`, func() {
@@ -2699,7 +2703,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
 				}))
 			})
 			It(`Invoke CreateNamespace successfully`, func() {
@@ -2818,7 +2822,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["X-Auth-Resource-Group"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke AssignNamespace with error: Operation response processing error`, func() {
@@ -2875,7 +2879,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
 				}))
 			})
 			It(`Invoke AssignNamespace successfully with retries`, func() {
@@ -2935,7 +2939,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"namespace": "Namespace"}`)
 				}))
 			})
 			It(`Invoke AssignNamespace successfully`, func() {
@@ -3125,7 +3129,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetPlans with error: Operation response processing error`, func() {
@@ -3178,7 +3182,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"plan": "Plan"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"plan": "Plan"}`)
 				}))
 			})
 			It(`Invoke GetPlans successfully with retries`, func() {
@@ -3234,7 +3238,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"plan": "Plan"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"plan": "Plan"}`)
 				}))
 			})
 			It(`Invoke GetPlans successfully`, func() {
@@ -3349,7 +3353,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3421,7 +3425,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetQuota with error: Operation response processing error`, func() {
@@ -3474,7 +3478,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"limit": {"storage_bytes": 12, "traffic_bytes": 12}, "usage": {"storage_bytes": 12, "traffic_bytes": 12}}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"limit": {"storage_bytes": 12, "traffic_bytes": 12}, "usage": {"storage_bytes": 12, "traffic_bytes": 12}}`)
 				}))
 			})
 			It(`Invoke GetQuota successfully with retries`, func() {
@@ -3530,7 +3534,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"limit": {"storage_bytes": 12, "traffic_bytes": 12}, "usage": {"storage_bytes": 12, "traffic_bytes": 12}}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"limit": {"storage_bytes": 12, "traffic_bytes": 12}, "usage": {"storage_bytes": 12, "traffic_bytes": 12}}`)
 				}))
 			})
 			It(`Invoke GetQuota successfully`, func() {
@@ -3645,7 +3649,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -3719,7 +3723,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListRetentionPolicies with error: Operation response processing error`, func() {
@@ -3772,7 +3776,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": {"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"mapKey": {"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}}`)
 				}))
 			})
 			It(`Invoke ListRetentionPolicies successfully with retries`, func() {
@@ -3828,7 +3832,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": {"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"mapKey": {"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}}`)
 				}))
 			})
 			It(`Invoke ListRetentionPolicies successfully`, func() {
@@ -3943,7 +3947,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -4025,7 +4029,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke AnalyzeRetentionPolicy with error: Operation response processing error`, func() {
@@ -4087,7 +4091,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -4097,7 +4101,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": ["Inner"]}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"mapKey": ["Inner"]}`)
 				}))
 			})
 			It(`Invoke AnalyzeRetentionPolicy successfully with retries`, func() {
@@ -4165,14 +4169,14 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": ["Inner"]}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"mapKey": ["Inner"]}`)
 				}))
 			})
 			It(`Invoke AnalyzeRetentionPolicy successfully`, func() {
@@ -4292,7 +4296,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetRetentionPolicy with error: Operation response processing error`, func() {
@@ -4346,7 +4350,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}`)
 				}))
 			})
 			It(`Invoke GetRetentionPolicy successfully with retries`, func() {
@@ -4403,7 +4407,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"images_per_repo": 13, "namespace": "Namespace", "retain_untagged": true}`)
 				}))
 			})
 			It(`Invoke GetRetentionPolicy successfully`, func() {
@@ -4517,7 +4521,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetSettings with error: Operation response processing error`, func() {
@@ -4570,7 +4574,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"platform_metrics": false}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"platform_metrics": false}`)
 				}))
 			})
 			It(`Invoke GetSettings successfully with retries`, func() {
@@ -4626,7 +4630,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"platform_metrics": false}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"platform_metrics": false}`)
 				}))
 			})
 			It(`Invoke GetSettings successfully`, func() {
@@ -4741,7 +4745,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 						_, err := bodyBuf.ReadFrom(req.Body)
 						Expect(err).To(BeNil())
 					}
-					fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
+					_, _ = fmt.Fprintf(GinkgoWriter, "  Request body: %s", bodyBuf.String())
 
 					Expect(req.Header["Account"]).ToNot(BeNil())
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
@@ -4813,7 +4817,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke DeleteImageTag with error: Operation response processing error`, func() {
@@ -4867,7 +4871,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
 				}))
 			})
 			It(`Invoke DeleteImageTag successfully with retries`, func() {
@@ -4924,7 +4928,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"Untagged": "Untagged"}`)
 				}))
 			})
 			It(`Invoke DeleteImageTag successfully`, func() {
@@ -5039,7 +5043,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.URL.Query()["namespace"]).To(Equal([]string{"testString"}))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListDeletedImages with error: Operation response processing error`, func() {
@@ -5094,7 +5098,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": {"daysUntilExpiry": 15, "tags": ["Tags"]}}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"mapKey": {"daysUntilExpiry": 15, "tags": ["Tags"]}}`)
 				}))
 			})
 			It(`Invoke ListDeletedImages successfully with retries`, func() {
@@ -5152,7 +5156,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"mapKey": {"daysUntilExpiry": 15, "tags": ["Tags"]}}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"mapKey": {"daysUntilExpiry": 15, "tags": ["Tags"]}}`)
 				}))
 			})
 			It(`Invoke ListDeletedImages successfully`, func() {
@@ -5259,7 +5263,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprint(res, `} this is not valid json {`)
+					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke RestoreTags with error: Operation response processing error`, func() {
@@ -5313,7 +5317,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"successful": ["Successful"], "unsuccessful": ["Unsuccessful"]}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"successful": ["Successful"], "unsuccessful": ["Unsuccessful"]}`)
 				}))
 			})
 			It(`Invoke RestoreTags successfully with retries`, func() {
@@ -5370,7 +5374,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					// Set mock response
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					fmt.Fprintf(res, "%s", `{"successful": ["Successful"], "unsuccessful": ["Unsuccessful"]}`)
+					_, _ = fmt.Fprintf(res, "%s", `{"successful": ["Successful"], "unsuccessful": ["Unsuccessful"]}`)
 				}))
 			})
 			It(`Invoke RestoreTags successfully`, func() {
@@ -5914,12 +5918,12 @@ func CreateMockDateTime(mockData string) *strfmt.DateTime {
 
 func SetTestEnvironment(testEnvironment map[string]string) {
 	for key, value := range testEnvironment {
-		os.Setenv(key, value)
+		_ = os.Setenv(key, value)
 	}
 }
 
 func ClearTestEnvironment(testEnvironment map[string]string) {
 	for key := range testEnvironment {
-		os.Unsetenv(key)
+		_ = os.Unsetenv(key)
 	}
 }
