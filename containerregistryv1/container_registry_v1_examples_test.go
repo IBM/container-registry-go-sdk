@@ -137,7 +137,7 @@ var _ = Describe(`ContainerRegistryV1 Examples Tests`, func() {
 			Expect(namespace).ToNot(BeNil())
 
 			namespaceLink = *namespace.Namespace
-			fmt.Fprintf(GinkgoWriter, "Saved namespaceLink value: %v\n", namespaceLink)
+			 _, _ = fmt.Fprintf(GinkgoWriter, "Saved namespaceLink value: %v\n", namespaceLink)
 		})
 		It(`GetAuth request example`, func() {
 			fmt.Println("\nGetAuth() result:")

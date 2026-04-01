@@ -112,7 +112,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 				Skip("Unable to load seedDigest configuration property, skipping tests")
 			}
 
-			fmt.Fprintf(GinkgoWriter, "Service URL: %v\n", serviceURL)
+			 _, _ = fmt.Fprintf(GinkgoWriter, "Service URL: %v\n", serviceURL)
 			shouldSkipTest = func() {}
 		})
 	})
@@ -152,7 +152,7 @@ var _ = Describe(`ContainerRegistryV1 Integration Tests`, func() {
 			Expect(*namespace.Namespace).To(Equal(baseNamespace))
 
 			namespaceLink = *namespace.Namespace
-			fmt.Fprintf(GinkgoWriter, "Saved namespaceLink value: %v\n", namespaceLink)
+			 _, _ = fmt.Fprintf(GinkgoWriter, "Saved namespaceLink value: %v\n", namespaceLink)
 		})
 	})
 
