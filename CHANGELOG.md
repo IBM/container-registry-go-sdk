@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/IBM/container-registry-go-sdk/compare/v1.2.1...v1.3.0) (2026-04-01)
+
+
+### Features
+
+* **containerregistryv1:** Add in-che endpoints to SDK ([da00ae4](https://github.com/IBM/container-registry-go-sdk/commit/da00ae46de35d6edf0a2b81d8e98718a4c5fbb5c))
+
 ## [1.2.1](https://github.com/IBM/container-registry-go-sdk/compare/v1.2.0...v1.2.1) (2025-11-18)
 
 
