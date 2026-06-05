@@ -240,6 +240,10 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 			Expect(url).To(Equal("https://in.icr.io"))
 			Expect(err).To(BeNil())
 
+			url, err = containerregistryv1.GetServiceURLForRegion("in-mum")
+			Expect(url).To(Equal("https://in2.icr.io"))
+			Expect(err).To(BeNil())
+
 			url, err = containerregistryv1.GetServiceURLForRegion("INVALID_REGION")
 			Expect(url).To(BeEmpty())
 			Expect(err).ToNot(BeNil())
@@ -1077,7 +1081,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListImageDigests with error: Operation response processing error`, func() {
@@ -1419,7 +1423,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke DeleteImage with error: Operation response processing error`, func() {
@@ -1644,7 +1648,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke InspectImage with error: Operation response processing error`, func() {
@@ -2371,7 +2375,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListNamespaceDetails with error: Operation response processing error`, func() {
@@ -2586,7 +2590,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["X-Auth-Resource-Group"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke CreateNamespace with error: Operation response processing error`, func() {
@@ -2822,7 +2826,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["X-Auth-Resource-Group"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke AssignNamespace with error: Operation response processing error`, func() {
@@ -3129,7 +3133,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetPlans with error: Operation response processing error`, func() {
@@ -3425,7 +3429,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetQuota with error: Operation response processing error`, func() {
@@ -3723,7 +3727,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListRetentionPolicies with error: Operation response processing error`, func() {
@@ -4029,7 +4033,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke AnalyzeRetentionPolicy with error: Operation response processing error`, func() {
@@ -4296,7 +4300,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetRetentionPolicy with error: Operation response processing error`, func() {
@@ -4521,7 +4525,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke GetSettings with error: Operation response processing error`, func() {
@@ -4817,7 +4821,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke DeleteImageTag with error: Operation response processing error`, func() {
@@ -5043,7 +5047,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.URL.Query()["namespace"]).To(Equal([]string{"testString"}))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke ListDeletedImages with error: Operation response processing error`, func() {
@@ -5263,7 +5267,7 @@ var _ = Describe(`ContainerRegistryV1`, func() {
 					Expect(req.Header["Account"][0]).To(Equal(fmt.Sprintf("%v", "testString")))
 					res.Header().Set("Content-type", "application/json")
 					res.WriteHeader(200)
-					 _, _ = fmt.Fprint(res, `} this is not valid json {`)
+					_, _ = fmt.Fprint(res, `} this is not valid json {`)
 				}))
 			})
 			It(`Invoke RestoreTags with error: Operation response processing error`, func() {
