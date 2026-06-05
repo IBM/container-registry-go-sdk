@@ -140,6 +140,7 @@ func GetServiceURLForRegion(region string) (string, error) {
 		"ca-mon":     "https://ca2.icr.io", // ca-mon
 		"eu-es":      "https://es.icr.io",  // eu-es
 		"in-che":     "https://in.icr.io",  // in-che
+		"in-mum":     "https://in2.icr.io", // in-mum
 	}
 
 	if url, ok := endpoints[region]; ok {
