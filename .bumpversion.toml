@@ -1,24 +1,24 @@
-[bumpversion]
+[tool.bumpversion]
 current_version = "1.4.0"
 commit = false
 message = "Update version {current_version} -> {new_version} [skip ci]"
 
-[[bumpversion.files]]
+[[tool.bumpversion.files]]
 filename = "common/version.go"
 search = "const Version = \"{current_version}\""
 replace = "const Version = \"{new_version}\""
 
-[[bumpversion.files]]
+[[tool.bumpversion.files]]
 filename = "README.md"
 search = "IBM Cloud Container Registry Go SDK {current_version}"
 replace = "IBM Cloud Container Registry Go SDK {new_version}"
 
-[[bumpversion.files]]
+[[tool.bumpversion.files]]
 filename = "README.md"
 search = "The current version of this SDK: {current_version}"
 replace = "The current version of this SDK: {new_version}"
 
-[[bumpversion.files]]
+[[tool.bumpversion.files]]
 filename = "README.md"
 search = "version = \"{current_version}\""
 replace = "version = \"{new_version}\""

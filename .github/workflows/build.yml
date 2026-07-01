@@ -88,6 +88,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
+          # fetch-depth: 0 is required for semantic-release to read the full
+          # commit history. persist-credentials must remain true (the default)
+          # so that @semantic-release/git can push the version bump commit back
+          # to main using the job-scoped GITHUB_TOKEN.
           fetch-depth: 0
 
       - name: Setup Node.js
