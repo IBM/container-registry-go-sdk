@@ -1,5 +1,5 @@
 [tool.bumpversion]
-current_version = "1.2.1"
+current_version = "1.4.0"
 commit = false
 message = "Update version {current_version} -> {new_version} [skip ci]"
 
@@ -10,5 +10,15 @@ replace = "const Version = \"{new_version}\""
 
 [[tool.bumpversion.files]]
 filename = "README.md"
-search = "{current_version}"
-replace = "{new_version}"
+search = "IBM Cloud Container Registry Go SDK {current_version}"
+replace = "IBM Cloud Container Registry Go SDK {new_version}"
+
+[[tool.bumpversion.files]]
+filename = "README.md"
+search = "The current version of this SDK: {current_version}"
+replace = "The current version of this SDK: {new_version}"
+
+[[tool.bumpversion.files]]
+filename = "README.md"
+search = "version = \"{current_version}\""
+replace = "version = \"{new_version}\""
