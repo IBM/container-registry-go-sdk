@@ -1,3 +1,12 @@
+## [1.4.1](https://github.com/IBM/container-registry-go-sdk/compare/v1.4.0...v1.4.1) (2026-07-01)
+
+
+### Bug Fixes
+
+* **ci:** correct bumpversion TOML section names and document credential requirement ([7fe7736](https://github.com/IBM/container-registry-go-sdk/commit/7fe7736916ffa4b8e94c97cdb42e869b6f156317))
+* **deps:** update go dependencies ([2978fdc](https://github.com/IBM/container-registry-go-sdk/commit/2978fdc8936b9f2ac7f26792e427711015a1ace8))
+* **release:** sync version files and fix bump-my-version config ([6fb541d](https://github.com/IBM/container-registry-go-sdk/commit/6fb541d5727026d7077440b11782cce0070507f8))
+
 # [1.3.0](https://github.com/IBM/container-registry-go-sdk/compare/v1.2.1...v1.3.0) (2026-04-01)
 
 
