@@ -3,10 +3,10 @@ module github.com/IBM/container-registry-go-sdk
 go 1.26.0
 
 require (
-	github.com/IBM/go-sdk-core/v5 v5.23.4
+	github.com/IBM/go-sdk-core/v5 v5.23.5
 	github.com/go-openapi/strfmt v0.27.2
 	github.com/onsi/ginkgo v1.16.5
-	github.com/onsi/gomega v1.43.1
+	github.com/onsi/gomega v1.44.0
 	github.com/stretchr/testify v1.12.1
 )
 
