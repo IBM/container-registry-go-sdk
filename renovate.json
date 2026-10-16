@@ -10,7 +10,8 @@
     },
     {
       "groupName": "Go dependencies",
-      "matchManagers": ["gomod"]
+      "matchManagers": ["gomod"],
+      "matchUpdateTypes": ["minor", "patch"]
     },
     {
       "groupName": "GitHub Actions",
